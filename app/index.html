@@ -65,7 +65,43 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     <paper-scroll-header-panel condenses class="flex">
       <div class="paper-header toolbar">A moeder is</div>
-      <bt-stage route="{{route}}"></bt-stage>
+      <div>
+        <excess-router-config
+          path-style="hash"
+          hash-prefix="#!">
+        </excess-router-config>
+
+        <excess-route 
+          route="/:menu/(.*)?" 
+          menu="{{mainmenu}}">
+        </excess-route>
+        
+        <excess-route 
+          route="/clip/:clipid" 
+          clipid="{{clipid}}">
+        </excess-route>
+
+        <excess-route 
+          route="/claiminvite/:invitecode" 
+          invitecode="{{invitecode}}">
+        </excess-route>
+
+        <lazy-pages attr-for-selected="route" selected="{{mainmenu}}">
+
+          <template is="dom-if" route="home" restamp>
+            <bt-home></bt-home>
+          </template>
+
+          <template is="dom-if" route="profile" restamp>
+            <bt-profile></bt-profile>
+          </template>
+
+          <template is="dom-if" route="clip" restamp>
+            <bt-clip clipid="{{clipid}}"></bt-clip>
+          </template>
+
+        </lazy-pages>
+      </div>
     </paper-scroll-header-panel>
 
   </template>

@@ -9,30 +9,27 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/lazy-pages/lazy-pages.html">
 
-<dom-module id="bt-stage">
+<dom-module id="bt-profile">
   <template>
     <style>
       :host {
         display: block;
       }
     </style>
-    <lazy-pages>
-      <lazy-page></lazy-page>
-    </lazy-pages>
+    <div>Hello from <span>{{foo}}</span></div>
   </template>
   <script>
   (function() {
     'use strict';
 
     Polymer({
-      is: 'bt-stage',
+      is: 'bt-profile',
 
       properties: {
         foo: {
           type: String,
-          value: 'bt-stage',
+          value: 'bt-profile',
           notify: true
         }
       }
