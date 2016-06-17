@@ -47,8 +47,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       attached: function() {
 
         this.contractaddr = new Polymer.IronMetaQuery({
-          key: 'blocktube_contract'
+          key: 'clipcontract'
         }).value;
+
+        var web3elem = document.querySelector('#web3wallet');
+        this.web3 = web3elem.web3;
+
+        //console.log(this.web3);
 
       },
 

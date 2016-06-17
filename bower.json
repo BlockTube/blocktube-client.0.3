@@ -10,7 +10,8 @@
     "page": "visionmedia/page.js#~1.6.3",
     "lazy-pages": "^0.8.5",
     "web3-wallet": "https://github.com/BlockTube/web3-wallet.git#^0.0.8",
-    "excess-router": "^0.9.14"
+    "excess-router": "^0.9.14",
+    "ipfs-upload": "^0.0.13"
   },
   "devDependencies": {}
 }
