@@ -24,7 +24,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <bt-index clips="{{clips}}"></bt-index>
       <template is="dom-repeat" items="{{clips}}">
-        <p>{{item.address}}</p>
         <bt-listitem id="{{item.address}}" contract="{{item.address}}">
         </bt-listitem>
       </template>
