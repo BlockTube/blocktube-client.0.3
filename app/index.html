@@ -112,10 +112,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           invitecode="{{invitecode}}">
         </excess-route>
 
-    <paper-scroll-header-panel condenses keep-condensed-header>
-      <div class="paper-header toolbar">A moeder is</div>
+    <paper-scroll-header-panel>
+      <!-- <div class="paper-header toolbar">A moeder is</div> -->
+
+      <paper-toolbar>
+        <img class="avatar" src="http://i.imgur.com/W2zCwpR.png" />
+      </paper-toolbar>
   
-        <iron-pages attr-for-selected="route" selected="{{mainmenu}}">
+        <iron-pages id="mainContainer" attr-for-selected="route" selected="{{mainmenu}}">
 
           <section route="home">
             <bt-home web3="{{web3}}"></bt-home>
