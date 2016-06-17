@@ -1,0 +1,372 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+<link rel="import" href="../../bower_components/ipfs-upload/ipfs-upload.html">
+
+<dom-module id="bt-listitem">
+  <template>
+    <style is="custom-style" include="shared-styles"></style>
+
+    <style>
+      :host {
+        display: block;
+        background-color: rgba(0,0,0,0.025);
+
+        /* This value changes in queries */
+        width: 224px;
+        margin: 0px 6px 26px 6px;
+      }
+
+      :host :hover {
+        cursor: pointer;
+      }
+
+      .container {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 12px;
+      }
+
+
+      .title {
+        width: 100%;
+        margin: 0px;
+      }
+
+      .title h4 {
+        @apply(--bt-font);
+        font-size: 14px;
+        color: var(--bt-blue);
+        margin: 0px;
+        width: 100%;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;    
+      }
+
+      h5 {
+        @apply(--bt-font);
+        margin: 0px;
+        opacity: 0.8;
+        font-size: 90%;
+      }
+
+    
+      .flexchild {
+        @apply(--layout-flex);
+      }
+    
+      .gris {
+        color: --google-grey-100;
+      }
+    
+      .actionbuttons {
+        @apply(--layout-horizontal);
+      }
+
+      .thumbnail {
+        width: 100%;
+
+        /* This value changes in queries */
+        height: 130px;
+      }
+
+      #duration {
+        background-color: black;
+        color: white;
+        height: 20px;
+        font-weight: bold;
+        padding:5px 12px 5px 12px;
+/*        position: relative;*/
+/*        top: 190px;*/
+        max-width: 60px;
+        text-align: right;
+        @apply(--horizontal-layout);
+        @apply(--horizontal-center);
+       }
+
+      .tags {
+        color: var(--bt-green);
+      }
+
+      .tags h5 {
+        font-size: 10px;
+      }
+
+
+      /* THESE ARE ALL NON-STANDARD QUERIES FOR THE DIFFERENT VIDEO SIZES */
+      @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) {    
+        :host {
+          width: 352px;
+          max-width: 100%;
+
+          margin: 0px 0px 26px 0px;
+        }
+        .thumbnail {
+          height: 171px;
+        }
+      }
+/*      @media all and (min-width: 321) and (max-width: 360px) and (orientation: portrait) {    
+        :host {
+          width: 352px;
+          margin: 0px 0px 26px 0px;
+        }
+        .thumbnail {
+          height: 198px;
+        }
+      }*/
+      @media all and (min-width: 361px) and (max-width: 609px) and (orientation: portrait) {
+        :host {
+          width: 448px;
+          margin: 0px 0px 26px 0px;
+        }
+        .thumbnail {
+          height: 260px;
+        }
+      }
+
+      @media all and (min-width: 610px) and (max-width: 760px) and (orientation: portrait) {
+        :host {
+          width: 624px;
+          margin: 0px 0px 26px 0px;
+        }
+        .thumbnail {
+          height: 351px;
+        }
+
+      }
+
+      @media all and (min-width: 761px) {
+        :host {
+          width: 222px;
+          margin: 0px 6px 26px 6px;
+        }
+        .thumbnail {
+          height: 130px;
+        }
+
+      }
+
+    </style>
+
+    <iron-localstorage id="lscache" name="itemcache"
+    value="{{itemcache}}"
+    on-iron-localstorage-load="itemcacheloaded"
+    on-iron-localstorage-load-empty="itemcacheloadedempty">
+    </iron-localstorage>
+    <div
+      class="thumbnail"
+      id="thumb"
+      style="background: url({{thumbnail}}) no-repeat center; background-size: cover;">
+  
+    </div>
+           <!-- <div id="duration">00:04:31</div> -->
+
+      <div class="container">
+        <div class="title">
+          <h4>{{title}}</h4>
+        </div>
+        <div class="tags">
+          <h5>{{tags}}</h5>
+        </div>
+      </div>
+
+
+</template>
+
+<script>
+    (function() {
+      'use strict';
+      
+      Polymer({
+        is: 'bt-listitem',
+
+        listeners: {
+          'tap': 'firelisttap',
+      },
+
+        properties: {
+          itemcache: {
+            type: Object,
+            //observer: 'itemcacheloaded'            
+          },
+          web3: {
+            type: Object,
+            observer: '_web3'
+          },
+          contract: {
+            type: String,
+            observer: '_contract'
+          },
+          title: {
+            type: String,
+            //value: 'Loading ipfs',
+            notify: true
+          },
+          description: {
+            type: String,
+            //value: 'Loading ipfs',
+            notify: true
+          },
+          views: {
+            type: Number,
+            value: 1000
+          },
+          comments: {
+            type: Number,
+            value: 2
+          },
+          thumb: {
+            type: String,
+            value: ''
+          },
+          duration: {
+            type: Number,
+            value: 0
+          },
+          hash: {
+            type: String,
+            //observer: '_hash'
+          },
+          videohash: {
+            type: String,
+            notify:true
+
+          },
+          listitem: {
+            type: Boolean,
+            value: false
+          },
+          likebutton: {
+          type: Boolean,
+          observer: '_likebutton',
+          value: false
+        },
+        contractabi: {
+          type: Object,
+          value: [{'constant':true,'inputs':[],'name':'treshold','outputs':[{'name':'','type':'uint256'}],'type':'function'},{'constant':false,'inputs':[],'name':'kill','outputs':[],'type':'function'},{'constant':true,'inputs':[],'name':'percentageforowner','outputs':[{'name':'','type':'uint256'}],'type':'function'},{'constant':true,'inputs':[],'name':'owner','outputs':[{'name':'','type':'address'}],'type':'function'},{'constant':true,'inputs':[],'name':'shareholdersnum','outputs':[{'name':'','type':'uint256'}],'type':'function'},{'constant':true,'inputs':[{'name':'','type':'uint256'}],'name':'shareholders','outputs':[{'name':'addr','type':'address'},{'name':'shares','type':'uint256'}],'type':'function'},{'constant':true,'inputs':[],'name':'tokenaddr','outputs':[{'name':'','type':'address'}],'type':'function'},{'constant':true,'inputs':[],'name':'Token','outputs':[{'name':'','type':'address'}],'type':'function'},{'constant':false,'inputs':[{'name':'_liker','type':'address'},{'name':'_likeamount','type':'uint256'}],'name':'blocktubeTransfer','outputs':[],'type':'function'},{'constant':true,'inputs':[],'name':'remainingCliptokens','outputs':[{'name':'','type':'uint256'}],'type':'function'},{'constant':true,'inputs':[],'name':'ipfsclipobject','outputs':[{'name':'','type':'string'}],'type':'function'},{'inputs':[{'name':'_ipfsclipobject','type':'string'},{'name':'_treshold','type':'uint256'},{'name':'_percentageforowner','type':'uint256'}],'type':'constructor'}]
+        }
+
+        },
+
+        ready: function(){
+          console.log('stube-item READY');
+          var web3el = document.querySelector('#web3wallet');
+          this.web3 = web3el.web3;
+        },
+
+        hitMe: function(){
+          //this.fire('go', { msg: "/clip/hash1" });
+          //location ="/clip/hash1";
+
+          //Excess.RouteManager.transitionTo('/clip/'+this.hash);
+
+//          page('/clip/'+this.hash);
+        },
+
+        _likebutton: function(){
+          //console.log('Like? ', this.likebutton);
+        },
+
+        _contract: function(){
+          console.log('loading clip contract: ', this.contract);
+          this.loadcontract();
+        },
+
+        firelisttap: function(){
+          this.fire('item-tapped', this.contract);
+        },
+
+        _web3: function(){
+          this.loadcontract();
+        },
+
+        itemcacheloaded: function(){
+          //console.log('web3',this.web3===null);
+          //console.log('contract',this.contract===null);
+          this.loadcontract();
+        },
+
+        itemcacheloadedempty: function(){
+          this.itemcache = {};
+          this.loadcontract();
+        },
+
+        loadcontract: function(){
+          if (this.web3 && this.itemcache && this.contract){
+            var myclipContract = this.web3.eth.contract(this.contractabi);
+            var myclipContractInstance = myclipContract.at(this.contract);
+            this.hash = myclipContractInstance.ipfsclipobject().toString();
+            console.log('HASH!',this.hash);
+            this.attached();
+          }
+        },
+
+        populate: function(ipfsData) {
+          var self=this;
+          self.title = ipfsData.name;
+          self.description = ipfsData.description;
+          self.videohash = ipfsData.video;
+          self.thumbnail = ipfsData.thumbnail;
+          self.videourl = '';
+          self.tags = ipfsData.tags;
+        },
+
+        attached: function() {
+
+ this.ipfsapihost = new Polymer.IronMetaQuery({
+          key: 'ipfs_read'
+        }).value;
+
+          this.$.lscache.name = 'itemcache-' + this.hash;
+
+          var ipfsData;
+          if (!this.hash){
+            return console.log('hash not available YET');
+          }
+
+          if (this.itemcache[this.hash]) {
+            //console.log('cache HIT', this.hash);
+            ipfsData = this.itemcache[this.hash];
+            return this.populate(ipfsData);
+          } else {
+
+            //console.log('cache MISS', this.hash);
+
+            var self = this;
+            var ipfs = window.ipfsAPI(this.ipfsapihost, 80);
+
+            var buf = '';
+            //console.log('MIKE:this.hash);
+            ipfs.cat(this.hash, function(err, res) {
+              res
+                .on('error', function(err) {
+                  throw (err);
+                })
+                .on('data', function(data) {
+                  buf += data;
+                })
+                .on('end', function() {
+                  var ipfsData = JSON.parse(buf);
+                  self.populate(ipfsData);
+                  self.set('itemcache.'+self.hash,ipfsData);
+                });
+            });
+          }
+
+
+        },
+      });
+    })();
+  </script>
+
+</dom-module>

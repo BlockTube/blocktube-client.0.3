@@ -92,10 +92,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       key="eth_node" 
       value="http://109.123.70.141:8545"></iron-meta>
 
-    <paper-scroll-header-panel condenses class="flex">
-      <div class="paper-header toolbar">A moeder is</div>
-      <div>
-        <excess-router-config
+      <excess-router-config
           path-style="hash"
           hash-prefix="#!">
         </excess-router-config>
@@ -115,22 +112,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           invitecode="{{invitecode}}">
         </excess-route>
 
-        <lazy-pages attr-for-selected="route" selected="{{mainmenu}}">
+    <paper-scroll-header-panel condenses keep-condensed-header>
+      <div class="paper-header toolbar">A moeder is</div>
+  
+        <iron-pages attr-for-selected="route" selected="{{mainmenu}}">
 
-          <template is="dom-if" route="home" restamp>
-            <bt-home></bt-home>
-          </template>
+          <section route="home">
+            <bt-home web3="{{web3}}"></bt-home>
+          </section>
 
-          <template is="dom-if" route="profile" restamp>
+          <section route="profile">
             <bt-profile web3="[[web3]]" account="[[account]]"></bt-profile>
-          </template>
+          </section>
 
-          <template is="dom-if" route="clip" restamp>
+          <section route="clip">
             <bt-clip clipid="{{clipid}}"></bt-clip>
-          </template>
+          </section>
 
-        </lazy-pages>
-      </div>
+        </iron-pages>
+
     </paper-scroll-header-panel>
 
   </template>

@@ -10,6 +10,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/lazy-pages/lazy-pages.html">
+<link rel="import" href="../bt-index/bt-index.html">
+<link rel="import" href="../bt-listitem/bt-listitem.html">
 
 
 <dom-module id="bt-home">
@@ -17,10 +19,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <style>
       :host {
         display: block;
+        height: 100%;
       }
     </style>
-    <h1>HALLO HOME</h1>
-
+    <bt-index clips="{{clips}}"></bt-index>
+      <template is="dom-repeat" items="{{clips}}">
+        <p>{{item.address}}</p>
+        <bt-listitem id="{{item.address}}" contract="{{item.address}}">
+        </bt-listitem>
+      </template>
   </template>
   <script>
   (function() {
@@ -30,16 +37,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'bt-home',
 
       properties: {
-        foo: {
-          type: String,
-          value: 'bt-home',
-          notify: true
+        clips: {
+          observer: '_clips'
         }
       },
 
       ready: function(){
         this.mainmenu = 'home';
       },
+
+      _clips: function(){
+        console.log(this.clips);
+      }
     });
   })();
   </script>

@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/ipfs-upload/ipfs-upload.html">
 
 <dom-module id="bt-profile">
   <template>
@@ -17,8 +18,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
       }
     </style>
-    <div><div>A Photo</div> {{account}}</div>
+    <div>
+    avatar
+    <template is="dom-if" if="{{avatarhash}}">
+      <img class="height:100px" src="http://gateway.ipfs.io/ipfs/{{avatarhash.hash}}">
+    </template>
+
+          <ipfs-upload id="ipfsupload" hash="{{avatarhash}}" on-ipfs-hash-received="_setipfshash" on-upload-started="_uploadstart" host="/ip4/109.123.70.141/tcp/5001" on-upload-error="_uploaderror"></ipfs-upload>
+
+
+     {{account}}</div>
     <div>BTcoins {{btcoinbalance}}</div><paper-button>buy more</paper-button>
+
   </template>
   <script>
   (function() {
@@ -60,9 +71,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var MyContract = self.web3.eth.contract(self.contractjson.abi);
           var myContractInstance = MyContract.at(self.contractaddr);
 
-          var account = app.helpers.fixaddress(this.account);
+          var account = app.helpers.fixaddress(self.account);
           var coinbalance = myContractInstance.balanceOf(account).toNumber();
-          this.btcoinbalance = coinbalance;
+          self.btcoinbalance = coinbalance;
           // console.log('localcoinbalance: ', coinbalance);
           //this.balanceloaded = true;
           //this.fire('balance-loaded');
