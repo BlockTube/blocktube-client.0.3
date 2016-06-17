@@ -17,7 +17,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
       }
     </style>
-    <div>Hello from <span>{{foo}}</span></div>
+    <div><div>A Photo</div> {{account}}</div>
+    <div>BTcoins {{btcoinbalance}}</div><paper-button>buy more</paper-button>
   </template>
   <script>
   (function() {
@@ -27,12 +28,47 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       is: 'bt-profile',
 
       properties: {
-        foo: {
-          type: String,
-          value: 'bt-profile',
-          notify: true
+        web3: {
+          type: Object,
+          observer: '_web3'
+        },
+        account: {
+          type: String
         }
-      }
+      },
+
+      ready: function(){
+
+      },
+      attached: function(){
+        this.account = app.helpers.fixaddress(this.account);
+      },
+      _web3: function(){
+        //debugger;
+        this.getBTbalance();
+      },
+      
+      getBTbalance: function() {
+        //Get Localcoin token balance
+        //this.web3wallet = document.querySelector('web3-wallet');
+        var self = this;
+
+        this.contracturl = this.resolveUrl('../../contracts/blockTube.json');
+        this.importHref(this.contracturl, function(e) {
+          this.contractjson = JSON.parse(e.target.import.body.innerText);
+
+          var MyContract = self.web3.eth.contract(self.contractjson.abi);
+          var myContractInstance = MyContract.at(self.contractaddr);
+
+          var account = app.helpers.fixaddress(this.account);
+          var coinbalance = myContractInstance.balanceOf(account).toNumber();
+          this.btcoinbalance = coinbalance;
+          // console.log('localcoinbalance: ', coinbalance);
+          //this.balanceloaded = true;
+          //this.fire('balance-loaded');
+        });
+      },
+
     });
   })();
   </script>
