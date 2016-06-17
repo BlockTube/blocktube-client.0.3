@@ -50,10 +50,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           key: 'clipcontract'
         }).value;
 
-        var web3elem = document.querySelector('#web3wallet');
+        window.setTimeout(function(){
+          var web3elem = document.querySelector('#web3wallet');
+        
         this.web3 = web3elem.web3;
 
-        //console.log(this.web3);
+        console.log(this.web3);
+        this.readthecontract();
+      }.bind(this), 3000);
 
       },
 
