@@ -63,6 +63,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
 
+
+
+    <web3-wallet 
+      id="web3wallet" 
+      keystore="{{keystore}}" 
+      walletname="blocktube-demo" 
+      password="test" 
+      web3="{{web3}}" 
+      host="http://109.123.70.141:8545" 
+      host2="{{host}}"  
+      balance="{{balance}}" 
+      account="{{account}}"></web3-wallet>
+
+    <iron-meta 
+      key="clipcontract" 
+      value="0xC4946E241ab66cDa428581cF2624f8cc6E4a7B72"></iron-meta>
+
+    <iron-meta 
+      key="ipfs_read" 
+      value="gateway.ipfs.io"></iron-meta>
+
+    <iron-meta 
+      key="ipfs_upload" 
+      value="/ip4/109.123.70.141/tcp/5001"></iron-meta>
+
+    <iron-meta 
+      key="eth_node" 
+      value="http://109.123.70.141:8545"></iron-meta>
+
     <paper-scroll-header-panel condenses class="flex">
       <div class="paper-header toolbar">A moeder is</div>
       <div>
