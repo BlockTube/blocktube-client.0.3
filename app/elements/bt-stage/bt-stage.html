@@ -9,6 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/lazy-pages/lazy-pages.html">
 
 <dom-module id="bt-stage">
   <template>
@@ -17,7 +18,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         display: block;
       }
     </style>
-    <div>Hello from <span>{{foo}}</span></div>
+    <lazy-pages>
+      <lazy-page></lazy-page>
+    </lazy-pages>
   </template>
   <script>
   (function() {
