@@ -20,11 +20,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <div>
     avatar
-    <template is="dom-if" if="{{avatarhash}}">
-      <img class="height:100px" src="http://gateway.ipfs.io/ipfs/{{avatarhash.hash}}">
+    <template is="dom-if" if="{{profiledata}}">IMG
+      <span>{{profiledata.username}}</span>
+      <img class="height:100px" src="{{profiledata.avatarurl}}">
     </template>
 
-          <ipfs-upload id="ipfsupload" hash="{{avatarhash}}" on-ipfs-hash-received="_setipfshash" on-upload-started="_uploadstart" host="/ip4/109.123.70.141/tcp/5001" on-upload-error="_uploaderror"></ipfs-upload>
+   <ipfs-upload id="ipfsupload" hash="{{avatarhash}}" on-ipfs-hash-received="_setavataripfshash" on-upload-started="_uploadstart" host="/ip4/109.123.70.141/tcp/5001" on-upload-error="_uploaderror"></ipfs-upload>
+
+    <ipfs-upload hidefileinput id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001"></ipfs-upload>
+
 
 
      {{account}}</div>
@@ -47,6 +51,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           observer: '_fixaccount'
         },
+        profilehash: {
+          type: String,
+        },
+        profiledata: {
+          type: String,
+        }
 
       },
 
@@ -59,6 +69,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           key: 'coincontract'
         }).value;
       },
+     
+
       _web3: function(){
         //debugger;
         this.getBTbalance();
@@ -66,7 +78,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _fixaccount: function(){
         this.account =app.helpers.fixaddress(this.account)
       },
-      
+      _uploadstart: function(){
+
+      },
+       _uploaderror: function(){
+
+      },
       getBTbalance: function() {
         //Get Localcoin token balance
         //this.web3wallet = document.querySelector('web3-wallet');
@@ -85,6 +102,36 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           //this.fire('balance-loaded');
         });
       },
+
+      _setavataripfshash: function(){
+        this.set('profiledata.avatarhash',this.avatarhash.hash);
+        var ipfs_url = new Polymer.IronMetaQuery({
+          key: 'ipfs_url'
+        }).value;
+
+        this.set('profiledata.avatarurl',ipfs_url + this.avatarhash.hash);
+     
+      },
+
+      _saveProfile: function(){
+
+        this.$.ipfsupload.add(JSON.stringify(this.metadata), function(err, res) {
+            // Yeah man - create that contract here now please....
+
+            if (!err && res[0] && res[0].Hash) {
+              self._createNewUploadContract(res[0].Hash,function(err,contractaddress){
+              self.progress = 'contractcreated';
+                console.log('mined!');
+                self.contractaddress = contractaddress;
+                // TODO : add this contractaddress to the index and return to your videos
+                self.push('clips',contractaddress);
+                self._addtoIndexContract(contractaddress);
+              });
+            } else {
+              console.log('error uploading metadata to IPFS', err);
+            }
+          });
+      }
 
     });
   })();

@@ -63,7 +63,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <span id="browser-sync-binding"></span>
   <template is="dom-bind" id="app">
 
-
+    <bt-profiledata profiledata="{{profiledata}}"></bt-profiledata>
 
     <web3-wallet 
       id="web3wallet" 
@@ -93,62 +93,62 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       value="/ip4/109.123.70.141/tcp/5001"></iron-meta>
 
     <iron-meta 
+      key="ipfs_url" 
+      value="http://gateway.ipfs.io/ipfs/"></iron-meta>
+
+    <iron-meta 
       key="eth_node" 
       value="http://109.123.70.141:8545"></iron-meta>
 
-      <excess-router-config
+    <excess-router-config
           path-style="hash"
-          hash-prefix="#!">
-        </excess-router-config>
+          hash-prefix="#!"></excess-router-config>
 
-        <excess-route 
+    <excess-route 
           route="/:menu/(.*)?" 
-          menu="{{mainmenu}}">
-        </excess-route>
-        
-        <excess-route 
-          route="/clip/:clipid" 
-          clipid="{{clipid}}">
-        </excess-route>
+          menu="{{mainmenu}}"></excess-route>
 
-        <excess-route 
+    <excess-route 
+          route="/clip/:clipid" 
+          clipid="{{clipid}}"></excess-route>
+
+    <excess-route 
           route="/claiminvite/:invitecode" 
-          invitecode="{{invitecode}}">
-        </excess-route>
+          invitecode="{{invitecode}}"></excess-route>
 
     <paper-scroll-header-panel>
-      <!-- <div class="paper-header toolbar">A moeder is</div> -->
+      <!-- <div class="paper-header toolbar">A moeder is</div>
+    -->
+    <paper-toolbar>
+      <a href="/#!/profile">
+        <img class="avatar" src="{{profiledata.avatarurl}}" />
+      </a>
+    </paper-toolbar>
 
-      <paper-toolbar>
-       <a href="/#!/profile">
-        <img class="avatar" src="http://i.imgur.com/W2zCwpR.png" />
-        </a>
-      </paper-toolbar>
-  
-        <iron-pages id="mainContainer" attr-for-selected="route" selected="{{mainmenu}}">
+    <iron-pages id="mainContainer" attr-for-selected="route" selected="{{mainmenu}}">
 
-          <section route="home">
-            <!-- <bt-home web3="{{web3}}"></bt-home> -->
-          </section>
+      <section route="home">
+        <bt-home web3="{{web3}}"></bt-home>
+    </section>
 
-          <section route="profile">
-            <bt-profile web3="[[web3]]" account="[[account]]"></bt-profile>
-          </section>
+    <section route="profile">
+      <bt-profile profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]"></bt-profile>
+    </section>
 
-          <section route="clip">
-            <bt-clip clipid="{{clipid}}"></bt-clip>
-          </section>
+    <section route="clip">
+      <bt-clip clipid="{{clipid}}"></bt-clip>
+    </section>
 
-        </iron-pages>
+  </iron-pages>
 
-    </paper-scroll-header-panel>
+</paper-scroll-header-panel>
 
-  </template>
+</template>
 
-  <!-- build:js scripts/app.js -->
-  <script src="scripts/app.js"></script>
-  <script src="scripts/helpers.js"></script>
-  <!-- endbuild-->
+<!-- build:js scripts/app.js -->
+<script src="scripts/app.js"></script>
+<script src="scripts/helpers.js"></script>
+<!-- endbuild-->
 </body>
 
 </html>
