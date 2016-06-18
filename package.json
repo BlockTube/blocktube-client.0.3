@@ -36,5 +36,9 @@
   },
   "engines": {
     "node": ">=0.10.0"
+  },
+  "dependencies": {
+    "glob-all": "^3.0.3",
+    "solc": "^0.3.5"
   }
 }

@@ -44,8 +44,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: '_web3'
         },
         account: {
-          type: String
-        }
+          type: String,
+          observer: '_fixaccount'
+        },
+
       },
 
       ready: function(){
@@ -53,10 +55,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
       attached: function(){
         this.account = app.helpers.fixaddress(this.account);
+        this.coincontract = new Polymer.IronMetaQuery({
+          key: 'coincontract'
+        }).value;
       },
       _web3: function(){
         //debugger;
         this.getBTbalance();
+      },
+      _fixaccount: function(){
+        this.account =app.helpers.fixaddress(this.account)
       },
       
       getBTbalance: function() {
@@ -64,15 +72,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         //this.web3wallet = document.querySelector('web3-wallet');
         var self = this;
 
-        this.contracturl = this.resolveUrl('../../contracts/blockTube.json');
-        this.importHref(this.contracturl, function(e) {
-          this.contractjson = JSON.parse(e.target.import.body.innerText);
 
-          var MyContract = self.web3.eth.contract(self.contractjson.abi);
-          var myContractInstance = MyContract.at(self.contractaddr);
+        app.helpers.getfile('../../contracts/MyToken.json', function(err,contractjson) {
 
-          var account = app.helpers.fixaddress(self.account);
-          var coinbalance = myContractInstance.balanceOf(account).toNumber();
+          var MyContract = self.web3.eth.contract(contractjson.abi);
+          var myContractInstance = MyContract.at(self.coincontract);
+
+          var coinbalance = myContractInstance.balanceOf(self.account).toNumber() / 1e18;
           self.btcoinbalance = coinbalance;
           // console.log('localcoinbalance: ', coinbalance);
           //this.balanceloaded = true;

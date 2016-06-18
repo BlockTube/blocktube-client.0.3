@@ -19,7 +19,7 @@ var reload = browserSync.reload;
 var merge = require('merge-stream');
 var path = require('path');
 var fs = require('fs');
-var glob = require('glob');
+var glob = require('glob-all');
 var historyApiFallback = require('connect-history-api-fallback');
 var packageJson = require('./package.json');
 var crypto = require('crypto');
@@ -260,12 +260,52 @@ gulp.task('serve:dist', ['default'], function () {
   });
 });
 
+
+gulp.task('solc', function() {
+
+  glob([
+    'app/contracts/*.sol',
+  ], {
+    cwd: '.'
+  }, function(error, files) {
+    var allfiles = '';
+    var destpath = '';
+
+    files.forEach(function(file) {
+      console.log('compiling sol file', file);
+
+      var fileContent = fs.readFileSync(file, "utf8");
+
+      allfiles += fileContent;
+      destpath = require('path').dirname(file);
+    });
+
+    var solc = require('solc');
+    var input = allfiles;
+    var output = solc.compile(input, 1); // 1 activates the optimiser
+    //console.log(output);
+    for (var contractName in output.contracts) {
+      var data = {
+        bytecode: output.contracts[contractName].bytecode,
+        abi: JSON.parse(output.contracts[contractName].interface)
+      }
+      var outputFileName = destpath + '/' + contractName + ".json";
+      console.log('saving to', outputFileName);
+
+      fs.writeFile(outputFileName, JSON.stringify(data), 'utf8');
+
+    }
+
+  });
+});
+
+
 // Build production files, the default task
 gulp.task('default', ['clean'], function (cb) {
   // Uncomment 'cache-config' after 'rename-index' if you are going to use service workers.
   runSequence(
     ['copy', 'styles'],
-    'elements',
+    'elements','solc'
     ['jshint', 'images', 'fonts', 'html'],
     'vulcanize','rename-index', // 'cache-config',
     cb);
