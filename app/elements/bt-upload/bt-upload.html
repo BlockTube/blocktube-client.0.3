@@ -1,0 +1,546 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-pages/iron-pages.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/paper-progress/paper-progress.html">
+<link rel="import" href="../../bower_components/ipfs-upload/ipfs-upload.html">
+
+
+<dom-module id="bt-upload">
+  <template>
+      <style is="custom-style" include="shared-styles"></style>
+
+    <!-- This is temporary  -->
+    <iron-localstorage name="blocktube-clips"
+    value="{{clips}}"
+    on-iron-localstorage-load-empty="initclips"
+  ></iron-localstorage>
+
+    <style>
+      :host {
+        display: block;
+        background-color: var(--bt-lightblue);
+        margin: 10px;
+      }
+
+      .container {
+        padding: 12px;
+      }
+
+      .uploader {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+        height: 120px;
+        background-color: var(--bt-lightblue);
+      }
+
+      paper-progress {
+        width: 100%;
+        --paper-progress-active-color: var(--bt-orange);
+      }
+
+      #videoland {
+        width: 60%;
+      }
+
+      #thecanvas {
+        width: 505px;
+        height: 286px;
+      }
+
+      .center {
+        @apply(--layout-vertical);
+        @apply(--layout-center-center);
+      }
+
+      .spacer {
+        height: 20px;
+      }
+
+/*      iron-pages {
+        min-height: 500px;
+      }*/
+
+      h3 {
+        color: white;
+      }
+
+    </style>
+    <paper-material>
+
+    <iron-pages selected="{{state}}" attr-for-selected="state">
+      <section state="firstuse">
+      <div class="center">
+<!--         <span class="spacer"></span>
+        <span class="spacer"></span>
+        <h3>1. Choose a movie file</h3>
+        <h3>2. Create a thumbnail</h3>
+        <h3>3. Enter the meta-data</h3>
+        <h3>4. Create the clip contract</h3>
+        <span class="spacer"></span> -->
+        <paper-button raised on-tap="continue">Upload somethin', fool!</paper-button>
+      </div>
+      </section>
+
+      <section state="start">
+        <div class="uploader">
+          <h3>1. Choose a movie file.</h3>
+
+          <ipfs-upload id="ipfsupload" hash="{{cliphash}}" on-ipfs-hash-received="_setipfshash" on-upload-started="_uploadstart" host="/ip4/109.123.70.141/tcp/5001" on-upload-error="_uploaderror"></ipfs-upload>
+
+          <template is="dom-if" if="{{_is(state,'uploading')}}">
+            <h3>Uploading to IPFS...</h3>
+          </template>
+          <!-- <paper-progress value="10" max="100"></paper-progress> -->
+
+      </div>
+      </section>
+
+      <section state="uploading">
+        <div class="center">
+        <span class="spacer"></span>
+        <span class="spacer"></span>
+        <h3>1. Choose a movie file</h3>
+        <p>Uploading to IPFS...</p>
+        <span class="spacer"></span>
+        
+      </div>
+      </section>
+
+      <section state="thumb">
+        <div id="videoland" class="center"></div>
+    <canvas id="thecanvas" class="center" crossOrigin="anonymous"></canvas>
+    <div id="thumbnailContainer" class="center"></div>
+    <div class="container center">
+        <h3 class="center">Scrub video to generate a new thumbnail.</h3>
+        <paper-button raised on-tap="setthumb">set thumbnail</paper-button>
+        <span class="spacer"></span>
+        <span class="spacer"></span>
+      </section>
+      
+      <section state="meta">
+      <div class="container">
+       <span class="spacer"></span>
+        <paper-input label="Title" char-counter maxlength="88" bind-value="{{title}}"></paper-input>
+    <paper-input label="Description" bind-value="{{description}}" maxlength="188" ></paper-input>
+    <paper-input label="Tags" placeholder="comma, separated" bind-value="{{tags}}"></paper-input>
+    <paper-input label="Clipshares" bind-value="{{clipshares}}" value="100"></paper-input>
+    <template is="dom-repeat" items="{{tagsarray}}">
+      <span><mark>{{item}}</mark> </span>
+
+    </template>
+
+    <paper-button class="center" raised on-tap="upload" disable="{{ipfsready}}">Create blocktu.be clip</paper-button>
+ <span class="spacer"></span>
+  </div>
+
+      </section>
+      <section state="process">
+        <div class="container">
+       <span class="spacer"></span>
+    <template is="dom-if" if="{{_is(progress,'uploading')}}">
+      <span>Your clip is being uploaded</span>
+    </template>
+    <template is="dom-if" if="{{_is(progress,'uploadcomplete')}}">
+    
+      <span>Upload complete</span>
+    </template>
+    <template is="dom-if" if="{{_is(progress,'creatingcontract')}}">
+      <span>Creating contract for your clip</span>
+    </template>
+    <template is="dom-if" if="{{_is(progress,'contractcreated')}}">
+      <span>Your clip is now ready.</span>
+    </template>
+    <template is="dom-if" if="{{_is(progress,'addingtoindex')}}">
+      <span>Adding to index contract.</span>
+    </template>
+    <template is="dom-if" if="{{_is(progress,'addedtoindex')}}">
+      <span>Added to index.</span>
+    </template>
+       <span class="spacer"></span>
+  </div>
+      </section>
+    </iron-pages>
+
+      
+
+    <!-- SPonnet; we should give users the ability to enter an ipfs hash instead of uploading the file. -->
+    
+   <!--  <paper-input label="ipfs hash" bind-value="{{cliphash}}" label="ipfs hash"></paper-input>
+
+    <paper-button raised on-tap="_setipfshash"></paper-button>
+ -->
+    
+
+    
+  </paper-material>
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+      var thecanvas ;
+    var video;
+    var thumbnailContainer;
+
+    Polymer({
+      is: 'bt-upload',
+
+      properties: {
+        web3: {
+          type: Object,
+//          observer: '_web3'
+        },
+        tags: {
+          type: String,
+          observer: '_tagsparser'
+        },
+        cliphash: {
+          type: String,
+          //observer: '_oncliphashreceived'
+        },
+        readyforupload: {
+          type: Boolean,
+          value: false
+        },
+        metadata: {
+          type: Object,
+          value: {},
+        },
+        contractaddress: {
+          type: String
+        },
+        state: {
+          type: String,
+          value: 'start'
+        },
+        ipfsready: {
+          type: Boolean,
+          value: false
+        }
+      },
+
+      ready: function(){
+        this.state = 'firstuse';
+        thecanvas = this.$.thecanvas;
+        thumbnailContainer = this.$.thumbnailContainer;
+        console.log(thecanvas);
+        this.ipfsready = false;
+
+        // TODO : patch upfs-upload so it can handle changes in 'host'
+
+        // this.$.ipfsupload.host = new Polymer.IronMetaQuery({
+        //   key: 'ipfs_upload'
+        // }).value;
+
+        // console.log('bt-upload, IPFS host=',this.$.ipfsupload.host);
+
+
+
+
+
+      },
+
+
+      continue: function(){
+        this.state = 'start';
+      },
+
+      setthumb: function(){
+        this.state = 'meta';
+      },
+
+      // this will be removed later. Temp fix to get a list of uploads
+      initclips: function(){
+          this.clips = [];
+      },
+      
+      _is: function(a, b) {
+        if (b === undefined){
+          b = true;
+        }
+        return a === b;
+      },
+
+      _uploadstart: function() {
+        console.log('upload start');
+        this.progress = 'uploading';
+//        this.ipfsuploading = true;
+      },
+
+      _uploaderror: function() {
+        console.log('error uploading');
+        this.ipfsuploading = false;
+      },
+
+      _tagsparser: function(){
+
+          var intags = this.tags.split(',');
+          if (intags){
+            var tmptags = [];
+            intags.forEach(function(tag){
+              tmptags.push(tag);
+            }.bind(this));
+            this.tagsarray = tmptags;
+          }
+      },
+
+      _setipfshash: function(data) {
+        this.state = 'thumb';
+        this.ipfsready = true;
+        console.log('got hash', this.cliphash);
+        this.metadata.uploaddate = Math.floor(new Date().getTime() / 1000);
+        this.metadata.video = data.detail.hash;
+        this.metadata.filename = data.detail.file.name;
+        this.metadata.filesize = data.detail.file.size;
+        this.metadata.filemimetype = data.detail.file.type;
+        this.metadata.tags = this.tags;
+
+        //this.ipfsuploading = false;
+        
+
+        this.newvideo = 'http://gateway.ipfs.io/ipfs/'+this.metadata.video;
+        //this.createclip();
+        this.thumbnailviewer();
+      },
+
+      thumbnailviewer: function(){
+//         <video id="videom"
+     
+//        controls>
+//   <source src='{{newvideo}}' />
+var self = this;
+// </video>
+        var elem = document.createElement('video');
+        var place = document.querySelector('#videoland');
+
+        elem.src = this.newvideo;
+        elem.controls = true;
+        elem.id = 'newvideo';
+        elem.crossOrigin = 'Anonymous';
+
+        place.appendChild(elem);
+
+        video = elem;
+        
+        var i=0;
+        elem.addEventListener('seeked', function() {
+      // now video has seeked and current frames will show
+      // at the time as we expect
+      self.generateThumbnail(i);
+      //var i;
+      // when frame is captured, increase
+      //i += 5;
+
+      // if we are not passed end, seek to next interval
+      // if (i <= elem.duration) {
+      //     // this will trigger another seeked event
+      //     elem.currentTime = i;
+
+      // } else {
+      //     // DONE!, next action
+      // }
+
+    }, false);
+      },
+
+      generateThumbnail: function() {     
+    //generate thumbnail URL data
+
+
+     
+    var context = thecanvas.getContext('2d');
+    context.drawImage(video, 0, 0, 280, 150);
+
+    thecanvas.crossOrigin = 'Anonymous';
+    var dataURL = thecanvas.toDataURL();
+
+    //create img
+    var img = document.createElement('img');
+
+
+    img.setAttribute('crossOrigin', 'anonymous');
+    img.setAttribute('src', dataURL);
+
+    //append img in container div
+    //thumbnailContainer.appendChild(img);
+},
+
+      upload: function() {
+        this.readyforupload = true;
+        this.createclip();
+        this.progress = 'uploading';
+        this.state = 'process';
+      },
+      
+      createclip: function() {
+        var self = this;
+        if (this.readyforupload && this.cliphash) {
+
+          // All is ready
+          this.metadata.name = this.title;
+          this.metadata.description = this.description;
+          this.metadata.thumbnail = thecanvas.toDataURL();
+
+          console.log('clip uploaded - now upload metadata to IPFS', this.metadata);
+          this.$.ipfsupload.add(JSON.stringify(this.metadata), function(err, res) {
+            // Yeah man - create that contract here now please....
+
+            if (!err && res[0] && res[0].Hash) {
+              self._createNewUploadContract(res[0].Hash,function(err,contractaddress){
+              self.progress = 'contractcreated';
+                console.log('mined!');
+                self.contractaddress = contractaddress;
+                // TODO : add this contractaddress to the index and return to your videos
+                self.push('clips',contractaddress);
+                self._addtoIndexContract(contractaddress);
+              });
+            } else {
+              console.log('error uploading metadata to IPFS', err);
+            }
+          });
+        }
+      },
+      fixaddress: function(address) {
+        function strStartsWith(str, prefix) {
+          return str.indexOf(prefix) === 0;
+        }
+
+        if (!strStartsWith(address, '0x')) {
+          return ('0x' + address);
+        }
+        return address;
+      },
+
+      _createNewUploadContract: function(hash,fn) {
+        var self = this;
+        this.contracturl = this.resolveUrl('../../contracts/blocktubeClip.json');
+        this.importHref(this.contracturl, function(e) {
+
+          this.progress = 'creatingcontract';
+
+          self.contractjson = JSON.parse(e.target.import.body.innerText);
+
+          console.log('Creating new contract on account ', self.account);
+
+          this.web3.eth.getGasPrice(function(err, result) {
+            var gasPrice = result.toNumber(10);
+
+            var MyContract = self.web3.eth.contract(self.contractjson.abi);
+            //var contractInstance = 
+            MyContract.new(hash, 0, parseInt(self.clipshares), {
+              from: self.fixaddress(self.account),
+              gasPrice: gasPrice,
+              gasLimit: 3000000,
+              gas: 2000000,
+              data: self.contractjson.bytecode
+            }, function(err, myContract) {
+              if (!err) {
+                // NOTE: The callback will fire twice!
+                // Once the contract has the transactionHash property set and once its deployed on an address.
+
+                // e.g. check tx hash on the first call (transaction send)
+                if (!myContract.address) {
+                  console.log('Your upload contract has been deployed to the Ethereum network. Transaction hash is', myContract.transactionHash);
+                  self.txhash = myContract.transactionHash;
+                  console.log('Wait a new moments while we mine it. You will receive your address when it is mined.');
+                  //self.showtoast("Here's the TX hash: " + self.txhash);
+                  self.fire('add-toast', {
+                    msg: 'Here\'s the TX hash: ' + self.txhash
+                  });
+
+                  // check address on the second call (contract deployed)
+                } else {
+                  console.log('Your upload contract has been deployed. Your contract address is', myContract.address);
+                  self.progress = 'contractcreated';
+                  self.contractaddress = myContract.address;
+                  //self.showtoast("Contract deployed: " + self.contractaddress);
+//                  self.fire('add-toast', {
+//                    msg: 'Contract deployed: ' + self.contractaddress
+//                  });
+                  fn(err,self.contractaddress);
+                }
+              } else {
+                console.log('error:', err);
+                //self.showtoast("Error: " + err);
+                self.fire('add-toast', {
+                  msg: 'Error.'
+                });
+                fn(err);
+              }
+            });
+          });
+
+        }, function(e) {
+          console.log('ERROR!', e);
+        });
+
+      },
+
+    _addtoIndexContract: function(contractaddress) {
+      var self = this;
+//      debugger;
+      this.contracturl = this.resolveUrl('../../contracts/blockTube.json');
+      this.importHref(this.contracturl, function(e) {
+
+        this.progress = 'addingtoindex';
+
+        self.contractjson = JSON.parse(e.target.import.body.innerText);
+
+        console.log('Adding to index contract on account ', self.account);
+
+        this.web3.eth.getGasPrice(function(err, result) {
+          var gasPrice = result.toNumber(10);
+
+          var MyContract = self.web3.eth.contract(self.contractjson.abi);
+
+          var myContractInstance = MyContract.at('0xC4946E241ab66cDa428581cF2624f8cc6E4a7B72');
+
+          // var options = {
+          //   from: self.account,
+          //   //value: 1 * 1e18,
+          //   gas: 100000,
+          //   gasPrice: gasPrice,
+          //   nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
+          // };
+
+          result = myContractInstance.addclip.sendTransaction(contractaddress, self.title, self.description, self.tags, {
+              from: self.fixaddress(self.account),
+              gasPrice: gasPrice,
+              gasLimit: 3000000,
+              gas: 2000000,
+              data: self.contractjson.bytecode
+            },
+            function(err, result) {
+              if (err !== null) {
+                console.log(err);
+                console.log('ERROR: Transaction didnt go through. See console.');
+              } else {
+                console.log('Transaction Successful!');
+                self.progress = 'addedtoindex';
+                console.log('Tx hash=', result);
+                // set vote status to TxHash received 
+                self.votestatus = 2;
+                self.transactionHash = result;
+              }
+            });
+        });
+
+      }, function(e) {
+        console.log('ERROR!', e);
+      });
+    },
+    });
+  })();
+  </script>
+  
+</dom-module>
