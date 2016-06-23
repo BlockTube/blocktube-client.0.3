@@ -117,37 +117,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           invitecode="{{invitecode}}"></excess-route>
 
 
-    <paper-scroll-header-panel>
-      <paper-toolbar class="medium-tall">
-        <a href="/#!/home">
-          <bt-logo></bt-logo>
-        </a>
-        <a href="/#!/profile">
-          <img class="avatar" src="{{profiledata.avatarurl}}" />
-        </a>
-      </paper-toolbar>
+  <paper-scroll-header-panel>
+    <paper-toolbar class="medium-tall">
+      <a href="/#!/home">
+        <bt-logo></bt-logo>
+      </a>
+      <a href="/#!/profile">
+        <img class="avatar" src="{{profiledata.avatarurl}}" />
+      </a>
+    </paper-toolbar>
 
     <lazy-pages attr-for-selected="route" selected="{{mainmenu}}">
-    {{mainmenu}}
-    <template is="dom-if" route="home">
-      <div>
-      HOME
-
-
+      <template is="dom-if" route="home">
         <bt-home web3="{{web3}}"></bt-home>
-
-    </div>
-  </template>
-
-  <template is="dom-if" route="profile">
-    <div>
-
-      <bt-profile profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]"></bt-profile>
-
-    </div>
-  </template>
-  </lazy-pages>
-      </paper-scroll-header-panel>
+      </template>
+      <template is="dom-if" route="profile">
+          <bt-profile profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]"></bt-profile>
+      </template>
+    </lazy-pages>
+  </paper-scroll-header-panel>
 
   <!-- 
 

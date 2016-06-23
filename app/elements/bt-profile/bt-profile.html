@@ -10,28 +10,152 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
+<link rel="import" href="../../bower_components/paper-input/paper-input.html">
 
 <dom-module id="bt-profile">
   <template>
     <style>
       :host {
         display: block;
+        @apply(--bt-font);
       }
-    </style>
-    <div>
-      <template is="dom-if" if="{{profiledata}}">
-        <span>{{profiledata.username}}</span>
-        <img class="height:100px" src="{{profiledata.avatarurl}}">
-      </template>
 
-      <!-- upload for avatar image -->
-      <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*">Choose File</file-upload>
-      <!-- ETH account + BT balance -->
-      <div>{{account}}</div>
-      <div>BTcoins {{btcoinbalance}}</div>
-      <!--       <paper-button>buy more</paper-button>
-    -->
-  </div>
+      .canvas {
+        width: 100%;
+      }
+
+      .canvassection {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10vw;
+      }
+
+      h1,h2,h3,h4,p {
+        margin: 0px;
+      }
+
+
+      .user {
+        width: 100%;
+        @apply(--layout-horizontal);
+        @apply(--layout-start);
+        @apply(--layout-start-justified);
+      }
+
+      .userinfo {
+        width: 70%;
+        box-sizing: border-box;
+        padding:0px 0px 0px 20px;
+        @apply(--layout-vertical);
+        @apply(--layout-start);      
+      }
+
+      .userinfoname {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-start-justified);  
+      }
+
+      .account {
+        font-size: 14px;
+        color:var(--bt-grey4);
+        word-wrap: break-word;
+        width: 100%;
+      }
+ 
+      .useravatar {
+        width: 30%;
+        width: 110px;
+        height: 90px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+      }
+
+      .edit {
+        height: 20px;
+        width: 20px;
+        color: blue;
+      }
+
+      .useravatarimg {
+        width: 90px;
+        height: 90px;
+        border-radius: 50%;
+        overflow: hidden;
+      }
+
+      .useravatarimg img {
+        width: 100%;
+        height: 100%;
+      }
+
+
+      .seperation {
+        width: 100%;
+        height: 1px;
+        background-color: var(--bt-grey1);
+      }
+      
+
+
+      @media all and (min-width: 0) and (max-width: 400px) and (orientation: portrait) {    
+      .user {
+        @apply(--layout-vertical);
+        @apply(--layout-start);
+        @apply(--layout-start-justified);
+      }
+      .userinfo {
+        width: 100%;
+        padding:20px 0px 0px 0px;    
+      }
+
+      }
+
+      @media all and (min-width: 1000px){ 
+        .canvassection {
+          padding: 100px;
+        }
+      }
+
+
+    </style>
+    <div class="canvas">
+      <div class="canvassection user">
+        <template is="dom-if" if="{{profiledata}}">
+        <div class="useravatar">
+          <div class="useravatarimg">
+            <img src="{{profiledata.avatarurl}}">
+          </div>
+          <div class="edit" on-tap="editAvatar">
+          e
+          </div>
+        </div>
+        <div class="userinfo">
+        <div class="userinfoname">
+          <template is="dom-if" if="{{!editname}}">
+            <h1>{{profiledata.username}}</h1>
+            <div class="edit" on-tap="editName">e
+            </div>
+          </template>
+
+          <template is="dom-if" if="{{editname}}">
+          <paper-input value="{{profiledata.username}}"></paper-input>
+            <div class="edit" on-tap="editName">OK
+            </div>
+          </template>
+
+        </div>
+          <p class="account">{{account}}</p>
+          <!-- <div>BTcoins {{btcoinbalance}}</div> -->
+        </div>
+        </template>
+      </div>
+      <div class="seperation"></div>
+
+
+      <!-- <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*">Choose File</file-upload> -->
+
+    </div>
 </template>
 <script>
   (function() {
@@ -54,7 +178,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         profiledata: {
           type: String,
-        }
+        },
+
+        editname: {
+          type: Boolean,
+          value: false
+        },
+
+       editavatar: {
+          type: Boolean,
+          value: false
+        },   
 
       },
 
@@ -103,6 +237,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           //this.balanceloaded = true;
           //this.fire('balance-loaded');
         });
+
+        //console.log("MIJNEN BALANCE IS NU:", self.btcoinbalance);
+
       },
 
       _setavataripfshash: function(e){
@@ -142,7 +279,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               console.log('error uploading metadata to IPFS', err);
             }
           });
-      }
+      },
+
+      editName:function () {
+        this.editname = !this.editname;
+      },
+
+      editAvatar:function () {
+        this.editavatar = !this.editavatar;
+
+      },
 
     });
   })();

@@ -12,6 +12,9 @@ BlockTu.be (c) 2016 Mofooooo's
     --bt-green:#39AA7C;
     --bt-grey1:#EFEFEF;
     --bt-grey2:#D1D1D1;
+    --bt-grey3:#B3B3B3;
+    --bt-grey4:#999999;
+    --bt-grey5:#808080;
 
     --bt-font: {
       font-family: 'Avenir', 'Helvetica Neue', Helvetica, Arial, sans-serif;
@@ -20,50 +23,34 @@ BlockTu.be (c) 2016 Mofooooo's
     };
   }
 
+  h1,h2,h3,h4,p {
+    margin: 0px;
+  }
 
   paper-scroll-header-panel {
     width: 100%;
     height: 100%;
   }
 
-/*  bt-home {
+  lazy-pages {
     height: 100%;
+    overflow: visible; 
   }
 
-  section {
-    height: 100%;
-  }*/
-
-
-  ::-webkit-scrollbar { 
-      display: none; 
-  }
-
-  .homecanvas {
+  paper-toolbar {
+    background-color: var(--bt-grey1);
     width: 100%;
-    /* background-color: red; */
     box-sizing: border-box;
-    padding: 4vw;
+    padding: 18px;
     @apply(--layout-horizontal);
-    @apply(--layout-start);
-    @apply(--layout-center-justified);
-    @apply(--layout-wrap);
-  }
-
-  .pagecontainer {
-    width: 100%;
-  }
-
-  ::-webkit-scrollbar { 
-      display: none; 
-  }
-  .drawer {
-    background-color: var(--bt-blue);
-    @apply(--layout-vertical);
     @apply(--layout-center);
-    box-sizing: border-box;
-    padding: 50px;
+    @apply(--layout-end-justified);
   }
+
+
+
+
+
 
 
   .avatar {
@@ -71,119 +58,31 @@ BlockTu.be (c) 2016 Mofooooo's
     width: 50px;
     height: 50px;
     border-radius: 50%;
-    }
-
-  .avatarbig {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    }
-
-
-  paper-toolbar {
-    background-color: var(--bt-grey1);
-    width: 100%;
-    box-sizing: border-box;
-    padding: 20px;
-    @apply(--layout-horizontal);
-    @apply(--layout-center);
-    @apply(--layout-end-justified);
-  }
-
-  .valueofvideo {
-    @apply(--bt-font);
-    font-style: bold;
-    color:rgba(0,0,0,0.25);
-    margin-left: 6px; 
   }
 
 
-  .content {
-    background-color: var(--bt-lightblue);
-    height: 100%;
-  }
-
-  #tabselector {
-    min-width: 360px;
-  }
-
- .flex {
-  @apply(--layout-flex);
- }
 
 
 
 
 
-  lazy-pages
-     {
-      height: 100%;
-      overflow: visible; 
-    }
+
+
+
 
   /* Breakpoints */
     @media all and (min-width: 0) and (max-width: 400px) and (orientation: portrait) {    
 
-.pagecontainer {
-/*    @apply(--layout-vertical);
-    @apply(--layout-center);
-    @apply(--layout-start);*/
-
   }
-
-
-      }
-
 
 
   /* Small */
   @media (max-width: 600px) {
-/*  .pagecontainer {
-    @apply(--layout-vertical);
-    @apply(--layout-center);
-  }
-    paper-material {
-      --menu-container-display: none;
-      width: calc(97.33% - 32px);
-      padding-left: 16px;
-      padding-right: 16px;
-    }
-
-    paper-toolbar.tall .app-name {
-      font-size: 24px;
-      font-weight: 400;
-    }
-
-    #drawer .paper-toolbar {
-      margin-left: 16px;
-    }
-
-    #overlay {
-      min-width: 360px;
-    }
-
-    .bg {
-      background: white;
-    }
-*/
   }
 
   /* Tablet+ */
-/*  @media (min-width: 601px) {
-
-    paper-material {
-      width: calc(98% - 46px);
-      margin-bottom: 32px;
-      padding-left: 30px;
-      padding-right: 30px;
-    }
-
-    #drawer.paper-drawer-panel > [drawer] {
-      border-right: 1px solid rgba(0, 0, 0, 0.14);
-    }
-
-
-  }*/
+  @media (min-width: 601px) {
+  }
 
   /* Material Design Adaptive Breakpoints */
   /*
