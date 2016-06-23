@@ -116,25 +116,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           route="/claiminvite/:invitecode" 
           invitecode="{{invitecode}}"></excess-route>
 
-       <a href="/#!/home">
-        <bt-logo></bt-logo>
-      </a>
 
+    <paper-scroll-header-panel>
+      <paper-toolbar class="medium-tall">
+        <a href="/#!/home">
+          <bt-logo></bt-logo>
+        </a>
+        <a href="/#!/profile">
+          <img class="avatar" src="{{profiledata.avatarurl}}" />
+        </a>
+      </paper-toolbar>
 
-  <lazy-pages attr-for-selected="route" selected="{{mainmenu}}">
-
+    <lazy-pages attr-for-selected="route" selected="{{mainmenu}}">
+    {{mainmenu}}
     <template is="dom-if" route="home">
       <div>
       HOME
-<!--         <paper-scroll-header-panel>
-        <paper-toolbar>
-          <a href="/#!/profile">
-            <img class="avatar" src="{{profiledata.avatarurl}}" />
-          </a>
-        </paper-toolbar> -->
+
 
         <bt-home web3="{{web3}}"></bt-home>
-   <!--    </paper-scroll-header-panel> -->
 
     </div>
   </template>
@@ -147,6 +147,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </div>
   </template>
   </lazy-pages>
+      </paper-scroll-header-panel>
 
   <!-- 
 
