@@ -126,7 +126,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <template is="dom-if" if="{{!editavatar}}">
         
           <div class="useravatarimg">
-            <img src="{{profiledata.avatarurl}}">
+            <img src="{{profiledata.avatarurl}}" observe="profiledata.avatarurl">
           </div>
 
           <div class="edit" on-tap="editAvatar">
@@ -136,7 +136,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
          
         </div>
          <template is="dom-if" if="{{editavatar}}">
-          <img-crop on-upload="handleblob"></img-crop>
+          <img-crop cropsize="200" on-upload="handleblob"></img-crop>
           </template>
         <div class="userinfo">
         <div class="userinfoname">
@@ -278,7 +278,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         } catch (e) {
           // problem uploading or parsing upload result.
         }
-        this.editavatar = true;
+        this.editavatar = false;
         this.$.avatarupload.clear();
       },
 
