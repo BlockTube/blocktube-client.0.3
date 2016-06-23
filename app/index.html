@@ -116,9 +116,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           route="/claiminvite/:invitecode" 
           invitecode="{{invitecode}}"></excess-route>
 
-BLAf {{mainmenu}}
+       <a href="/#!/home">
+        <bt-logo></bt-logo>
+      </a>
+
+
   <lazy-pages attr-for-selected="route" selected="{{mainmenu}}">
-BLAAA
+
     <template is="dom-if" route="home">
       <div>
       HOME
@@ -128,6 +132,7 @@ BLAAA
             <img class="avatar" src="{{profiledata.avatarurl}}" />
           </a>
         </paper-toolbar> -->
+
         <bt-home web3="{{web3}}"></bt-home>
    <!--    </paper-scroll-header-panel> -->
 
