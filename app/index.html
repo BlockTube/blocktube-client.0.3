@@ -116,33 +116,51 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           route="/claiminvite/:invitecode" 
           invitecode="{{invitecode}}"></excess-route>
 
-    <paper-scroll-header-panel>
-      <!-- <div class="paper-header toolbar">A moeder is</div>
-    -->
-    <paper-toolbar>
-      <a href="/#!/profile">
-        <img class="avatar" src="{{profiledata.avatarurl}}" />
-      </a>
-    </paper-toolbar>
-
-    <iron-pages id="mainContainer" attr-for-selected="route" selected="{{mainmenu}}">
-
-      <section route="home">
+BLAf {{mainmenu}}
+  <lazy-pages attr-for-selected="route" selected="{{mainmenu}}">
+BLAAA
+    <template is="dom-if" route="home">
+      <div>
+      HOME
+<!--         <paper-scroll-header-panel>
+        <paper-toolbar>
+          <a href="/#!/profile">
+            <img class="avatar" src="{{profiledata.avatarurl}}" />
+          </a>
+        </paper-toolbar> -->
         <bt-home web3="{{web3}}"></bt-home>
-    </section>
+   <!--    </paper-scroll-header-panel> -->
 
-    <section route="profile">
+    </div>
+  </template>
+
+  <template is="dom-if" route="profile">
+    <div>
+
       <bt-profile profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]"></bt-profile>
-    </section>
 
-    <section route="clip">
-      <bt-clip clipid="{{clipid}}"></bt-clip>
-    </section>
+    </div>
+  </template>
+  </lazy-pages>
 
-  </iron-pages>
+  <!-- 
 
-</paper-scroll-header-panel>
+  <iron-pages id="mainContainer" attr-for-selected="route" selected="{{mainmenu}}">
 
+  <section route="home">
+    <bt-home web3="{{web3}}"></bt-home>
+  </section>
+
+  <section route="profile">
+    <bt-profile profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]"></bt-profile>
+  </section>
+
+  <section route="clip">
+    <bt-clip clipid="{{clipid}}"></bt-clip>
+  </section>
+
+</iron-pages>
+-->
 </template>
 
 <!-- build:js scripts/app.js -->
