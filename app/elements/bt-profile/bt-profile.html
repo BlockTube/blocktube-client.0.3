@@ -9,7 +9,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/ipfs-upload/ipfs-upload.html">
+<link rel="import" href="../../bower_components/file-upload/file-upload.html">
 
 <dom-module id="bt-profile">
   <template>
@@ -19,23 +19,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
     </style>
     <div>
-    avatar
-    <template is="dom-if" if="{{profiledata}}">IMG
-      <span>{{profiledata.username}}</span>
-      <img class="height:100px" src="{{profiledata.avatarurl}}">
-    </template>
+      <template is="dom-if" if="{{profiledata}}">
+        <span>{{profiledata.username}}</span>
+        <img class="height:100px" src="{{profiledata.avatarurl}}">
+      </template>
 
-   <ipfs-upload id="ipfsupload" hash="{{avatarhash}}" on-ipfs-hash-received="_setavataripfshash" on-upload-started="_uploadstart" host="/ip4/109.123.70.141/tcp/5001" on-upload-error="_uploaderror"></ipfs-upload>
-
-    <ipfs-upload hidefileinput id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001"></ipfs-upload>
-
-
-
-     {{account}}</div>
-    <div>BTcoins {{btcoinbalance}}</div><paper-button>buy more</paper-button>
-
-  </template>
-  <script>
+      <!-- upload for avatar image -->
+      <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*">Choose File</file-upload>
+      <!-- ETH account + BT balance -->
+      <div>{{account}}</div>
+      <div>BTcoins {{btcoinbalance}}</div>
+      <!--       <paper-button>buy more</paper-button>
+    -->
+  </div>
+</template>
+<script>
   (function() {
     'use strict';
 
@@ -69,6 +67,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           key: 'coincontract'
         }).value;
       },
+
+      avataruploadok: function(e){
+        console.log(e);
+      },
      
 
       _web3: function(){
@@ -81,8 +83,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _uploadstart: function(){
 
       },
-       _uploaderror: function(){
-
+       _uploaderror: function(e){
+        console.log(e);
       },
       getBTbalance: function() {
         //Get Localcoin token balance
@@ -103,13 +105,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         });
       },
 
-      _setavataripfshash: function(){
-        this.set('profiledata.avatarhash',this.avatarhash.hash);
+      _setavataripfshash: function(e){
+
+        try{
+          var resJSON = JSON.parse(e.detail.xhr.response);
+
+        this.set('profiledata.avatarhash',resJSON.Hash);
         var ipfs_url = new Polymer.IronMetaQuery({
           key: 'ipfs_url'
         }).value;
 
-        this.set('profiledata.avatarurl',ipfs_url + this.avatarhash.hash);
+        this.set('profiledata.avatarurl',ipfs_url + resJSON.Hash);
+        }catch(e){
+          // problem uploading or parsing upload result.
+        }
+
+        //this.$.avatarupload.clear();
      
       },
 
