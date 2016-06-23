@@ -13,7 +13,8 @@
     "excess-router": "^0.9.14",
     "ipfs-upload": "^0.0.13",
     "iron-localstorage": "^1.0.5",
-    "file-upload": "^1.7.5"
+    "file-upload": "^1.7.5",
+    "polymer-img-crop": "https://github.com/BlockTube/polymer-img-crop.git"
   },
   "devDependencies": {}
 }

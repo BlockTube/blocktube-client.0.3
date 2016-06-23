@@ -11,6 +11,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/polymer-img-crop/img-crop.html">
 
 <dom-module id="bt-profile">
   <template>
@@ -121,15 +122,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
     <div class="canvas">
       <div class="canvassection user">
-        <template is="dom-if" if="{{profiledata}}">
         <div class="useravatar">
+          <template is="dom-if" if="{{!editavatar}}">
+        
           <div class="useravatarimg">
             <img src="{{profiledata.avatarurl}}">
           </div>
+
           <div class="edit" on-tap="editAvatar">
           e
           </div>
+        </template>
+         
         </div>
+         <template is="dom-if" if="{{editavatar}}">
+          <img-crop on-upload="handleblob"></img-crop>
+          </template>
         <div class="userinfo">
         <div class="userinfoname">
           <template is="dom-if" if="{{!editname}}">
@@ -148,7 +156,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <p class="account">{{account}}</p>
           <!-- <div>BTcoins {{btcoinbalance}}</div> -->
         </div>
-        </template>
+        
       </div>
       <div class="seperation"></div>
 
@@ -156,6 +164,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <!-- <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*">Choose File</file-upload> -->
 
     </div>
+
+<!-- this is headless -->
+ <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*"></file-upload>
+
 </template>
 <script>
   (function() {
@@ -220,6 +232,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
        _uploaderror: function(e){
         console.log(e);
       },
+       handleblob: function(e) {
+          console.log(e);
+          var file = e.detail;
+          file.lastModifiedDate = new Date();
+          file.name = 'avatar.png';
+          //debugger;
+
+          this.$.avatarupload.uploadFile(file);
+        },
+     
+
       getBTbalance: function() {
         //Get Localcoin token balance
         //this.web3wallet = document.querySelector('web3-wallet');
@@ -242,23 +265,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
 
-      _setavataripfshash: function(e){
-
-        try{
+      _setavataripfshash: function(e) {
+        try {
           var resJSON = JSON.parse(e.detail.xhr.response);
 
-        this.set('profiledata.avatarhash',resJSON.Hash);
-        var ipfs_url = new Polymer.IronMetaQuery({
-          key: 'ipfs_url'
-        }).value;
+          this.set('profiledata.avatarhash', resJSON.Hash);
+          var ipfs_url = new Polymer.IronMetaQuery({
+            key: 'ipfs_url'
+          }).value;
 
-        this.set('profiledata.avatarurl',ipfs_url + resJSON.Hash);
-        }catch(e){
+          this.set('profiledata.avatarurl', ipfs_url + resJSON.Hash);
+        } catch (e) {
           // problem uploading or parsing upload result.
         }
-
-        //this.$.avatarupload.clear();
-     
+        this.editavatar = true;
+        this.$.avatarupload.clear();
       },
 
       _saveProfile: function(){
@@ -286,7 +307,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       editAvatar:function () {
-        this.editavatar = !this.editavatar;
+        this.editavatar = true;
 
       },
 
