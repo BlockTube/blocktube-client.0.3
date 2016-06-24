@@ -117,8 +117,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           menu="{{mainmenu}}"></excess-route>
 
     <excess-route 
-          route="/clip/:clipid" 
-          clipid="{{clipid}}"></excess-route>
+          route="/clip/:clipcontract" 
+          clipcontract="{{clipcontract}}"></excess-route>
 
     <excess-route 
           route="/claiminvite/:invitecode" 
@@ -147,8 +147,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <bt-profile btbalance="[[btbalance]]" profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]"></bt-profile>
       </template>
 
-      <template is="dom-if" route="clip">
-       <bt-clip clipid="{{clipid}}"></bt-clip>      
+      <template is="dom-if" route="clip" restamp>
+       <bt-clip clipcontract="{{clipcontract}}"></bt-clip>      
      </template>
 <!--       <template is="dom-if" route="upload">
           <bt-upload profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]" btbalance="[[btbalance]]" ethbalance="[[ethbalance]]"></bt-upload>

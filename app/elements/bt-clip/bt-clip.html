@@ -1,37 +1,294 @@
-<!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<!-- <script src="../../bower_components/VideoSub/videosub.js"></script>
+ -->
 <dom-module id="bt-clip">
   <template>
     <style>
       :host {
         display: block;
       }
+      video {
+      /*  HIER NOG NIET NAAR ZIEN!*/
+        }
+
+        .wide {
+          width: 100%; 
+        }
+
+        #playpause {
+          width: 80px;
+          height: 80px;
+        }
+
+        .soundslider {
+          width: 100px;
+        }
+
+        .controls {
+/*          background-color: red;
+*/        }
+
+        .overlay {
+          
+          max-height: 300px;
+        }
+
+        paper-slider {
+          --paper-slider-active-color: var(--bt-orange);
+          --paper-slider-secondary-color: var(--bt-orange);
+          --paper-slider-knob-color: var(--bt-orange);
+        }
+
     </style>
-    <div>Hello from <span>{{foo}}</span></div>
+
+    <iron-localstorage
+      id="contractcache"
+      value="{{contractdata}}"
+      on-iron-localstorage-load="contractloaded"
+      on-iron-localstorage-load-empty="contractloadedempty">
+    </iron-localstorage>
+
+    <div class="vertical layout">
+    <video id="vp">
+      <source src="{{videourl}}" />
+<!--       <track src="/images/scrubs.srt" kind="subtitle" srclang="en-US" label="English" />
+ -->    </video>
+ <div  id="overlay" >
+    <div class="overlay fit vertical layout">
+      <paper-icon-button 
+        id="exit" 
+        icon="close" 
+        on-tap="close">
+       </paper-icon-button>
+      <div class="flex"></div>
+      <div class="horizontal layout center-center">
+      <paper-icon-button 
+        id="playpause" 
+        icon="{{playicon}}" 
+        on-tap="togglePlay"
+        disabled>
+       </paper-icon-button>
+       <paper-icon-button icon="av:skip-next"></paper-icon-button>
+     </div>
+     <div class="flex"></div>
+       
+    </div>
+  </div>
+    <div class="horizontal layout">
+    <paper-slider expand secondary-progress="{{progresspercentage}}" immediate-value="{{scrubtime}}" min="0" max="100" class="wide"></paper-slider>
+    <paper-icon-button icon="hardware:cast"></paper-icon-button>
+    <paper-icon-button icon="fullscreen"></paper-icon-button>
+  </div>
+    </div>
   </template>
   <script>
   (function() {
-    'use strict';
+    // 'use strict';
 
     Polymer({
       is: 'bt-clip',
 
       properties: {
-        foo: {
+
+        timeout: {
+        type: Number,
+        value: 3,
+        },
+        resttime: {
+        type: Number,
+        value: 3,
+        },
+        overlayvisible: {
+        type: Boolean,
+        value: true,
+        },
+
+
+        init: {
+          type: Boolean,
+          value: false
+        },
+        clipcontract: {
           type: String,
-          value: 'bt-clip',
+          //value: 'QmR8NyktETUYryjL3ZecAGJtSYPup9CJqihxyJVXcHuLBu',
+          //notify: true,
+          observer: '_clipcontract'
+        },
+        videourl: {
+          type: String,
           notify: true
+        },
+        playing: {
+          type: Boolean,
+          observer: '_playing',
+          value: false
+        },
+        playicon: {
+          type: String,
+          value: 'av:play-arrow'
+        },
+        volume: {
+          type: Number,
+          value: 200,
+          observer: '_volume'
+        },
+        scrubtime: {
+          type: Number,
+          observer: '_scrubtime',
+          value: 0
+        },
+        progresspercentage: {
+          type: Number,
+          value: 0
         }
+
+      },
+
+    showOverlay : function() {
+      //console.log('hit it!', Date.now());
+      this.overlayvisible = true;
+      this.resttime = this.timeout;
+      this.overlay = document.querySelector('#overlay');
+      this.overlay.hidden = false;
+    },
+
+     countdownOverlay : function() {
+      if (!this.interval) {
+        this.interval = setInterval(function() {
+          this.resttime = this.resttime - 1;
+          if (this.resttime <= 0) {
+            this.toggleVisibility();
+          }
+        }.bind(this), 1000);
+      }
+    },
+
+    toggleVisibility: function() {
+      clearInterval(this.interval);
+      this.interval = null;
+      if (this.overlayvisible) {
+        this.overlayvisible = false;
+        this.overlay.hidden = true;
+      } else {
+        this.overlayvisible = true;
+        this.overlay.hidden = false;
+      }
+    },
+
+      attached: function() {
+        this.init = true;
+        this.mute = false;
+      },
+
+      enableplay: function() {
+        this.$.playpause.disabled = false;
+        this.$.vp.volume = this.volume / 200;
+      },
+
+      togglePlay: function() {
+        if (this.playing) {
+          this.playing = false;
+          this.playicon = 'av:play-arrow';
+          this.$.vp.pause();
+        } else {
+          this.playing = true;
+          this.playicon = 'av:pause';
+          this.$.vp.play();
+        }
+      },
+
+      toggleOverlay: function() {
+        console.log('hovering video', Date.now());
+      },
+
+      close: function() {
+        this.fire('close');
+      },
+
+      _playing: function() {
+
+      },
+
+      _scrubtime: function() {
+        if (this.init) {
+          var newtime = this.$.vp.duration * this.scrubtime;
+          console.log(newtime / 100);
+          this.$.vp.currentTime = newtime / 100;
+        }
+        //this.$.vp.currentTime = newtime;
+      },
+
+      _progress: function() {
+        var perplayed = this.$.vp.currentTime / this.$.vp.duration;
+        //console.log(this.$.vp.currentTime, ' / ', this.$.vp.duration, ' ', perplayed * 100, '%');
+        this.progresspercentage = perplayed * 100;
+
+      },
+
+      _volume: function() {
+        console.log(this.volume);
+        if (this.init) {
+          this.$.vp.volume = this.volume / 200;
+          this.prevvolume = this.volume;
+          console.log(this.$.vp.volume);
+
+          this.volumeicon = 'av:volume-down';
+
+        }
+      },
+
+      toggleMute: function() {
+        if (this.mute) {
+          this.prevvolume = this.volume;
+          this.volume = 0;
+          this.mute = false;
+          this.volumeicon = 'av:volume-off';
+        } else {
+          this.volume = this.prevvolume;
+          this.mute = true;
+        }
+      },
+
+
+      _initipfs: function() {
+        if (!this.ipfs_url) {
+          this.ipfs_url = new Polymer.IronMetaQuery({
+            key: 'ipfs_url'
+          }).value;
+        }
+      },
+
+      contractloaded: function() {
+
+        this._initipfs();
+        //debugger;
+        this.$.vp.src = this.ipfs_url + this.contractdata.video;
+
+
+        this.$.vp.addEventListener('canplay', this.enableplay.bind(this));
+
+        this.$.vp.addEventListener('progress', this._progress.bind(this));
+        console.log('stube-playser setting URL for video player to ', this.$.vp.src);
+
+      },
+      contractloadedempty: function() {
+        if (this.$.contractcache.name != "") {
+          console.log('this shoudl NOT happen!', this.$.contractcache.name);
+        }
+      },
+
+      _clipcontract: function() {
+        this.$.contractcache.name = 'itemcache-' + this.clipcontract;
+
+        //        console.log('bt-clip got contract' , this.clipcontract);
+
+
+
       }
     });
   })();

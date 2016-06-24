@@ -482,25 +482,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.avatarupload.clear();
       },
 
-      _saveProfile: function(){
+      // _saveProfile: function(){
 
-        this.$.ipfsupload.add(JSON.stringify(this.metadata), function(err, res) {
-            // Yeah man - create that contract here now please....
+      //   this.$.ipfsupload.add(JSON.stringify(this.metadata), function(err, res) {
+      //       // Yeah man - create that contract here now please....
 
-            if (!err && res[0] && res[0].Hash) {
-              self._createNewUploadContract(res[0].Hash,function(err,contractaddress){
-              self.progress = 'contractcreated';
-                console.log('mined!');
-                self.contractaddress = contractaddress;
-                // TODO : add this contractaddress to the index and return to your videos
-                self.push('clips',contractaddress);
-                self._addtoIndexContract(contractaddress);
-              });
-            } else {
-              console.log('error uploading metadata to IPFS', err);
-            }
-          });
-      },
+      //       if (!err && res[0] && res[0].Hash) {
+      //         self._createNewUploadContract(res[0].Hash,function(err,contractaddress){
+      //         self.progress = 'contractcreated';
+      //           console.log('mined!');
+      //           self.contractaddress = contractaddress;
+      //           // TODO : add this contractaddress to the index and return to your videos
+      //           self.push('clips',contractaddress);
+      //           self._addtoIndexContract(contractaddress);
+      //         });
+      //       } else {
+      //         console.log('error uploading metadata to IPFS', err);
+      //       }
+      //     });
+      // },
 
       editName:function () {
         this.editname = !this.editname;
@@ -510,7 +510,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.editavatar = !this.editavatar;
 
       },
-
 
       toggleupload: function() {
         console.log("Shhht");
