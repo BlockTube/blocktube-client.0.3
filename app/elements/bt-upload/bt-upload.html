@@ -113,7 +113,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <section state="start">
         <div class="uploader">
           
-        <bt-input autofocus label="Title" bind-value="{{title}}" color="orange"></bt-input>
+        <bt-input autofocus label="Title" bind-value="{{title}}" color="orange" big></bt-input>
         <bt-input label="Description" bind-value="{{description}}" color="orange"></bt-input>
         <div class="whitespace"></div>
         <file-upload id="clipupload" target="{{ipfsuploadhost}}/api/v0/add?stream-channels=true" on-success="_setclipipfshash" on-error="uploaderror" accept="*/*"><bt-button color="orange">Choose file</bt-button></file-upload>
