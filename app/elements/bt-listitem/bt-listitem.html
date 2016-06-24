@@ -320,39 +320,40 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         attached: function() {
-          this.ipfsapihost = new Polymer.IronMetaQuery({
-            key: 'ipfs_read'
-          }).value;
+         
         },
 
-        loadIPFSdata: function(){
+        loadIPFSdata: function() {
 
-            //console.log('cache MISS', this.hash);
+          if (!this.ipfsapihost) {
+            this.ipfsapihost = new Polymer.IronMetaQuery({
+              key: 'ipfs_read'
+            }).value;
+          }
+          var self = this;
+          var ipfs = window.ipfsAPI(this.ipfsapihost, 80);
 
-            var self = this;
-            var ipfs = window.ipfsAPI(this.ipfsapihost, 80);
+          var buf = '';
+          //console.log('MIKE:this.hash);
+          ipfs.cat(this.hash, function(err, res) {
+            if (err) {
+              console.log('bt-listitem error', self.hash, err);
+              return;
+            }
+            res
+              .on('error', function(err) {
+                throw (err);
+              })
+              .on('data', function(data) {
+                buf += data;
+              })
+              .on('end', function() {
+                var ipfsData = JSON.parse(buf);
+                self.itemcache = ipfsData;
+                self.populate(self.itemcache);
+              });
+          });
 
-            var buf = '';
-            //console.log('MIKE:this.hash);
-            ipfs.cat(this.hash, function(err, res) {
-              if (err){
-                console.log('bt-listitem error',self.hash,err);
-                return;
-              }
-              res
-                .on('error', function(err) {
-                  throw (err);
-                })
-                .on('data', function(data) {
-                  buf += data;
-                })
-                .on('end', function() {
-                  var ipfsData = JSON.parse(buf);
-                  self.itemcache = ipfsData;
-                  self.populate(self.itemcache);
-                });
-            });
-          
         }
 
       });
