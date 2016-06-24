@@ -1,37 +1,269 @@
-<!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-
+<link rel="import" href="../../bower_components/iron-icons/av-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
+<link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<!-- <script src="../../bower_components/VideoSub/videosub.js"></script>
+ -->
 <dom-module id="bt-clip">
   <template>
     <style>
       :host {
         display: block;
       }
+      video {
+      /*  HIER NOG NIET NAAR ZIEN!*/
+        }
+
+        .wide {
+          width: 100%; 
+        }
+
+        #playpause {
+          width: 80px;
+          height: 80px;
+        }
+
+        .soundslider {
+          width: 100px;
+        }
+
+        .controls {
+/*          background-color: red;
+*/        }
+
+        .overlay {
+          
+          max-height: 300px;
+        }
+
+        paper-slider {
+          --paper-slider-active-color: var(--bt-orange);
+          --paper-slider-secondary-color: var(--bt-orange);
+          --paper-slider-knob-color: var(--bt-orange);
+        }
+
     </style>
-    <div>Hello from <span>{{foo}}</span></div>
+    <div class="vertical layout" onmouseover="showOverlay()" onmouseout="countdownOverlay()">
+    <video id="vp">
+      <source src="{{videourl}}" />
+<!--       <track src="/images/scrubs.srt" kind="subtitle" srclang="en-US" label="English" />
+ -->    </video>
+ <div  id="overlay" >
+    <div class="overlay fit vertical layout">
+      <paper-icon-button 
+        id="exit" 
+        icon="close" 
+        on-tap="close">
+       </paper-icon-button>
+      <div class="flex"></div>
+      <div class="horizontal layout center-center">
+      <paper-icon-button 
+        id="playpause" 
+        icon="{{playicon}}" 
+        on-tap="togglePlay"
+        disabled>
+       </paper-icon-button>
+       <paper-icon-button icon="av:skip-next"></paper-icon-button>
+     </div>
+     <div class="flex"></div>
+       
+    </div>
+  </div>
+    <div class="horizontal layout">
+    <paper-slider expand secondary-progress="{{progresspercentage}}" immediate-value="{{scrubtime}}" min="0" max="100" class="wide"></paper-slider>
+    <paper-icon-button icon="hardware:cast"></paper-icon-button>
+    <paper-icon-button icon="fullscreen"></paper-icon-button>
+  </div>
+    </div>
   </template>
   <script>
   (function() {
-    'use strict';
+    // 'use strict';
+    
+    var vp;
+    var timeout = 3;
+    var resttime = 3;
+    var overlayvisible = true;
+    var interval;
+    var overlay;
+
+   var  showOverlay = function(){
+      //console.log('hit it!', Date.now());
+      overlayvisible = true;
+      resttime = timeout;
+      overlay = document.querySelector('#overlay');
+      overlay.hidden = false;
+    };
+
+    var countdownOverlay = function(){
+      if(!interval){
+      interval = setInterval(function(){
+        resttime = resttime - 1;
+        if(resttime <= 0){
+          toggleVisibility();
+        }
+      }, 1000);
+    }
+    };
+
+    var toggleVisibility = function(){ 
+      clearInterval(interval);
+      interval = null;
+      if(overlayvisible){
+        overlayvisible = false;
+        overlay.hidden = true;
+      } else {
+        overlayvisible = true;
+        overlay.hidden = false;
+      }
+    };
+
+  
 
     Polymer({
       is: 'bt-clip',
 
       properties: {
-        foo: {
+        init: {
+          type: Boolean,
+          value: false
+        },
+        clipcontract: {
           type: String,
-          value: 'bt-clip',
+          //value: 'QmR8NyktETUYryjL3ZecAGJtSYPup9CJqihxyJVXcHuLBu',
+          //notify: true,
+          observer: '_clipcontract'
+        },
+        videourl: {
+          type: String,
           notify: true
+        },
+        playing: {
+          type: Boolean,
+          observer: '_playing',
+          value: false
+        },
+        playicon: {
+          type: String,
+          value: 'av:play-arrow'
+        },
+        volume: {
+          type: Number,
+          value: 200,
+          observer: '_volume'
+        },
+        scrubtime: {
+          type: Number,
+          observer: '_scrubtime',
+          value: 0
+        },
+        progresspercentage: {
+          type: Number,
+          value: 0
         }
+
+      },
+
+      attached: function() {
+//        console.log('stube hash=',this.videohash);
+          vp = this.$.vp;
+          this.init = true;
+          this.mute = false;
+      },
+
+      enableplay: function(){
+        this.$.playpause.disabled = false;
+        vp.volume = this.volume / 200;
+      },
+
+      togglePlay: function(){
+        if(this.playing){
+          this.playing = false;
+          this.playicon = 'av:play-arrow';
+          vp.pause();
+        } else {
+          this.playing = true;
+          this.playicon = 'av:pause';
+          vp.play();
+        }
+      },
+
+      toggleOverlay: function(){
+        console.log('hovering video', Date.now());
+      },
+
+      close: function(){
+        this.fire('close');
+      },
+
+      _playing: function(){
+        
+      },
+
+      _scrubtime: function(){
+        if(this.init){
+          var newtime = vp.duration * this.scrubtime;
+          console.log(newtime/100);
+          vp.currentTime = newtime/100;
+        }
+        //vp.currentTime = newtime;
+      },
+
+      _progress: function(){
+        var perplayed = vp.currentTime / vp.duration;
+        //console.log(vp.currentTime, ' / ', vp.duration, ' ', perplayed * 100, '%');
+        this.progresspercentage = perplayed * 100;
+
+      },
+
+      _volume: function(){
+        console.log(this.volume);
+        if(this.init){
+          vp.volume = this.volume/200;
+          this.prevvolume = this.volume;
+          console.log(vp.volume);
+          
+          this.volumeicon = 'av:volume-down';
+        
+        }
+      },
+
+      toggleMute: function(){
+        if(this.mute){
+          this.prevvolume = this.volume;
+          this.volume = 0;
+          this.mute = false;
+          this.volumeicon = 'av:volume-off';
+        } else {
+          this.volume = this.prevvolume;
+          this.mute = true;
+        }
+      },
+
+      _clipcontract: function(){
+        console.log('stube-player got hash' , this.videohash);
+        vp.src = 'http://gateway.ipfs.io/ipfs/' + this.videohash;
+        // var elem = document.createElement("video");
+        // var place = document.querySelector("#vidplace");
+
+        // elem.src = this.videourl;
+        // elem.controls = false;
+        // elem.id = "vp";
+        // elem.crossOrigin = "Anonymous";
+
+        // place.appendChild(elem);
+        // vp = elem;
+        
+        vp.addEventListener('canplay', this.enableplay.bind(this));
+
+        vp.addEventListener('progress', this._progress.bind(this));
+        console.log('stube-playser setting URL for video player to ',vp.src);
+
+        
+
+
       }
     });
   })();
