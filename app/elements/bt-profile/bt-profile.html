@@ -17,6 +17,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/polymer-img-crop/img-crop.html">
 <link rel="import" href="../bt-style/bt-style.html">
 <link rel="import" href="../bt-button/bt-button.html">
+<link rel="import" href="../bt-input/bt-input.html">
 
 <dom-module id="bt-profile">
   <template>
@@ -179,11 +180,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-bottom: 10vw;
       }
 
-/*      bt-button {
-        @apply(--layout-horizontal);
-        @apply(--layout-end);
-        @apply(--layout-center-justified);
-      }*/
 
       bt-input{
         max-width: 50%;
@@ -197,6 +193,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin: 10vw 0px 10vw 0px;        
       }
 
+      .traingleicon {
+        /*border: 1px solid red;*/
+        margin-right: 8px;
+        transition: all .1s linear;
+      }
+
+      .collapseopen {
+        -ms-transform: rotate(180deg);
+        -webkit-transform: rotate(180deg); 
+        transform: rotate(180deg);
+      }
+
+      .collapseclose {
+        -ms-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg); 
+        transform: rotate(0deg);
+      }
 
 
       
@@ -280,14 +293,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="seperation"></div>
       <div class="padding">
         <div class="upload">
-        <template is="dom-if" if="{{collapseclosed}}">
-          <bt-button underline="green" on-tap="toggleupload"><img src="../../images/triangle.svg">Upload a video</bt-button>
-        </template>
+          <bt-button underline="green" on-tap="toggleupload"><img class$="{{collapseclass}} traingleicon" src="../../images/triangle.svg">Upload a video</bt-button>
 
-        <iron-collapse id="uploadcollapse"  on-tap="toggleupload">
-                  <bt-upload profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]" btbalance="[[btbalance]]" ethbalance="[[ethbalance]]"></bt-upload>
-
-        </iron-collapse>
+          <iron-collapse id="uploadcollapse">
+            <bt-upload profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]" btbalance="[[btbalance]]" ethbalance="[[ethbalance]]"></bt-upload>
+          </iron-collapse>
 
 <!--       <bt-button on-tap="_toUpload"><img src="../../images/triangle.svg">Upload a video</bt-button>
  -->      <!-- HIER MISS EEN COLLAPSE MET DE UPLOADFLOW? -->
@@ -455,6 +465,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var coll = document.querySelector('#uploadcollapse');
         coll.toggle();
         this.collapseclosed=!this.collapseclosed;
+
+        if(!this.collapseclosed){
+        this.collapseclass = 'collapseopen';
+        } else {
+        this.collapseclass = 'collapseclose';
+        }
       },
 
 

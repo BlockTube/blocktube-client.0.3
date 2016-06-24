@@ -11,6 +11,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/iron-input/iron-input.html">
+<link rel="import" href="../../bower_components/iron-autogrow-textarea/iron-autogrow-textarea.html">
+<link rel="import" href="../../bower_components/iron-form-element-behavior/iron-form-element-behavior.html">
+
 
 <link rel="import" href="../bt-style/bt-style.html">
 
@@ -20,10 +23,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <script src="../pikaday/pikaday.js"></script> -->
 
 
-<dom-module id="bt-input">
+<dom-module id="bt-textarea">
   <template>
-    <style>
-     :host {
+        <style>
+:host {
         display: block;
         margin: 8px 0px 8px 0px;
         --input-color: grey4;
@@ -56,7 +59,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       }
 
-      input {
+      iron-autogrow-textarea {
         @apply(--lato-light);
         color:var(--bt-black);
         outline-width: 0;
@@ -72,6 +75,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-size: var(--input-fontsize);
         line-height: var(--input-lineheight);
         background-color: transparent;
+        border-top: none;
+        border-left: none;
+        border-right: none;
+
         border-bottom: 1px solid var(--bt-grey2);
         text-align: var(--txt-align);
       }
@@ -98,7 +105,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         transform: var(--translate-basic);
       }
 
-      .infocus input {
+      .infocus iron-autogrow-textarea {
         border-bottom: 2px solid var(--input-color);
 
       }
@@ -111,33 +118,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         -webkit-transform: var(--translate-basic);
         transform: var(--translate-basic);
       }
+
+      .textarea-container {
+        border: 1px solid red;
+      }
     </style>
-   
+
 
     <div class$="{{focusclass}} {{contentclass}} total">
       <label class="label">[[label]]</label>
-      <content select="[prefix]"></content>
-      <input id="inputter"
-        is="iron-input"
-        bind-value="{{inputvalue}}"
-        autofocus$="[[autofocus]]"
-        type="{{type}}"
-        name$="[[name]]"
-        >
+      <iron-autogrow-textarea class="grower" id="inputter" bind-value="{{inputvalue}}" placeholder$="[[placeholder]]" type="{{type}}"></iron-autogrow-textarea>
     </div>
+
 
 
 
 
   </template>
   <script>
-  (function() {
-    'use strict';
-
     Polymer({
-      is: 'bt-input',
-
-
+      is: 'bt-textarea',
 
       behaviors: [
       ],
@@ -146,43 +146,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         color: {
           type:String,
-          value: 'grey4',
+          value: 'darkgrey',
           observer: '_color'
         },
 
-        fontsize: {
-          type:Number,
-          value: 16
-        },
-
-
         inputvalue: {
           type: String,
-          observer: '_inputvalue'
+          value: ''
         },
 
-
-        date: {
-          type: Boolean,
-          value: false,
-          observer: '_date'
-        },
-
-        big: {
-          type: Boolean,
-          value: false,
-          observer: '_big'
-        },
 
         txt: {
           type: Boolean,
           value: false
-        },
-
-        center: {
-          type: Boolean,
-          value: false,
-          observer:'_center'
         },
 
         type: {
@@ -191,13 +167,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: '_type'
         },
 
-
-        unixts: {
-          type: Number,
-          notify:true
-        },
-
       },
+
       _inputvalue: function (){
         if(this.inputvalue){
           this.contentclass = 'withcontent';
@@ -215,22 +186,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       attached: function() {
-
-
-              // if(!this.txt && this.date){
-              //   console.log('ik heb een date');
-              // }
-
-          // this._pickaday();
-
-        // if(this.date){
-        //   this._pickaday();
-        // } else {
-        //   console.log("No pickaday");
-        // }
-
-
-
       },
 
 
@@ -241,76 +196,38 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _boundtoFocus: function(){
           this.focusclass = 'infocus';
+
+        this.customStyle['--autogrow-text'] = 'transparent';
+        this.updateStyles();  
+
       },
 
       _boundtoBlur: function(){
           this.focusclass = 'outfocus';
           this._inputvalue();
+
+        if(this.inputvalue){
+        this.customStyle['--autogrow-text'] = 'transparent';
+        this.updateStyles(); 
+        } else {
+        this.customStyle['--autogrow-text'] = 'rgba(0,0,0,0.04)';
+        this.updateStyles();  
+        }
+
+
+
       },
 
       _color: function(){
-        this.inputcolor = 'var(--bt-'+this.color+')';
+        this.inputcolor = 'var(--locals-'+this.color+')';
         this.customStyle['--input-color'] = this.inputcolor;
         this.updateStyles();
-        console.log('YOooooooo',this.inputcolor);
-
       },
-
-
-      _big: function(){
-        if(this.big){
-        this.customStyle['--input-fontsize'] = '40px';
-        this.customStyle['--input-lineheight'] = '40px';
-        this.customStyle['--label-fontsize'] = '15px';
-        this.customStyle['--translate-basic'] = 'translateY(0%) translateX(0px) scale(1)';
-        this.customStyle['--translate-nocontent'] = 'translateY(0%) translateX(10px) translateY(20px) scale(2.25)';
-        this.updateStyles();
-      }
-      },
-        
 
       _type:function(){
         // console.log(this.type);
       },
 
-      _center: function(){
-        if(this.center){
-        this.customStyle['--txt-align'] = 'center';
-        } else {
-        this.customStyle['--txt-align'] = 'left';
-        }
-        this.updateStyles();
-
-      },
-
-
-      _date: function(){
-
-      
-      if(!this.txt && this.date){
-          var self = this;
-          var picker = new Pikaday(
-          {
-              field: this.$.inputter,
-              firstDay: 1,
-              minDate: new Date(2000, 0, 1),
-              maxDate: new Date(2020, 12, 31),
-              yearRange: [2000,2020],
-              onSelect: function() {
-                  self.inputvalue = this.getMoment().format('Do MMMM YYYY') + ' ';
-                  // var date = document.createTextNode(this.getMoment().format('Do MMMM YYYY') + ' ');
-                  // self.$.selected.appendChild(date);
-                  self.unixts = this.getMoment().format('X');
-              }
-          });          
-          // picker.setMoment(moment().dayOfYear(366));
-        }
-      }
-
-
-
-
     });
-  })();
   </script>
 </dom-module>
