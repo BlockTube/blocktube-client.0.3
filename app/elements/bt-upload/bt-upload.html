@@ -78,7 +78,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class="center">
           <p>You lack the funds to create a new clip</p>
           <p>Get an invite from somebody to gain some BTcoins</p>
-          <p>Buy some BTcoins</p>
+<!--           <p>Buy some BTcoins</p>
+          <h2 class="coinsbar">{{btbalance}}<span class="coinsbaricon">ß</span></h2>
+ -->      
+          <h2 class="coinsbar">{{ethbalance}}<span class="coinsbaricon">Ξ</span></h2>
+          <a href="http://faucet.ma.cx:3000/deonate/{{account}}">get some ETH from the faucet</a>
         </div>
       </section>
 
@@ -250,10 +254,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _checkbalance: function(){
-        if (!this.btbalance || !this.ethbalance){
-          return;
-        }
-        if (this.btbalance < 1 || this.ethbalance < 1 ){
+        // if (!this.btbalance || !this.ethbalance){
+        //   return;
+        // }
+        if (this.ethbalance < 1 ){
           this.state = 'coinsdepleted';
         }
       },
