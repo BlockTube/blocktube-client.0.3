@@ -9,10 +9,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 -->
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
+  <style type="text/css">
 
+
+  .avatar {
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+  }
+
+  </style>
 <dom-module id="bt-avataricon">
   <template>
-    <img src="{{_getipfsurl(hash)}}" />
+    <img class="avatar" src="{{_getipfsurl(hash)}}" />
   </template>
   <script>
   (function() {
