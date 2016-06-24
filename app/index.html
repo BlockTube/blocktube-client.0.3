@@ -146,6 +146,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <template is="dom-if" route="profile">
           <bt-profile btbalance="[[btbalance]]" profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]"></bt-profile>
       </template>
+
+      <template is="dom-if" route="clip">
+       <bt-clip clipid="{{clipid}}"></bt-clip>      
+     </template>
 <!--       <template is="dom-if" route="upload">
           <bt-upload profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]" btbalance="[[btbalance]]" ethbalance="[[ethbalance]]"></bt-upload>
       </template>   -->    
