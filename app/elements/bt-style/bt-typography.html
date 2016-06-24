@@ -1,0 +1,221 @@
+<link rel="import" href="../polymer/polymer.html">
+
+<style is="custom-style">
+
+
+
+    @font-face {
+      font-family: Latohairline;
+      src: url(bt-fonts/Lato-Hairline.ttf);
+    }
+    @font-face {
+      font-family: Latolight;
+      src: url(bt-fonts/Lato-Light.ttf);
+    }
+    @font-face {
+      font-family: Latoregular;
+      src: url(bt-fonts/Lato-Regular.ttf);
+    }
+    @font-face {
+      font-family: Latobold;
+      src: url(bt-fonts/Lato-Bold.ttf);
+    }
+    @font-face {
+      font-family: Latoblack;
+      src: url(bt-fonts/Lato-Black.ttf);
+    }
+    @font-face {
+      font-family: Montserratregular;
+      src: url(bt-fonts/Montserrat-Regular.ttf);
+    }
+    @font-face {
+      font-family: Montserratbold;
+      src: url(bt-fonts/Montserrat-Bold.ttf);
+    }
+
+
+
+  :root {
+    --lato-hairline: {
+      font-family: Latohairline;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 100;
+    };
+
+    --lato-light: {
+      font-family: Latolight;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 200;
+    };
+
+    --lato-reg: {
+      font-family: Latoregular;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 300;
+    };
+
+    --lato-bold: {
+      font-family: Latobold;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 700;
+    };
+
+    --lato-black: {
+      font-family: Latoblack;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 900;
+    };
+
+    --montserrat-reg: {
+      font-family: Montserratregular;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 300;
+    };
+
+    --montserrat-bold: {
+      font-family: Montserratbold;
+      -webkit-font-smoothing: antialiased;
+      font-weight: 900;
+    };
+
+
+
+    --font-nowrap: {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    };
+
+
+    --bt-font-h1: {
+      @apply(--lato-light);
+      @apply(-font-nowrap);
+      -webkit-margin-before:0px;
+      -webkit-margin-after:0px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 0px 0px 0px 0px;
+      padding: 0px;
+      font-size: 40px;
+      line-height: 52px;
+    };
+
+    --bt-font-body: {
+      @apply(--lato-reg);
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 24px;
+      -webkit-margin-before:0px;
+      -webkit-margin-after:0px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 0px;
+    };
+
+/*
+
+    --locals-font-h1: {
+      @apply(--opensans-light);
+      @apply(--locals-font-nowrap);
+      -webkit-margin-before:7px;
+      -webkit-margin-after:7px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 7px 0px 7px 0px;
+      padding: 0px;
+      font-size: 40px;
+      line-height: 52px;
+    };
+
+    --locals-font-h2: {
+      @apply(--opensans-reg);
+      @apply(--locals-font-nowrap);
+      -webkit-margin-before:7px;
+      -webkit-margin-after:7px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;      
+      margin: 7px 0px 7px 0px;
+      padding: 0px;
+      font-size: 30px;
+      line-height: 34px;
+    };
+
+    --locals-font-h3: {
+      @apply(--opensans-semibold);
+      @apply(--locals-font-nowrap);
+      -webkit-margin-before:10px;
+      -webkit-margin-after:10px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 10px 0px 10px 0px;
+      padding: 0px;
+      font-size: 24px;
+      line-height: 26px;
+    };
+
+    --locals-font-h4: {
+      @apply(--opensans-bold);
+      @apply(--locals-font-nowrap);
+      -webkit-margin-before:10px;
+      -webkit-margin-after:10px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 10px 0px 10px 0px;
+      padding: 0px;
+      font-size: 20px;
+      line-height: 22px;
+    };
+
+
+
+    --locals-font-body1: {
+      @apply(--opensans-light);
+      font-size: 18px;
+      font-weight: 300;
+      line-height: 24px;
+      -webkit-margin-before:0px;
+      -webkit-margin-after:0px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 0px;
+    };
+
+    --locals-font-small: {
+      @apply(--opensans-bold);
+      font-size: 10px;
+      font-weight: 300;
+      line-height: 12px;
+      -webkit-margin-before:0px;
+      -webkit-margin-after:0px;
+      -webkit-margin-start:0em;
+      -webkit-margin-end:0em;
+      margin: 0px;
+    };
+
+
+
+    --locals-font-menu: {
+      @apply(--opensans-light);
+      @apply(--locals-font-nowrap);
+      font-size: 13px;
+      font-weight: 500;
+      line-height: 24px;
+    };
+
+    --locals-font-button: {
+      @apply(--opensans-light);
+      @apply(--locals-font-nowrap);
+    };*/
+    
+/*    --locals-typo: {
+      @apply(--locals-font-h1);
+      @apply(--locals-font-h2);
+      @apply(--locals-font-h3);
+      @apply(--locals-font-h4);
+      @apply(--locals-font-p);
+    };*/
+
+  }
+
+
+</style>

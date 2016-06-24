@@ -10,38 +10,59 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
+<link rel="import" href="bt-color.html">
+<link rel="import" href="bt-typography.html">
+
+<!--
+
+The `<bt-style>` component provides simple ways to use the bt look and feel
+in your component/application. The following seperate imports are available:
+
+1. [bt-color.html](https://github.com/bt-world/bt-style/blob/master/bt-color.html):
+a complete list of the colors used in bt
+
+2. [bt-typography.html](https://github.com/bt-world/bt-style/blob/master/bt-typography.html):
+All of the classes and mixins used to style the typography of bt
+
+2. [bt-defaultstyling.html](https://github.com/bt-world/bt-style/blob/master/bt-typography.html):
+Some classes and mixins to use a default styling.
+
+Including the complete `<bt-style>` will include these two files at once.
+
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
 <dom-module id="bt-style">
   <template>
     <style>
       :host {
-    --bt-blue: #101022;
-    --bt-lightblue:#63C3CD;
-    --bt-orange:#F26728;
-    --bt-green:#39AA7C;
-    --bt-grey1:#EFEFEF;
-    --bt-grey2:#D1D1D1;
-    --bt-grey3:#B3B3B3;
-    --bt-grey4:#999999;
-    --bt-grey5:#808080;
-    
-    --bt-font: {
-      font-family: 'Avenir', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      font-weight: 50;
-    };
-    }
-    </style>
-  </template>
-  <script>
-  (function() {
-    'use strict';
+        display: block;
+      }
 
+    </style>
+
+    <content></content>
+
+  </template>
+
+  <script>
     Polymer({
       is: 'bt-style',
 
       properties: {
+
+      },
+      ready: function() {
+      
+      },
+
+      attached: function() {
+      
       }
+
+
     });
-  })();
   </script>
 </dom-module>

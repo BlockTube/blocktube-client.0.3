@@ -12,75 +12,121 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
 <link rel="import" href="../../bower_components/polymer-img-crop/img-crop.html">
+<link rel="import" href="../bt-style/bt-style.html">
+<link rel="import" href="../bt-button/bt-button.html">
 
 <dom-module id="bt-profile">
   <template>
     <style>
       :host {
         display: block;
-        @apply(--bt-font);
+        height: 100%;
+        @apply(--lato-reg);
       }
 
       .canvas {
         width: 100%;
       }
 
-      .canvassection {
+      .padding {
         width: 100%;
         box-sizing: border-box;
-        padding: 10vw;
+        padding: 0px 10vw 0px 10vw;
       }
 
-      h1,h2,h3,h4,p {
-        margin: 0px;
+      h1 {
+        @apply(--bt-font-h1);
+      }
+      p {
+        @apply(--bt-font-body);
       }
 
-
-      .user {
+      .userandcoins {
         width: 100%;
+        margin: 10vw 0px 10vw 0px;
+
         @apply(--layout-horizontal);
         @apply(--layout-start);
         @apply(--layout-start-justified);
+        @apply(--layout-wrap);
+      }
+
+      .user {
+        width: 75%;
+        @apply(--layout-horizontal);
+        @apply(--layout-start);
+        @apply(--layout-start-justified);
+        @apply(--layout-wrap);
+        /*background: yellow;*/
       }
 
       .userinfo {
-        width: 70%;
-        box-sizing: border-box;
-        padding:0px 0px 0px 20px;
         @apply(--layout-vertical);
-        @apply(--layout-start);      
+        @apply(--layout-start);
+        @apply(--layout-flex);
+        width: 100%;
+        /*background: red;*/
+        
       }
 
       .userinfoname {
         @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--layout-start-justified);  
+        @apply(--layout-end);
+        @apply(--layout-start-justified);      
       }
 
       .account {
         font-size: 14px;
-        color:var(--bt-grey4);
-        word-wrap: break-word;
+        color:var(--bt-grey3);
+        @apply(--font-nowrap);
+        /*word-wrap: break-word*/;
         width: 100%;
       }
  
       .useravatar {
-        width: 30%;
-        width: 110px;
-        height: 90px;
+        width: 120px;
+        margin:0px 20px 0px 0px;
         @apply(--layout-horizontal);
-        @apply(--layout-end);
+        @apply(--layout-center-center);
+        /*background: purple;*/
       }
 
       .edit {
-        height: 20px;
-        width: 20px;
-        color: blue;
+        height: 36px;
+        width: 36px;
+        transition: all .05s linear;
+
+      }
+      .edit:hover {
+        cursor: pointer;
+       transform: scale(1.2,1.2);
+
+      }
+
+      .edit:active {
+       transform: scale(0.90,0.90);
+       }
+
+
+      .edit img{
+        height: 100%;
+        width: 100%;
+      }
+
+      .e1 {
+        height: 40px;
+        width: 40px;
+        margin: 40px;
+        position: absolute;
+      }
+
+      .e2 {
+        margin: 0px 0px 4px 12px;
       }
 
       .useravatarimg {
-        width: 90px;
-        height: 90px;
+        width: 120px;
+        height: 120px;
         border-radius: 50%;
         overflow: hidden;
       }
@@ -90,78 +136,152 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         height: 100%;
       }
 
+      .coinstotal {
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-end-justified);
+        width: 25%;
+      }
+
+      .coins {
+        margin: 0px;
+        @apply(--montserrat-reg);
+        font-size: 45px;
+        /*color: var(--bt-orange);*/
+        color: var(--bt-darkgreen);
+      }
+
+      .coinicon {
+        @apply(--montserrat-bold);
+
+        font-size: 22px;
+        margin-left: 2px;
+      }
+
 
       .seperation {
         width: 100%;
         height: 1px;
         background-color: var(--bt-grey1);
       }
+
+
+
+
+      .temp {
+        @apply(--lato-hairline);
+        margin-bottom: 10vw;
+      }
+
+      bt-button {
+        margin: 50px  0px  50px  0px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end);
+        @apply(--layout-center-justified);
+      }
+
+
+
+
+
+
       
 
 
       @media all and (min-width: 0) and (max-width: 400px) and (orientation: portrait) {    
-      .user {
-        @apply(--layout-vertical);
-        @apply(--layout-start);
-        @apply(--layout-start-justified);
-      }
-      .userinfo {
+
+
+      .edit img{
+        height: 100%;
         width: 100%;
-        padding:20px 0px 0px 0px;    
       }
 
+
+      .e2 {
+        margin: 0px 0px 6px 12px;
       }
 
-      @media all and (min-width: 1000px){ 
-        .canvassection {
-          padding: 100px;
-        }
+
+      .userinfo {
+        margin: 15px 0px 15px 0px;
+      }
+      .userinfo p {
+        width: 50%;
+      }
+      }
+
+      @media all and (min-width: 800px){ 
+      .userandcoins {
+        margin: 80px 0px 50px 0px;
+      }
+
+/*
+        .padding {
+          padding: 0px 100px 0px 100px;
+        }*/
       }
 
 
     </style>
     <div class="canvas">
-      <div class="canvassection user">
-        <div class="useravatar">
-          <template is="dom-if" if="{{!editavatar}}">
-        
-          <div class="useravatarimg">
-            <img src="{{profiledata.avatarurl}}" observe="profiledata.avatarurl">
-          </div>
+      <div class="padding">
 
-          <div class="edit" on-tap="editAvatar">
-          e
-          </div>
-        </template>
-         
-        </div>
-         <template is="dom-if" if="{{editavatar}}">
+        <template is="dom-if" if="{{editavatar}}">
+          <h2>Oh harro! Yes, file-crop goes heeele!</h2>
           <img-crop cropsize="200" on-upload="handleblob"></img-crop>
-          </template>
-        <div class="userinfo">
-        <div class="userinfoname">
-          <template is="dom-if" if="{{!editname}}">
-            <h1>{{profiledata.username}}</h1>
-            <div class="edit" on-tap="editName">e
-            </div>
-          </template>
+          <bt-button on-tap="editAvatar">close, mofo!</bt-button>
 
-          <template is="dom-if" if="{{editname}}">
-          <paper-input value="{{profiledata.username}}"></paper-input>
-            <div class="edit" on-tap="editName">OK
-            </div>
-          </template>
+        </template>
 
+
+      <div class="userandcoins">
+      <div class="user">
+
+        <div class="useravatar">
+            <div class="edit e1" on-tap="editAvatar">
+              <img src="../../images/edit.svg">
+            </div>
+            <div class="useravatarimg">
+              <img src="{{profiledata.avatarurl}}" observe="profiledata.avatarurl">
+            </div>
         </div>
+
+
+        <div class="userinfo">
+          <div class="userinfoname">
+            <template is="dom-if" if="{{!editname}}">
+              <h1  on-tap="editName">{{profiledata.username}}</h1>
+              <div class="edit e2" on-tap="editName">
+              <img src="../../images/edit.svg">
+              </div>
+            </template>
+            <template is="dom-if" if="{{editname}}">
+            <paper-input value="{{profiledata.username}}"></paper-input>
+              <div class="edit" on-tap="editName">OK
+              </div>
+            </template>
+          </div>
           <p class="account">{{account}}</p>
           <!-- <div>BTcoins {{btcoinbalance}}</div> -->
         </div>
         
+
+
+      </div>
+
+        <div class="coinstotal">
+          <h2 class="coins">0<span class="coinicon">ß</span></h2>
+        </div>
+      </div>
+      </div>
+ 
+      <div class="seperation"></div>
+      <div class="padding">
+      <bt-button><img src="../../images/triangle.svg">Upload a video</bt-button>
+      <!-- HIER MISS EEN COLLAPSE MET DE UPLOADFLOW? -->
+      <h4 class="temp">Hier dan een lijstje met mijn geuploade video's?</h4>
       </div>
       <div class="seperation"></div>
-
-
-      <!-- <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*">Choose File</file-upload> -->
 
     </div>
 
@@ -307,7 +427,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       editAvatar:function () {
-        this.editavatar = true;
+        this.editavatar = !this.editavatar;
 
       },
 
