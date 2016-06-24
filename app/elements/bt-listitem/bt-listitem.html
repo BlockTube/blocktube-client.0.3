@@ -325,17 +325,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         loadIPFSdata: function() {
 
-          if (!this.ipfsapihost) {
+          if (!this.ipfsclient) {
             this.ipfsapihost = new Polymer.IronMetaQuery({
               key: 'ipfs_read'
             }).value;
+            this.ipfsclient = window.ipfsAPI(this.ipfsapihost, 80);
           }
           var self = this;
-          var ipfs = window.ipfsAPI(this.ipfsapihost, 80);
-
+         
           var buf = '';
           //console.log('MIKE:this.hash);
-          ipfs.cat(this.hash, function(err, res) {
+          this.ipfsclient.cat(this.hash, function(err, res) {
             if (err) {
               console.log('bt-listitem error', self.hash, err);
               return;
