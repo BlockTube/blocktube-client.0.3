@@ -10,45 +10,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<dom-module id="bt-profiledata">
+<dom-module id="bt-avataricon">
   <template>
-    <style>
-      :host {
-        display: block;
-      }
-    </style>
-
-    <iron-localstorage name="bt-profile"
-    value="{{profiledata}}"
-    on-iron-localstorage-load="_profileloaded"
-    on-iron-localstorage-load-empty="_profileinit"></iron-localstorage>
-
+    <img src="{{_getipfsurl(hash)}}" />
   </template>
   <script>
   (function() {
     'use strict';
 
     Polymer({
-      is: 'bt-profiledata',
+      is: 'bt-avataricon',
 
       properties: {
-        profiledata: {
-          type: Object,
-          notify: true
+        hash: {
+          type: String,         
         }
       },
-      _profileinit: function() {
-        console.log('new profile created');
-        this.profiledata = {
-          username: 'John Doe',
-          avatarhash: 'QmcNuYUwDboxhxZ966Hp5UtjwQNAgLTZBQMW151EqvvXu4',
-        };
+
+ _initipfs: function(){
+        if (!this.ipfs_url){
+          this.ipfs_url = new Polymer.IronMetaQuery({
+              key: 'ipfs_url'
+            }).value;
+        }
+      },   
+
+_getipfsurl: function(hash){
+  this._initipfs();
+  return this.ipfs_url + hash;
+}
 
 
-      },
-      _profileloaded: function() {
-        console.log('profile loaded');
-      },
     });
   })();
   </script>
