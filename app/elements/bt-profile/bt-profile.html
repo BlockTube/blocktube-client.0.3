@@ -326,7 +326,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </div>
 
 <!-- this is headless -->
-<!--  <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*"></file-upload> -->
+<file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*"></file-upload>
 
 </template>
 <script>
@@ -441,6 +441,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _getipfsurl: function(hash){
+        //debugger;
         this._initipfs();
         return this.ipfs_url + hash;
       },
