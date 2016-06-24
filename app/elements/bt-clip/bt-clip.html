@@ -45,6 +45,14 @@
         }
 
     </style>
+
+    <iron-localstorage
+      id="contractcache"
+      value="{{contractdata}}"
+      on-iron-localstorage-load="contractloaded"
+      on-iron-localstorage-load-empty="contractloadedempty">
+    </iron-localstorage>
+
     <div class="vertical layout" onmouseover="showOverlay()" onmouseout="countdownOverlay()">
     <video id="vp">
       <source src="{{videourl}}" />
@@ -166,27 +174,26 @@
 
       },
 
+   
       attached: function() {
-//        console.log('stube hash=',this.videohash);
-          vp = this.$.vp;
           this.init = true;
           this.mute = false;
       },
 
       enableplay: function(){
         this.$.playpause.disabled = false;
-        vp.volume = this.volume / 200;
+        this.$.vp.volume = this.volume / 200;
       },
 
       togglePlay: function(){
         if(this.playing){
           this.playing = false;
           this.playicon = 'av:play-arrow';
-          vp.pause();
+          this.$.vp.pause();
         } else {
           this.playing = true;
           this.playicon = 'av:pause';
-          vp.play();
+          this.$.vp.play();
         }
       },
 
@@ -204,16 +211,16 @@
 
       _scrubtime: function(){
         if(this.init){
-          var newtime = vp.duration * this.scrubtime;
+          var newtime = this.$.vp.duration * this.scrubtime;
           console.log(newtime/100);
-          vp.currentTime = newtime/100;
+          this.$.vp.currentTime = newtime/100;
         }
-        //vp.currentTime = newtime;
+        //this.$.vp.currentTime = newtime;
       },
 
       _progress: function(){
-        var perplayed = vp.currentTime / vp.duration;
-        //console.log(vp.currentTime, ' / ', vp.duration, ' ', perplayed * 100, '%');
+        var perplayed = this.$.vp.currentTime / this.$.vp.duration;
+        //console.log(this.$.vp.currentTime, ' / ', this.$.vp.duration, ' ', perplayed * 100, '%');
         this.progresspercentage = perplayed * 100;
 
       },
@@ -221,9 +228,9 @@
       _volume: function(){
         console.log(this.volume);
         if(this.init){
-          vp.volume = this.volume/200;
+          this.$.vp.volume = this.volume/200;
           this.prevvolume = this.volume;
-          console.log(vp.volume);
+          console.log(this.$.vp.volume);
           
           this.volumeicon = 'av:volume-down';
         
@@ -242,25 +249,39 @@
         }
       },
 
-      _clipcontract: function(){
-        console.log('stube-player got hash' , this.videohash);
-        vp.src = 'http://gateway.ipfs.io/ipfs/' + this.videohash;
-        // var elem = document.createElement("video");
-        // var place = document.querySelector("#vidplace");
 
-        // elem.src = this.videourl;
-        // elem.controls = false;
-        // elem.id = "vp";
-        // elem.crossOrigin = "Anonymous";
+ _initipfs: function(){
+        if (!this.ipfs_url){
+          this.ipfs_url = new Polymer.IronMetaQuery({
+              key: 'ipfs_url'
+            }).value;
+        }
+      },   
 
-        // place.appendChild(elem);
-        // vp = elem;
+contractloaded: function(){
+
+  this._initipfs();
+//debugger;
+     this.$.vp.src = this.ipfs_url + this.contractdata.video;
+
         
-        vp.addEventListener('canplay', this.enableplay.bind(this));
+        this.$.vp.addEventListener('canplay', this.enableplay.bind(this));
 
-        vp.addEventListener('progress', this._progress.bind(this));
-        console.log('stube-playser setting URL for video player to ',vp.src);
+        this.$.vp.addEventListener('progress', this._progress.bind(this));
+        console.log('stube-playser setting URL for video player to ',this.$.vp.src);
 
+},
+contractloadedempty: function(){
+  if (this.$.contractcache.name != ""){
+    console.log('this shoudl NOT happen!',this.$.contractcache.name);
+  }
+},
+
+      _clipcontract: function(){
+        this.$.contractcache.name = 'itemcache-' + this.clipcontract;
+
+//        console.log('bt-clip got contract' , this.clipcontract);
+     
         
 
 
