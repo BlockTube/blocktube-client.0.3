@@ -285,7 +285,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         </template>
 
         <iron-collapse id="uploadcollapse"  on-tap="toggleupload">
-        negers
+                  <bt-upload profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]" btbalance="[[btbalance]]" ethbalance="[[ethbalance]]"></bt-upload>
+
         </iron-collapse>
 
 <!--       <bt-button on-tap="_toUpload"><img src="../../images/triangle.svg">Upload a video</bt-button>
