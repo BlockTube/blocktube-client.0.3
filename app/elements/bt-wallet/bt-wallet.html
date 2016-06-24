@@ -1,0 +1,73 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="bt-wallet">
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'bt-wallet',
+
+      properties: {
+        web3: {
+          type: Object,
+          observer: '_web3'
+        },
+        btbalance: {
+          type: Number,
+          notify: true
+        },
+        ethbalance: {
+          type: Number,
+          notify: true
+        },
+        blockheight: {
+          type: Number,
+          observer: '_newBlock'
+        },
+        account: {
+          type: String,
+          observer: '_fixaddress'
+        }
+      },
+
+      _web3: function(){
+        var self = this;
+        app.helpers.getfile('../../contracts/MyToken.json', function(err, contractjson) {
+          var MyContract = self.web3.eth.contract(contractjson.abi);
+          self.coincontractInstance = MyContract.at(self.coincontract);
+          self.updateBalance();
+        });
+      },
+
+      _fixaddress: function(){
+        this.account =app.helpers.fixaddress(this.account);
+      },
+
+      _newBlock: function() {
+        this.updateBalance();
+      },
+
+      updateBalance: function() {
+        console.log('bt-wallet: update balance');
+        if (this.coincontractInstance && this.account) {
+          this.btbalance = this.coincontractInstance.balanceOf(this.account).toNumber();
+          console.log('your BT balance is ',this.btbalance);
+        }
+      },
+
+
+    });
+  })();
+  </script>
+</dom-module>

@@ -73,8 +73,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       web3="{{web3}}" 
       host="http://109.123.70.141:8545" 
       host2="{{host}}"  
-      balance="{{balance}}" 
+      balance="{{ethbalance}}" 
       account="{{account}}"></web3-wallet>
+
+    <bt-listener web3="[[web3]]" blockheight="{{blockheight}}"></bt-listener>
+
+    <bt-wallet web3="[[web3]]" account="[[account]]" blockheight="[[blockheight]]" btbalance="{{btbalance}}"></bt-wallet>
 
     <iron-meta 
       key="clipcontract" 
@@ -91,6 +95,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <iron-meta 
       key="ipfs_upload" 
       value="/ip4/109.123.70.141/tcp/5001"></iron-meta>
+
+    <iron-meta 
+      key="ipfs_uploadhost" 
+      value="http://109.123.70.141:5001"></iron-meta>
 
     <iron-meta 
       key="ipfs_url" 
@@ -123,9 +131,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <a href="/#!/home">
         <bt-logo></bt-logo>
       </a>
-<!--       <div class="coinsbartotal">
-        <h2 class="coinsbar">43<span class="coinsbaricon">ß</span></h2>
-      </div> -->
+       <div class="coinsbartotal">
+        <h2 class="coinsbar">{{btbalance}}<span class="coinsbaricon">ß</span></h2>
+      </div>
       <a href="/#!/profile">
         <img class="avatar" src="{{profiledata.avatarurl}}" />
       </a>
@@ -136,8 +144,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <bt-home web3="{{web3}}"></bt-home>
       </template>
       <template is="dom-if" route="profile">
-          <bt-profile profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]"></bt-profile>
+          <bt-profile btbalance="[[btbalance]]" profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]"></bt-profile>
       </template>
+      <template is="dom-if" route="upload">
+          <bt-upload profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]" btbalance="[[btbalance]]" ethbalance="[[ethbalance]]"></bt-upload>
+      </template>      
     </lazy-pages>
   </paper-scroll-header-panel>
 

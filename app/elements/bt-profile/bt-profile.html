@@ -233,12 +233,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="padding">
 
         <template is="dom-if" if="{{editavatar}}">
-          <h2>Oh harro! Yes, file-crop goes heeele!</h2>
           <img-crop cropsize="200" on-upload="handleblob"></img-crop>
-          <bt-button on-tap="editAvatar">close, mofo!</bt-button>
-
+          <bt-button on-tap="editAvatar">Close</bt-button>
         </template>
-
 
       <div class="userandcoins">
       <div class="user">
@@ -291,7 +288,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         negers
         </iron-collapse>
 
-      <!-- HIER MISS EEN COLLAPSE MET DE UPLOADFLOW? -->
+<!--       <bt-button on-tap="_toUpload"><img src="../../images/triangle.svg">Upload a video</bt-button>
+ -->      <!-- HIER MISS EEN COLLAPSE MET DE UPLOADFLOW? -->
 <!--       <h4 class="temp">Hier dan een lijstje met mijn geuploade video's?</h4> -->
       </div>
       <div class="seperation"></div>
@@ -359,8 +357,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         //debugger;
         this.getBTbalance();
       },
+      _toUpload: function(){
+        Excess.RouteManager.transitionTo('/upload');
+      },
       _fixaccount: function(){
-        this.account =app.helpers.fixaddress(this.account)
+        this.account =app.helpers.fixaddress(this.account);
       },
       _uploadstart: function(){
 
