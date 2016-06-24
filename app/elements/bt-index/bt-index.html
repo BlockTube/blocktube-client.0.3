@@ -11,7 +11,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <dom-module id="bt-index">
- 
+ <template>
+     <iron-localstorage id="clipscache"
+    value="{{clipscache}}" name="clipscache"
+    on-iron-localstorage-load="cacheloaded"
+    on-iron-localstorage-load-empty="cacheloadedempty">
+    </iron-localstorage>
+ </template>
   <script>
   (function() {
     'use strict';
@@ -56,10 +62,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.web3 = web3elem.web3;
 
         console.log(this.web3);
-        this.readthecontract();
+        //this.readthecontract();
       }.bind(this), 3000);
 
       },
+
+      cacheloaded: function(){
+        this.clips = this.clipscache;
+      },
+
+      cacheloadedempty: function(){
+        this.readthecontract();
+      },
+
 
       readthecontract: function(){
       
@@ -94,6 +109,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           clipitem.tags = clipobject[3];
           this.push('clips', clipitem);
         }
+
+        this.clipscache = this.clips;
 
         //console.log('cliplist: ',this.clips);
         //   var _description = null;
