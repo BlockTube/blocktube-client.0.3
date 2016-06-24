@@ -90,6 +90,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
+          <ipfs-upload id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ></ipfs-upload>
+
       <iron-pages selected="{{state}}" attr-for-selected="state">
 
  <section state="coinsdepleted">
@@ -191,6 +193,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <span>Added to index.</span>
         </template>
         <span class="spacer"></span>
+        clip at {{contractaddress}}
       </div>
     </section>
   </iron-pages>
@@ -222,10 +225,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: String,
           observer: '_tagsparser'
         },
-        cliphash: {
-          type: String,
+        //cliphash: {
+        //  type: String,
           //observer: '_oncliphashreceived'
-        },
+        //},
         readyforupload: {
           type: Boolean,
           value: false
@@ -333,6 +336,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.state = 'thumb';
           this.ipfsready = true;
           console.log('got hash', resJSON.Hash);
+          //this.cliphash = resJSON.Hash;
           this.metadata.uploaddate = Math.floor(new Date().getTime() / 1000);
           this.metadata.video = resJSON.Hash;
           this.metadata.filename = file.name;
@@ -422,7 +426,7 @@ var self = this;
       
       createclip: function() {
         var self = this;
-        if (this.readyforupload && this.cliphash) {
+        if (this.readyforupload && this.metadata.video) {
 
           // All is ready
           this.metadata.name = this.title;
@@ -475,7 +479,7 @@ var self = this;
 
             var MyContract = self.web3.eth.contract(self.contractjson.abi);
             //var contractInstance = 
-            MyContract.new(hash, 0, parseInt(self.clipshares), {
+            MyContract.new(hash, 0, parseInt(self.clipshares) || 50, {
               from: self.fixaddress(self.account),
               gasPrice: gasPrice,
               gasLimit: 3000000,
