@@ -158,7 +158,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-    <iron-localstorage id="lscache" name="itemcache"
+    <iron-localstorage id="lscache"
     value="{{itemcache}}"
     on-iron-localstorage-load="itemcacheloaded"
     on-iron-localstorage-load-empty="itemcacheloadedempty">
@@ -233,15 +233,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             type: Number,
             value: 0
           },
-          hash: {
-            type: String,
-            //observer: '_hash'
-          },
-          videohash: {
-            type: String,
-            notify:true
-
-          },
           listitem: {
             type: Boolean,
             value: false
@@ -278,8 +269,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         _contract: function(){
-          console.log('loading clip contract: ', this.contract);
-          this.loadcontract();
+          this.$.lscache.name = 'itemcache-' + this.contract;   
+//            this.loaddata();
         },
 
         firelisttap: function(){
@@ -291,23 +282,30 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         itemcacheloaded: function(){
+          if (this.$.lscache.name === ""){
+            return;
+          }
           //console.log('web3',this.web3===null);
           //console.log('contract',this.contract===null);
-          this.loadcontract();
+          //debugger;
+          //this.loadcontract();
+          this.populate(this.itemcache);
         },
 
         itemcacheloadedempty: function(){
-          this.itemcache = {};
+          if (this.$.lscache.name === ""){
+            return;
+          }
+          //this.itemcache = {};
           this.loadcontract();
         },
 
         loadcontract: function(){
-          if (this.web3 && this.itemcache && this.contract){
+          if (this.web3 && this.contract){
             var myclipContract = this.web3.eth.contract(this.contractabi);
             var myclipContractInstance = myclipContract.at(this.contract);
             this.hash = myclipContractInstance.ipfsclipobject().toString();
-            console.log('HASH!',this.hash);
-            this.attached();
+            this.loadIPFSdata();
           }
         },
 
@@ -322,23 +320,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
         attached: function() {
+          this.ipfsapihost = new Polymer.IronMetaQuery({
+            key: 'ipfs_read'
+          }).value;
+        },
 
- this.ipfsapihost = new Polymer.IronMetaQuery({
-          key: 'ipfs_read'
-        }).value;
-
-          this.$.lscache.name = 'itemcache-' + this.hash;
-
-          var ipfsData;
-          if (!this.hash){
-            return console.log('hash not available YET');
-          }
-
-          if (this.itemcache[this.hash]) {
-            //console.log('cache HIT', this.hash);
-            ipfsData = this.itemcache[this.hash];
-            return this.populate(ipfsData);
-          } else {
+        loadIPFSdata: function(){
 
             //console.log('cache MISS', this.hash);
 
@@ -348,6 +335,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             var buf = '';
             //console.log('MIKE:this.hash);
             ipfs.cat(this.hash, function(err, res) {
+              if (err){
+                console.log('bt-listitem error',self.hash,err);
+                return;
+              }
               res
                 .on('error', function(err) {
                   throw (err);
@@ -357,14 +348,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 })
                 .on('end', function() {
                   var ipfsData = JSON.parse(buf);
-                  self.populate(ipfsData);
-                  self.set('itemcache.'+self.hash,ipfsData);
+                  self.itemcache = ipfsData;
+                  self.populate(self.itemcache);
                 });
             });
-          }
+          
+        }
 
-
-        },
       });
     })();
   </script>
