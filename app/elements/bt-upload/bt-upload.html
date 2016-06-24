@@ -39,7 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       .uploader {
         @apply(--layout-vertical);
-        @apply(--layout-center-center);
+        @apply(--layout-start);
       }
 
       paper-progress {
@@ -69,6 +69,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: white;
       }
 
+      .whitespace {
+        height: 2vh;
+        min-height: 20px;
+      }
+
+
+
+
+      @media all and (min-width: 0) and (max-width: 400px) and (orientation: portrait) {
+        .uploader {
+          @apply(--layout-vertical);
+          @apply(--layout-center-center);
+        }
+
+      }    
+
+
+
+
     </style>
 
       <iron-pages selected="{{state}}" attr-for-selected="state">
@@ -94,14 +113,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <section state="start">
         <div class="uploader">
           
-        <bt-input autofocus label="Title" bind-value="{{title}}" color="orange" big></bt-input>
+        <bt-input autofocus label="Title" bind-value="{{title}}" color="orange"></bt-input>
         <bt-input label="Description" bind-value="{{description}}" color="orange"></bt-input>
-        <bt-input label="Tags" placeholder="comma, separated" bind-value="{{tags}}" color="orange"></bt-input>
-        <bt-input label="Clipshares" bind-value="{{clipshares}}" value="100" color="orange"></bt-input>
-
-
-          <file-upload id="clipupload" target="{{ipfsuploadhost}}/api/v0/add?stream-channels=true" on-success="_setclipipfshash" on-error="uploaderror" accept="*/*">Choose file</file-upload>
-
+        <div class="whitespace"></div>
+        <file-upload id="clipupload" target="{{ipfsuploadhost}}/api/v0/add?stream-channels=true" on-success="_setclipipfshash" on-error="uploaderror" accept="*/*"><bt-button color="orange">Choose file</bt-button></file-upload>
+<!--         <bt-input label="Tags" placeholder="comma, separated" bind-value="{{tags}}" color="orange"></bt-input>
+        <bt-input label="Clipshares" bind-value="{{clipshares}}" value="100" color="orange"></bt-input> -->
         <template is="dom-if" if="{{_is(state,'uploading')}}">
           <h3>Uploading to IPFS...</h3>
         </template>

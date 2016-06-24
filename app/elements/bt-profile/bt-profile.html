@@ -211,6 +211,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         transform: rotate(0deg);
       }
 
+      .whitespace {
+        height: 2vh;
+        min-height: 20px;
+      }
+
+
+      .cancel {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10px;
+        @apply(--layout-horizontal);
+        @apply(--layout-end-justified);
+      }
 
       
 
@@ -293,9 +306,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div class="seperation"></div>
       <div class="padding">
         <div class="upload">
-          <bt-button underline="green" on-tap="toggleupload"><img class$="{{collapseclass}} traingleicon" src="../../images/triangle.svg">Upload a video</bt-button>
-
+        <template is="dom-if" if="{{collapseclosed}}">
+          <bt-button color="orange" on-tap="toggleupload"><img class$="{{collapseclass}} traingleicon" src="../../images/triangle.svg">Upload a video</bt-button>
+          <div class="whitespace"></div>
+        </template>
           <iron-collapse id="uploadcollapse">
+          <div class="cancel" on-tap="toggleupload">
+            <img src="../../images/cancel.svg">
+          </div>
             <bt-upload profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]" btbalance="[[btbalance]]" ethbalance="[[ethbalance]]"></bt-upload>
           </iron-collapse>
 
@@ -308,7 +326,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </div>
 
 <!-- this is headless -->
- <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*"></file-upload>
+<!--  <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*"></file-upload> -->
 
 </template>
 <script>
