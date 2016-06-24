@@ -258,7 +258,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               <img src="../../images/edit.svg">
             </div>
             <div class="useravatarimg">
-              <img src="{{profiledata.avatarurl}}" observe="profiledata.avatarurl">
+              <img src="{{_getipfsurl(profiledata.avatarhash)}}" observe="profiledata.avatarurl">
             </div>
         </div>
 
@@ -357,8 +357,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.coincontract = new Polymer.IronMetaQuery({
           key: 'coincontract'
         }).value;
+        this._initipfs();
       },
 
+      _initipfs: function(){
+        if (!this.ipfs_url){
+          this.ipfs_url = new Polymer.IronMetaQuery({
+              key: 'ipfs_url'
+            }).value;
+        }
+      }
       avataruploadok: function(e){
         console.log(e);
       },
@@ -413,16 +421,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
 
+      _getipfsurl: function(hash){
+        this._initipfs();
+        return this.ipfs_url + hash;
+      },
+
       _setavataripfshash: function(e) {
         try {
           var resJSON = JSON.parse(e.detail.xhr.response);
 
           this.set('profiledata.avatarhash', resJSON.Hash);
-          var ipfs_url = new Polymer.IronMetaQuery({
-            key: 'ipfs_url'
-          }).value;
 
-          this.set('profiledata.avatarurl', ipfs_url + resJSON.Hash);
+          //this.set('profiledata.avatarurl', ipfs_url + resJSON.Hash);
         } catch (e) {
           // problem uploading or parsing upload result.
         }

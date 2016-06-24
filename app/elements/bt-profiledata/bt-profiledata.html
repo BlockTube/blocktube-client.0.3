@@ -38,15 +38,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
       _profileinit: function() {
+
+        if (!this.ipfs_url) {
+
+          this.ipfs_url = new Polymer.IronMetaQuery({
+            key: 'ipfs_url'
+          }).value;
+        }
+
+
         this.profiledata = {
           username: 'John Doe',
           avatarhash: 'QmcNuYUwDboxhxZ966Hp5UtjwQNAgLTZBQMW151EqvvXu4',
-          avatarurl: 'http://gateway.ipfs.io/ipfs/QmcNuYUwDboxhxZ966Hp5UtjwQNAgLTZBQMW151EqvvXu4'
+          //avatarurl: this.ipfs_url + 'QmcNuYUwDboxhxZ966Hp5UtjwQNAgLTZBQMW151EqvvXu4'
         };
 
       },
       _profileloaded: function() {
-console.log('profile loaded',this.profiledata);
+        console.log('profile loaded',this.profiledata);
       },
     });
   })();
