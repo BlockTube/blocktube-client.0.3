@@ -305,10 +305,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         loadcontract: function(){
           if (this.web3 && this.contract){
+            try{
             var myclipContract = this.web3.eth.contract(this.contractabi);
             var myclipContractInstance = myclipContract.at(this.contract);
             this.hash = myclipContractInstance.ipfsclipobject().toString();
-            this.loadIPFSdata();
+            this.loadIPFSdata();              
+            }catch(e){
+              console.log(e);
+              debugger;
+            }
           }
         },
 
@@ -337,7 +342,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var self = this;
          
           var buf = '';
-          //console.log('MIKE:this.hash);
+          
           this.ipfsclient.cat(this.hash, function(err, res) {
             if (err) {
               console.log('bt-listitem error', self.hash, err);

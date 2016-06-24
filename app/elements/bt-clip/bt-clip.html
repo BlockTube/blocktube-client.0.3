@@ -53,7 +53,7 @@
       on-iron-localstorage-load-empty="contractloadedempty">
     </iron-localstorage>
 
-    <div class="vertical layout" onmouseover="showOverlay()" onmouseout="countdownOverlay()">
+    <div class="vertical layout">
     <video id="vp">
       <source src="{{videourl}}" />
 <!--       <track src="/images/scrubs.srt" kind="subtitle" srclang="en-US" label="English" />
@@ -89,51 +89,26 @@
   <script>
   (function() {
     // 'use strict';
-    
-    var vp;
-    var timeout = 3;
-    var resttime = 3;
-    var overlayvisible = true;
-    var interval;
-    var overlay;
-
-   var  showOverlay = function(){
-      //console.log('hit it!', Date.now());
-      overlayvisible = true;
-      resttime = timeout;
-      overlay = document.querySelector('#overlay');
-      overlay.hidden = false;
-    };
-
-    var countdownOverlay = function(){
-      if(!interval){
-      interval = setInterval(function(){
-        resttime = resttime - 1;
-        if(resttime <= 0){
-          toggleVisibility();
-        }
-      }, 1000);
-    }
-    };
-
-    var toggleVisibility = function(){ 
-      clearInterval(interval);
-      interval = null;
-      if(overlayvisible){
-        overlayvisible = false;
-        overlay.hidden = true;
-      } else {
-        overlayvisible = true;
-        overlay.hidden = false;
-      }
-    };
-
-  
 
     Polymer({
       is: 'bt-clip',
 
       properties: {
+
+        timeout: {
+        type: Number,
+        value: 3,
+        },
+        resttime: {
+        type: Number,
+        value: 3,
+        },
+        overlayvisible: {
+        type: Boolean,
+        value: true,
+        },
+
+
         init: {
           type: Boolean,
           value: false
@@ -174,19 +149,49 @@
 
       },
 
-   
+    showOverlay : function() {
+      //console.log('hit it!', Date.now());
+      this.overlayvisible = true;
+      this.resttime = this.timeout;
+      this.overlay = document.querySelector('#overlay');
+      this.overlay.hidden = false;
+    },
+
+     countdownOverlay : function() {
+      if (!this.interval) {
+        this.interval = setInterval(function() {
+          this.resttime = this.resttime - 1;
+          if (this.resttime <= 0) {
+            this.toggleVisibility();
+          }
+        }.bind(this), 1000);
+      }
+    },
+
+    toggleVisibility: function() {
+      clearInterval(this.interval);
+      this.interval = null;
+      if (this.overlayvisible) {
+        this.overlayvisible = false;
+        this.overlay.hidden = true;
+      } else {
+        this.overlayvisible = true;
+        this.overlay.hidden = false;
+      }
+    },
+
       attached: function() {
-          this.init = true;
-          this.mute = false;
+        this.init = true;
+        this.mute = false;
       },
 
-      enableplay: function(){
+      enableplay: function() {
         this.$.playpause.disabled = false;
         this.$.vp.volume = this.volume / 200;
       },
 
-      togglePlay: function(){
-        if(this.playing){
+      togglePlay: function() {
+        if (this.playing) {
           this.playing = false;
           this.playicon = 'av:play-arrow';
           this.$.vp.pause();
@@ -197,48 +202,48 @@
         }
       },
 
-      toggleOverlay: function(){
+      toggleOverlay: function() {
         console.log('hovering video', Date.now());
       },
 
-      close: function(){
+      close: function() {
         this.fire('close');
       },
 
-      _playing: function(){
-        
+      _playing: function() {
+
       },
 
-      _scrubtime: function(){
-        if(this.init){
+      _scrubtime: function() {
+        if (this.init) {
           var newtime = this.$.vp.duration * this.scrubtime;
-          console.log(newtime/100);
-          this.$.vp.currentTime = newtime/100;
+          console.log(newtime / 100);
+          this.$.vp.currentTime = newtime / 100;
         }
         //this.$.vp.currentTime = newtime;
       },
 
-      _progress: function(){
+      _progress: function() {
         var perplayed = this.$.vp.currentTime / this.$.vp.duration;
         //console.log(this.$.vp.currentTime, ' / ', this.$.vp.duration, ' ', perplayed * 100, '%');
         this.progresspercentage = perplayed * 100;
 
       },
 
-      _volume: function(){
+      _volume: function() {
         console.log(this.volume);
-        if(this.init){
-          this.$.vp.volume = this.volume/200;
+        if (this.init) {
+          this.$.vp.volume = this.volume / 200;
           this.prevvolume = this.volume;
           console.log(this.$.vp.volume);
-          
+
           this.volumeicon = 'av:volume-down';
-        
+
         }
       },
 
-      toggleMute: function(){
-        if(this.mute){
+      toggleMute: function() {
+        if (this.mute) {
           this.prevvolume = this.volume;
           this.volume = 0;
           this.mute = false;
@@ -250,39 +255,38 @@
       },
 
 
- _initipfs: function(){
-        if (!this.ipfs_url){
+      _initipfs: function() {
+        if (!this.ipfs_url) {
           this.ipfs_url = new Polymer.IronMetaQuery({
-              key: 'ipfs_url'
-            }).value;
+            key: 'ipfs_url'
+          }).value;
         }
-      },   
+      },
 
-contractloaded: function(){
+      contractloaded: function() {
 
-  this._initipfs();
-//debugger;
-     this.$.vp.src = this.ipfs_url + this.contractdata.video;
+        this._initipfs();
+        //debugger;
+        this.$.vp.src = this.ipfs_url + this.contractdata.video;
 
-        
+
         this.$.vp.addEventListener('canplay', this.enableplay.bind(this));
 
         this.$.vp.addEventListener('progress', this._progress.bind(this));
-        console.log('stube-playser setting URL for video player to ',this.$.vp.src);
+        console.log('stube-playser setting URL for video player to ', this.$.vp.src);
 
-},
-contractloadedempty: function(){
-  if (this.$.contractcache.name != ""){
-    console.log('this shoudl NOT happen!',this.$.contractcache.name);
-  }
-},
+      },
+      contractloadedempty: function() {
+        if (this.$.contractcache.name != "") {
+          console.log('this shoudl NOT happen!', this.$.contractcache.name);
+        }
+      },
 
-      _clipcontract: function(){
+      _clipcontract: function() {
         this.$.contractcache.name = 'itemcache-' + this.clipcontract;
 
-//        console.log('bt-clip got contract' , this.clipcontract);
-     
-        
+        //        console.log('bt-clip got contract' , this.clipcontract);
+
 
 
       }

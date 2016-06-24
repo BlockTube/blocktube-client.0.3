@@ -90,7 +90,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-          <ipfs-upload id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ></ipfs-upload>
+          <ipfs-upload hidefileinput id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ></ipfs-upload>
 
       <iron-pages selected="{{state}}" attr-for-selected="state">
 
@@ -209,7 +209,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   (function() {
     'use strict';
 
-      var thecanvas ;
+    var thecanvas;
     var video;
     var thumbnailContainer;
 
@@ -219,7 +219,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       properties: {
         web3: {
           type: Object,
-//          observer: '_web3'
+          //          observer: '_web3'
         },
         tags: {
           type: String,
@@ -227,7 +227,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
         //cliphash: {
         //  type: String,
-          //observer: '_oncliphashreceived'
+        //observer: '_oncliphashreceived'
         //},
         readyforupload: {
           type: Boolean,
@@ -258,7 +258,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
-      ready: function(){
+      ready: function() {
         this.state = 'start';
         thecanvas = this.$.thecanvas;
         thumbnailContainer = this.$.thumbnailContainer;
@@ -266,38 +266,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.ipfsready = false;
       },
 
-      attached: function(){
+      attached: function() {
         this.ipfsuploadhost = new Polymer.IronMetaQuery({
           key: 'ipfs_uploadhost'
         }).value;
+        this.clipcontract = new Polymer.IronMetaQuery({
+          key: 'clipcontract'
+        }).value;
+
         this._checkbalance();
       },
 
-      _checkbalance: function(){
+      _checkbalance: function() {
         // if (!this.btbalance || !this.ethbalance){
         //   return;
         // }
-        if (this.ethbalance < 1 ){
+        if (this.ethbalance < 1) {
           this.state = 'coinsdepleted';
         }
       },
 
 
-      continue: function(){
+      continue: function() {
         this.state = 'start';
       },
 
-      setthumb: function(){
+      setthumb: function() {
         this.state = 'meta';
       },
 
       // this will be removed later. Temp fix to get a list of uploads
-      initclips: function(){
-          this.clips = [];
+      initclips: function() {
+        this.clips = [];
       },
-      
+
       _is: function(a, b) {
-        if (b === undefined){
+        if (b === undefined) {
           b = true;
         }
         return a === b;
@@ -306,7 +310,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       _uploadstart: function() {
         console.log('upload start');
         this.progress = 'uploading';
-//        this.ipfsuploading = true;
+        //        this.ipfsuploading = true;
       },
 
       _uploaderror: function() {
@@ -314,16 +318,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.ipfsuploading = false;
       },
 
-      _tagsparser: function(){
+      _tagsparser: function() {
 
-          var intags = this.tags.split(',');
-          if (intags){
-            var tmptags = [];
-            intags.forEach(function(tag){
-              tmptags.push(tag);
-            }.bind(this));
-            this.tagsarray = tmptags;
-          }
+        var intags = this.tags.split(',');
+        if (intags) {
+          var tmptags = [];
+          intags.forEach(function(tag) {
+            tmptags.push(tag);
+          }.bind(this));
+          this.tagsarray = tmptags;
+        }
       },
 
       _setclipipfshash: function(e) {
@@ -335,19 +339,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           this.state = 'thumb';
           this.ipfsready = true;
-          console.log('got hash', resJSON.Hash);
-          //this.cliphash = resJSON.Hash;
           this.metadata.uploaddate = Math.floor(new Date().getTime() / 1000);
           this.metadata.video = resJSON.Hash;
           this.metadata.filename = file.name;
           this.metadata.filesize = file.size;
           this.metadata.filemimetype = file.type;
-          //this.metadata.tags = this.tags;
-          //this.ipfsuploading = false;
-
 
           this.newvideo = 'http://gateway.ipfs.io/ipfs/' + this.metadata.video;
-          //this.createclip();
+
           this.thumbnailviewer();
         } catch (e) {
           //error uploading
@@ -355,13 +354,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
-      thumbnailviewer: function(){
-//         <video id="videom"
-     
-//        controls>
-//   <source src='{{newvideo}}' />
-var self = this;
-// </video>
+      thumbnailviewer: function() {
+       
+        var self = this;
+
         var elem = document.createElement('video');
         var place = document.querySelector('#videoland');
 
@@ -373,49 +369,32 @@ var self = this;
         place.appendChild(elem);
 
         video = elem;
-        
-        var i=0;
+
+        var i = 0;
         elem.addEventListener('seeked', function() {
-      // now video has seeked and current frames will show
-      // at the time as we expect
-      self.generateThumbnail(i);
-      //var i;
-      // when frame is captured, increase
-      //i += 5;
-
-      // if we are not passed end, seek to next interval
-      // if (i <= elem.duration) {
-      //     // this will trigger another seeked event
-      //     elem.currentTime = i;
-
-      // } else {
-      //     // DONE!, next action
-      // }
-
-    }, false);
+          // now video has seeked and current frames will show
+          // at the time as we expect
+          self.generateThumbnail(i);
+        }, false);
       },
 
-      generateThumbnail: function() {     
-    //generate thumbnail URL data
+      generateThumbnail: function() {
+        //generate thumbnail URL data
+
+        var context = thecanvas.getContext('2d');
+        context.drawImage(video, 0, 0, 280, 150);
+
+        thecanvas.crossOrigin = 'Anonymous';
+        var dataURL = thecanvas.toDataURL();
+
+        //create img
+        var img = document.createElement('img');
 
 
-     
-    var context = thecanvas.getContext('2d');
-    context.drawImage(video, 0, 0, 280, 150);
+        img.setAttribute('crossOrigin', 'anonymous');
+        img.setAttribute('src', dataURL);
 
-    thecanvas.crossOrigin = 'Anonymous';
-    var dataURL = thecanvas.toDataURL();
-
-    //create img
-    var img = document.createElement('img');
-
-
-    img.setAttribute('crossOrigin', 'anonymous');
-    img.setAttribute('src', dataURL);
-
-    //append img in container div
-    //thumbnailContainer.appendChild(img);
-},
+      },
 
       upload: function() {
         this.readyforupload = true;
@@ -423,7 +402,7 @@ var self = this;
         this.progress = 'uploading';
         this.state = 'process';
       },
-      
+
       createclip: function() {
         var self = this;
         if (this.readyforupload && this.metadata.video) {
@@ -438,12 +417,12 @@ var self = this;
             // Yeah man - create that contract here now please....
 
             if (!err && res[0] && res[0].Hash) {
-              self._createNewUploadContract(res[0].Hash,function(err,contractaddress){
-              self.progress = 'contractcreated';
+              self._createNewUploadContract(res[0].Hash, function(err, contractaddress) {
+                self.progress = 'contractcreated';
                 console.log('mined!');
                 self.contractaddress = contractaddress;
                 // TODO : add this contractaddress to the index and return to your videos
-                self.push('clips',contractaddress);
+                self.push('clips', contractaddress);
                 self._addtoIndexContract(contractaddress);
               });
             } else {
@@ -463,28 +442,26 @@ var self = this;
         return address;
       },
 
-      _createNewUploadContract: function(hash,fn) {
+      _createNewUploadContract: function(hash, fn) {
         var self = this;
-        this.contracturl = this.resolveUrl('../../contracts/blocktubeClip.json');
-        this.importHref(this.contracturl, function(e) {
 
-          this.progress = 'creatingcontract';
 
-          self.contractjson = JSON.parse(e.target.import.body.innerText);
+  app.helpers.getfile('../../contracts/MyToken.json', function(err,contractjson) {
+          self.progress = 'creatingcontract';
 
           console.log('Creating new contract on account ', self.account);
 
-          this.web3.eth.getGasPrice(function(err, result) {
+          self.web3.eth.getGasPrice(function(err, result) {
             var gasPrice = result.toNumber(10);
 
-            var MyContract = self.web3.eth.contract(self.contractjson.abi);
+            var MyContract = self.web3.eth.contract(contractjson.abi);
             //var contractInstance = 
             MyContract.new(hash, 0, parseInt(self.clipshares) || 50, {
               from: self.fixaddress(self.account),
               gasPrice: gasPrice,
               gasLimit: 3000000,
               gas: 2000000,
-              data: self.contractjson.bytecode
+              data: contractjson.bytecode
             }, function(err, myContract) {
               if (!err) {
                 // NOTE: The callback will fire twice!
@@ -506,10 +483,10 @@ var self = this;
                   self.progress = 'contractcreated';
                   self.contractaddress = myContract.address;
                   //self.showtoast("Contract deployed: " + self.contractaddress);
-//                  self.fire('add-toast', {
-//                    msg: 'Contract deployed: ' + self.contractaddress
-//                  });
-                  fn(err,self.contractaddress);
+                  //                  self.fire('add-toast', {
+                  //                    msg: 'Contract deployed: ' + self.contractaddress
+                  //                  });
+                  fn(err, self.contractaddress);
                 }
               } else {
                 console.log('error:', err);
@@ -522,65 +499,54 @@ var self = this;
             });
           });
 
-        }, function(e) {
-          console.log('ERROR!', e);
         });
 
       },
 
-    _addtoIndexContract: function(contractaddress) {
-      var self = this;
-//      debugger;
-      this.contracturl = this.resolveUrl('../../contracts/blockTube.json');
-      this.importHref(this.contracturl, function(e) {
+      _addtoIndexContract: function(contractaddress) {
+        var self = this;
+        //      debugger;
+        //this.contracturl = this.resolveUrl('../../contracts/blockTube.json');
+        //this.importHref(this.contracturl, function(e) {
+        app.helpers.getfile('../../contracts/blockTube.json', function(err,contractjson) {
 
-        this.progress = 'addingtoindex';
+          self.progress = 'addingtoindex';
 
-        self.contractjson = JSON.parse(e.target.import.body.innerText);
+          //self.contractjson = JSON.parse(e.target.import.body.innerText);
 
-        console.log('Adding to index contract on account ', self.account);
+          console.log('Adding to index contract on account ', self.account);
 
-        this.web3.eth.getGasPrice(function(err, result) {
-          var gasPrice = result.toNumber(10);
+          self.web3.eth.getGasPrice(function(err, result) {
+            var gasPrice = result.toNumber(10);
 
-          var MyContract = self.web3.eth.contract(self.contractjson.abi);
+            var MyContract = self.web3.eth.contract(contractjson.abi);
 
-          var myContractInstance = MyContract.at('0xC4946E241ab66cDa428581cF2624f8cc6E4a7B72');
+            var myContractInstance = MyContract.at(self.clipcontract);
 
-          // var options = {
-          //   from: self.account,
-          //   //value: 1 * 1e18,
-          //   gas: 100000,
-          //   gasPrice: gasPrice,
-          //   nonce: Math.floor(Math.random(999999)) + new Date().getTime(),
-          // };
+            result = myContractInstance.addclip.sendTransaction(contractaddress, self.title, self.description, self.tags, {
+                from: self.fixaddress(self.account),
+                gasPrice: gasPrice,
+                gasLimit: 3000000,
+                gas: 2000000,
+                data: contractjson.bytecode
+              },
+              function(err, result) {
+                if (err !== null) {
+                  console.log(err);
+                  console.log('ERROR: Transaction didnt go through. See console.');
+                } else {
+                  console.log('Transaction Successful!');
+                  self.progress = 'addedtoindex';
+                  console.log('Tx hash=', result);
+                  // set vote status to TxHash received 
+                  self.votestatus = 2;
+                  self.transactionHash = result;
+                }
+              });
+          });
 
-          result = myContractInstance.addclip.sendTransaction(contractaddress, self.title, self.description, self.tags, {
-              from: self.fixaddress(self.account),
-              gasPrice: gasPrice,
-              gasLimit: 3000000,
-              gas: 2000000,
-              data: self.contractjson.bytecode
-            },
-            function(err, result) {
-              if (err !== null) {
-                console.log(err);
-                console.log('ERROR: Transaction didnt go through. See console.');
-              } else {
-                console.log('Transaction Successful!');
-                self.progress = 'addedtoindex';
-                console.log('Tx hash=', result);
-                // set vote status to TxHash received 
-                self.votestatus = 2;
-                self.transactionHash = result;
-              }
-            });
         });
-
-      }, function(e) {
-        console.log('ERROR!', e);
-      });
-    },
+      },
     });
   })();
   </script></dom-module>
