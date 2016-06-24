@@ -11,6 +11,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/file-upload/file-upload.html">
 <link rel="import" href="../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../bower_components/iron-collapse/iron-collapse.html">
+
+
 <link rel="import" href="../../bower_components/polymer-img-crop/img-crop.html">
 <link rel="import" href="../bt-style/bt-style.html">
 <link rel="import" href="../bt-button/bt-button.html">
@@ -165,6 +168,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background-color: var(--bt-grey1);
       }
 
+      .confirmbtn {
+        margin:15px;
+      }
 
 
 
@@ -173,15 +179,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-bottom: 10vw;
       }
 
-      bt-button {
-        margin: 50px  0px  50px  0px;
+/*      bt-button {
         @apply(--layout-horizontal);
         @apply(--layout-end);
         @apply(--layout-center-justified);
+      }*/
+
+      bt-input{
+        max-width: 50%;
       }
 
 
 
+
+      .upload {
+        width: 100%;
+        margin: 10vw 0px 10vw 0px;        
+      }
 
 
 
@@ -189,36 +203,28 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
       @media all and (min-width: 0) and (max-width: 400px) and (orientation: portrait) {    
-
-
-      .edit img{
-        height: 100%;
-        width: 100%;
-      }
-
-
-      .e2 {
-        margin: 0px 0px 6px 12px;
-      }
-
-
-      .userinfo {
-        margin: 15px 0px 15px 0px;
-      }
-      .userinfo p {
-        width: 50%;
-      }
+        .edit img{
+          height: 100%;
+          width: 100%;
+        }
+        .e2 {
+          margin: 0px 0px 6px 12px;
+        }
+        .userinfo {
+          margin: 15px 0px 15px 0px;
+        }
+        .userinfo p {
+          width: 50%;
+        }
       }
 
       @media all and (min-width: 800px){ 
-      .userandcoins {
-        margin: 80px 0px 50px 0px;
-      }
-
-/*
-        .padding {
-          padding: 0px 100px 0px 100px;
-        }*/
+        .userandcoins {
+          margin: 80px 0px 50px 0px;
+        }
+        .upload {
+          margin: 50px 0px 50px 0px;
+        }
       }
 
 
@@ -256,9 +262,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </div>
             </template>
             <template is="dom-if" if="{{editname}}">
-            <paper-input value="{{profiledata.username}}"></paper-input>
-              <div class="edit" on-tap="editName">OK
-              </div>
+            <bt-input big color="green" bind-value="{{profiledata.username}}" label="username"></bt-input>
+              <bt-button class="confirmbtn" on-tap="editName" color="green">OK</bt-button>
             </template>
           </div>
           <p class="account">{{account}}</p>
@@ -277,9 +282,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
  
       <div class="seperation"></div>
       <div class="padding">
-      <bt-button><img src="../../images/triangle.svg">Upload a video</bt-button>
+        <div class="upload">
+        <template is="dom-if" if="{{collapseclosed}}">
+          <bt-button underline="green" on-tap="toggleupload"><img src="../../images/triangle.svg">Upload a video</bt-button>
+        </template>
+
+        <iron-collapse id="uploadcollapse"  on-tap="toggleupload">
+        negers
+        </iron-collapse>
+
       <!-- HIER MISS EEN COLLAPSE MET DE UPLOADFLOW? -->
-      <h4 class="temp">Hier dan een lijstje met mijn geuploade video's?</h4>
+<!--       <h4 class="temp">Hier dan een lijstje met mijn geuploade video's?</h4> -->
       </div>
       <div class="seperation"></div>
 
@@ -321,7 +334,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Boolean,
           value: false
         },   
-
+        collapseclosed: {
+          type: Boolean,
+          value: true
+        },
       },
 
       ready: function(){
@@ -430,6 +446,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.editavatar = !this.editavatar;
 
       },
+
+
+      toggleupload: function() {
+        console.log("Shhht");
+        var coll = document.querySelector('#uploadcollapse');
+        coll.toggle();
+        this.collapseclosed=!this.collapseclosed;
+      },
+
 
     });
   })();

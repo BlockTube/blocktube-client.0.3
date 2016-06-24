@@ -16,36 +16,70 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       :host {
         display: inline-block;
         position: relative;
-
         @apply(--montserrat-bold);
-        width: 185px;
-        color: var(--bt-darkgreen);
-/*        background: var(--bt-darkgreen);
-        color: white;*/
+        --font-color: var(--bt-darkgreen);
+        color: var(--font-color);
         box-sizing: border-box;
-        padding:15px;
         border-radius: 5px;
-         background: var(--bt-grey1);
-
-        margin: 0px 2px 2px 0px;
+        background: var(--bt-grey1);
+        font-size: 18px;
+        padding:10px;
       }
 
       :host:hover {
         cursor: pointer;
       }
 
-      :host:active {
-        margin: 0px;
-
+      :host([small]) {
+        font-size: 12px;
+        padding:10px;
       }
+
+      :host([big]) {
+        font-size: 24px;
+        padding:10px;
+      }
+
+      :host([xl]) {
+        font-size: 40px;
+        padding:20px;
+      }
+
+
+      :host([outline]) {
+        display: inline-block;
+        position: relative;
+        @apply(--montserrat-bold);
+        /*width: 185px;*/
+        color: var(--outline-color);
+        background: white;
+        box-sizing: border-box;
+        border-radius: 5px;
+        border:2px solid var(--outline-color);
+        margin: 0px 2px 2px 0px;
+      }
+
+
+      :host([underline]) {
+        display: inline-block;
+        position: relative;
+        @apply(--montserrat-bold);
+        /*width: 185px;*/
+        color: var(--underline-color);
+        background: transparent;
+        box-sizing: border-box;
+        border-radius: 0px;
+        border-bottom:2px dotted var(--underline-color);
+        margin: 0px 2px 2px 0px;
+      }
+
+
+
 
     </style>
     <!-- <div>Hello from <span>{{foo}}</span></div> -->
 
-
-    <div>
     <content></content>
-    </div>
 
   </template>
   <script>
@@ -57,7 +91,49 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       properties: {
 
-      }
+        color: {
+          type:String,
+          observer: '_color'
+        },
+
+
+        outline: {
+          type:String,
+          observer: '_outline'
+        },
+
+        underline: {
+          type:String,
+          observer: '_underline'
+        },
+
+      },
+
+
+      _color: function(color) {
+        console.log("HIIIIIIIIETE, de color se",this.color);
+        this.fontcolor = 'var(--bt-'+this.color+')';
+        this.customStyle['--font-color'] = this.fontcolor;
+        this.updateStyles();
+      },
+
+
+      _outline: function(outline) {
+        console.log("HIIIIIIIIETE, den outline se",this.outline);
+        this.outlinecolor = 'var(--bt-'+this.outline+')';
+        this.customStyle['--outline-color'] = this.outlinecolor;
+        this.updateStyles();
+      },
+
+
+      _underline: function(underline) {
+        this.underlinecolor = 'var(--bt-'+this.underline+')';
+        console.log("HIIIIIIIIETE den underline se",this.underlinecolor);
+
+        this.customStyle['--underline-color'] = this.underlinecolor;
+        this.updateStyles();
+      },
+
     });
   })();
   </script>
