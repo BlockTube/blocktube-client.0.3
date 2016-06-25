@@ -207,7 +207,8 @@
       },
 
       close: function() {
-        this.fire('close');
+        //this.fire('close');
+        Excess.RouteManager.transitionTo('/home');
       },
 
       _playing: function() {
