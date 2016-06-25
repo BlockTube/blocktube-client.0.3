@@ -21,7 +21,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         color: var(--font-color);
         box-sizing: border-box;
         border-radius: 5px;
-        background: var(--bt-grey1);
+        --btn-bg: var(--bt-grey1);
+        background: var(--btn-bg);
         font-size: 18px;
         padding:10px;
       }
@@ -34,6 +35,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         font-size: 12px;
         padding:10px;
       }
+
+      :host([medium]) {
+        font-size: 15px;
+        padding:10px;
+      }
+
 
       :host([big]) {
         font-size: 24px;
@@ -96,6 +103,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           observer: '_color'
         },
 
+        bg: {
+          type:String,
+          observer: '_bg'
+        },
 
         outline: {
           type:String,
@@ -116,6 +127,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.customStyle['--font-color'] = this.fontcolor;
         this.updateStyles();
       },
+
+
+
+      _bg: function(bg) {
+        if(this.bg === 'transparent'){
+        this.customStyle['--btn-bg'] = 'transparent';
+        this.updateStyles();
+        } else {
+        console.log("HIIIIIIIIETE, de bg se",this.bg);
+        this.bgcolor = 'var(--bt-'+this.bg+')';
+        this.customStyle['--btn-bg'] = this.bgcolor;
+        this.updateStyles();
+        }
+      },
+
 
 
       _outline: function(outline) {

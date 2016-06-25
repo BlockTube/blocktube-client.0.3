@@ -45,6 +45,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         @apply(--bt-font-body);
       }
 
+
       .userandcoins {
         width: 100%;
         margin: 10vw 0px 10vw 0px;
@@ -56,7 +57,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .user {
-        width: 75%;
+        width: 85%;
         @apply(--layout-horizontal);
         @apply(--layout-start);
         @apply(--layout-start-justified);
@@ -76,7 +77,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       .userinfoname {
         @apply(--layout-horizontal);
         @apply(--layout-end);
-        @apply(--layout-start-justified);      
+        @apply(--layout-start-justified);
+        @apply(--layout-wrap);
+        margin: 2px 12px 10px 0px;
       }
 
       .account {
@@ -125,7 +128,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       .e2 {
-        margin: 0px 0px 4px 12px;
+        margin: 0px 0px -2px 0px;
       }
 
       .useravatarimg {
@@ -154,11 +157,22 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin-right: 10px;
       }
 
+
+
+      .usertags a:link {
+        color:var(--bt-grey4);
+      }
+
+      .usertags a:visited {
+        color:var(--bt-grey4);
+      }
+
+
       .coinstotal {
         @apply(--layout-horizontal);
         @apply(--layout-end);
         @apply(--layout-end-justified);
-        width: 25%;
+        width: 15%;
       }
 
       .coins {
@@ -166,7 +180,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         @apply(--montserrat-reg);
         font-size: 45px;
         /*color: var(--bt-orange);*/
-        color: var(--bt-darkgreen);
+        color: var(--bt-yellow);
       }
 
       .coinicon {
@@ -183,9 +197,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         background-color: var(--bt-grey1);
       }
 
-      .confirmbtn {
+/*      .confirmbtn {
         margin:15px;
-      }
+      }*/
 
 
 
@@ -196,7 +210,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
       bt-input{
-        max-width: 50%;
+        max-width: 85%;
       }
 
 
@@ -243,19 +257,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
       @media all and (min-width: 0) and (max-width: 400px) and (orientation: portrait) {    
-        .smallbtn img{
-          height: 100%;
-          width: 100%;
-        }
-        .e2 {
-          margin: 0px 0px 6px 12px;
-        }
+
         .userinfo {
-          margin: 15px 0px 15px 0px;
+          margin: 15px 0px 0px 0px;
         }
-        .userinfo p {
-          width: 50%;
-        }
+      .userinfoname {
+        margin: 2px 12px 25px 0px;
+      }
+
+
       }
 
       @media all and (min-width: 800px){ 
@@ -300,12 +310,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </div>
             </template>
             <template is="dom-if" if="{{editname}}">
-            <bt-input big color="green" bind-value="{{profiledata.username}}" label="username"></bt-input>
-              <bt-button class="confirmbtn" on-tap="editName" color="green">OK</bt-button>
+              <bt-input big color="green" bind-value="{{profiledata.username}}" label="username" autofocus></bt-input>
+              <bt-button class="confirmbtn" on-tap="editName" color="green" medium bg="transparent">OK</bt-button>
             </template>
           </div>
           <div class="usertags">
-            <p>You're not following any tags yet.</p>
+            <p>You're not following any tags yet. <a href="">Show me how!</a></p>
 <!--             <div class="smallbtn">
               <img src="../../images/add.svg">
             </div> -->
@@ -318,7 +328,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
 
         <div class="coinstotal">
-          <h2 class="coins">0<span class="coinicon">ß</span></h2>
+          <h2 class="coins">48<span class="coinicon">ß</span></h2>
         </div>
       </div>
       </div>
@@ -331,8 +341,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <div class="whitespace"></div>
         </template>
           <iron-collapse id="uploadcollapse">
-          <div class="cancel" on-tap="toggleupload">
-            <img src="../../images/cancel.svg">
+          <div class="cancel">
+            <img on-tap="toggleupload" src="../../images/cancel.svg">
           </div>
             <bt-upload profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]" btbalance="[[btbalance]]" ethbalance="[[ethbalance]]"></bt-upload>
           </iron-collapse>
@@ -341,8 +351,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
  -->      <!-- HIER MISS EEN COLLAPSE MET DE UPLOADFLOW? -->
 <!--       <h4 class="temp">Hier dan een lijstje met mijn geuploade video's?</h4> -->
       </div>
-      <div class="seperation"></div>
-
     </div>
 
 <!-- this is headless -->

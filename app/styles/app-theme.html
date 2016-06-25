@@ -6,25 +6,30 @@ BlockTu.be (c) 2016 Mofooooo's
 <style is="custom-style">
 
   :root {
+
     --bt-blue: #101022;
     --bt-lightblue:#63C3CD;
-    /*--bt-orange:#F26728;*/
+    --bt-orange:#F26728;
     --bt-green:#39AA7C;
+    --bt-yellow:#F2D049;
     --bt-grey1:#EFEFEF;
     --bt-grey2:#D1D1D1;
     --bt-grey3:#B3B3B3;
     --bt-grey4:#999999;
     --bt-grey5:#808080;
 
-/*    --bt-font: {
-      font-family: 'Avenir', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-      -webkit-font-smoothing: antialiased;
-      font-weight: 50;
-    };*/
   }
 
   h1,h2,h3,h4,p {
     margin: 0px;
+  }
+
+  a:link {
+    color: var(--bt-darkgreen);
+  }
+
+  a:visited {
+    color: var(--bt-blue);
   }
 
   paper-scroll-header-panel {
@@ -38,44 +43,56 @@ BlockTu.be (c) 2016 Mofooooo's
   }
 
   paper-toolbar {
-    background-color: var(--bt-grey1);
+    background-color: var(--bt-green);
     width: 100%;
     box-sizing: border-box;
-    padding: 18px;
+    /*padding: 18px;*/
     @apply(--layout-horizontal);
+    @apply(--layout-center);
+    @apply(--layout-end-justified);
+    height: 85px;
+  }
+  .coinsbartotal{
+    height: 27px;
+    @apply(--layout-vertical);
     @apply(--layout-center);
     @apply(--layout-end-justified);
   }
 
 
+  .coinsbar {
+    margin: 0px 10px 0px 0px;
+    @apply(--montserrat-reg);
+    font-size: 16px;
+    color:#F2D049;
+  }
+  .coinsbaricon {
+    margin: 0px 0px 0px 3px;
+    font-size: 14px;
+
+  }
 
 
-
-
-
-
-
-
-
-      .coinsbar {
-        margin: 6px 15px 0px 10px;
-        @apply(--montserrat-reg);
-        font-size: 20px;
-        /*color: var(--bt-orange);*/
-        color: var(--bt-grey5);
-      }
-      .coinsbaricon {
-        margin: 0px 0px 0px 3px;
-        font-size: 14px;
-
-      }
-
+  .flex {
+    @apply(--layout-flex);
+  }
 
 
 
 
   /* Breakpoints */
     @media all and (min-width: 0) and (max-width: 400px) and (orientation: portrait) {    
+
+  .coinsbar {
+    margin: 0px 12px 0px 5px;
+    @apply(--montserrat-reg);
+    font-size: 16px;
+    color:#F2D049;
+  }
+
+  .coinsbartotal{
+    height: 30px;
+  }
 
   }
 
