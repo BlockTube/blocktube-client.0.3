@@ -46,12 +46,8 @@
 
     </style>
 
-    <iron-localstorage
-      id="contractcache"
-      value="{{contractdata}}"
-      on-iron-localstorage-load="contractloaded"
-      on-iron-localstorage-load-empty="contractloadedempty">
-    </iron-localstorage>
+
+    <bt-clipdata web3="[[web3]]" contract="{{clipcontract}}" clipdata="{{clipdata}}"></bt-clipdata>
 
     <div class="vertical layout">
     <video id="vp">
@@ -96,16 +92,16 @@
       properties: {
 
         timeout: {
-        type: Number,
-        value: 3,
+          type: Number,
+          value: 3,
         },
         resttime: {
-        type: Number,
-        value: 3,
+          type: Number,
+          value: 3,
         },
         overlayvisible: {
-        type: Boolean,
-        value: true,
+          type: Boolean,
+          value: true,
         },
 
 
@@ -113,11 +109,15 @@
           type: Boolean,
           value: false
         },
+        clipdata: {
+          type: Object,
+          observer: '_clipdata'
+        },
         clipcontract: {
           type: String,
           //value: 'QmR8NyktETUYryjL3ZecAGJtSYPup9CJqihxyJVXcHuLBu',
           //notify: true,
-          observer: '_clipcontract'
+//          observer: '_clipcontract'
         },
         videourl: {
           type: String,
@@ -149,36 +149,36 @@
 
       },
 
-    showOverlay : function() {
-      //console.log('hit it!', Date.now());
-      this.overlayvisible = true;
-      this.resttime = this.timeout;
-      this.overlay = document.querySelector('#overlay');
-      this.overlay.hidden = false;
-    },
-
-     countdownOverlay : function() {
-      if (!this.interval) {
-        this.interval = setInterval(function() {
-          this.resttime = this.resttime - 1;
-          if (this.resttime <= 0) {
-            this.toggleVisibility();
-          }
-        }.bind(this), 1000);
-      }
-    },
-
-    toggleVisibility: function() {
-      clearInterval(this.interval);
-      this.interval = null;
-      if (this.overlayvisible) {
-        this.overlayvisible = false;
-        this.overlay.hidden = true;
-      } else {
+      showOverlay: function() {
+        //console.log('hit it!', Date.now());
         this.overlayvisible = true;
+        this.resttime = this.timeout;
+        this.overlay = document.querySelector('#overlay');
         this.overlay.hidden = false;
-      }
-    },
+      },
+
+      countdownOverlay: function() {
+        if (!this.interval) {
+          this.interval = setInterval(function() {
+            this.resttime = this.resttime - 1;
+            if (this.resttime <= 0) {
+              this.toggleVisibility();
+            }
+          }.bind(this), 1000);
+        }
+      },
+
+      toggleVisibility: function() {
+        clearInterval(this.interval);
+        this.interval = null;
+        if (this.overlayvisible) {
+          this.overlayvisible = false;
+          this.overlay.hidden = true;
+        } else {
+          this.overlayvisible = true;
+          this.overlay.hidden = false;
+        }
+      },
 
       attached: function() {
         this.init = true;
@@ -263,11 +263,11 @@
         }
       },
 
-      contractloaded: function() {
+      _clipdata: function() {
 
         this._initipfs();
         //debugger;
-        this.$.vp.src = this.ipfs_url + this.contractdata.video;
+        this.$.vp.src = this.ipfs_url + this.clipdata.video;
 
 
         this.$.vp.addEventListener('canplay', this.enableplay.bind(this));
@@ -276,14 +276,14 @@
         console.log('stube-playser setting URL for video player to ', this.$.vp.src);
 
       },
-      contractloadedempty: function() {
-        if (this.$.contractcache.name != "") {
-          console.log('this shoudl NOT happen!', this.$.contractcache.name);
-        }
-      },
+      // contractloadedempty: function() {
+      //   if (this.$.contractcache.name != "") {
+      //     console.log('this shoudl NOT happen!', this.$.contractcache.name);
+      //   }
+      // },
 
       _clipcontract: function() {
-        this.$.contractcache.name = 'itemcache-' + this.clipcontract;
+      //  this.$.contractcache.name = 'itemcache-' + this.clipcontract;
 
         //        console.log('bt-clip got contract' , this.clipcontract);
 

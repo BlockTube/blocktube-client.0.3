@@ -1,0 +1,153 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="bt-clipdata">
+  <template>
+
+  <iron-localstorage
+      id="lscache"
+      value="{{itemcache}}"
+      on-iron-localstorage-load="itemcacheloaded"
+      on-iron-localstorage-load-empty="itemcacheloadedempty">
+    </iron-localstorage>
+   
+  </template>
+  <script>
+  (function() {
+    'use strict';
+
+    Polymer({
+      is: 'bt-clipdata',
+
+      properties: {
+        web3: {
+          type: Object,
+          observer: '_web3'
+        },
+        contract: {
+          type: String,
+          observer: '_contract'
+        },
+        clipdata: {
+          type: Object,
+          notify:true
+        },
+        contractabi: {
+          type: Object,
+          value: [{'constant':true,'inputs':[],'name':'treshold','outputs':[{'name':'','type':'uint256'}],'type':'function'},{'constant':false,'inputs':[],'name':'kill','outputs':[],'type':'function'},{'constant':true,'inputs':[],'name':'percentageforowner','outputs':[{'name':'','type':'uint256'}],'type':'function'},{'constant':true,'inputs':[],'name':'owner','outputs':[{'name':'','type':'address'}],'type':'function'},{'constant':true,'inputs':[],'name':'shareholdersnum','outputs':[{'name':'','type':'uint256'}],'type':'function'},{'constant':true,'inputs':[{'name':'','type':'uint256'}],'name':'shareholders','outputs':[{'name':'addr','type':'address'},{'name':'shares','type':'uint256'}],'type':'function'},{'constant':true,'inputs':[],'name':'tokenaddr','outputs':[{'name':'','type':'address'}],'type':'function'},{'constant':true,'inputs':[],'name':'Token','outputs':[{'name':'','type':'address'}],'type':'function'},{'constant':false,'inputs':[{'name':'_liker','type':'address'},{'name':'_likeamount','type':'uint256'}],'name':'blocktubeTransfer','outputs':[],'type':'function'},{'constant':true,'inputs':[],'name':'remainingCliptokens','outputs':[{'name':'','type':'uint256'}],'type':'function'},{'constant':true,'inputs':[],'name':'ipfsclipobject','outputs':[{'name':'','type':'string'}],'type':'function'},{'inputs':[{'name':'_ipfsclipobject','type':'string'},{'name':'_treshold','type':'uint256'},{'name':'_percentageforowner','type':'uint256'}],'type':'constructor'}]
+        }        
+      },
+
+
+        _contract: function(){
+          this.$.lscache.name = 'itemcache-' + this.contract;   
+        },
+
+        _web3: function(){
+          this.loadcontract();
+        },
+
+        itemcacheloaded: function(){
+          if (this.$.lscache.name === ""){
+            return;
+          }
+          //console.log('web3',this.web3===null);
+          //console.log('contract',this.contract===null);
+          //debugger;
+          //this.loadcontract();
+          this.cacheready = true;
+          this.populate(this.itemcache);
+        },
+
+        itemcacheloadedempty: function(){
+          if (this.$.lscache.name === ""){
+            return;
+          }
+          //this.itemcache = {};
+          this.cacheready = true;
+          this.loadcontract();
+        },
+
+        loadcontract: function(){
+          if (this.cacheready && !this.itemcache){
+
+          if (this.web3 && this.contract){
+            try{
+            var myclipContract = this.web3.eth.contract(this.contractabi);
+            var myclipContractInstance = myclipContract.at(this.contract);
+            this.hash = myclipContractInstance.ipfsclipobject();
+            this.hash = this.hash.toString();
+            this.loadIPFSdata();              
+            }catch(e){
+              console.log(e);
+              //debugger;
+            }
+          }
+          }
+        },
+
+        populate: function(ipfsData) {
+          console.log('bt-clipdate: populate clipdata',ipfsData);
+          this.clipdata = ipfsData;
+          // var self=this;
+          // self.title = ipfsData.name;
+          // self.description = ipfsData.description;
+          // self.videohash = ipfsData.video;
+          // self.thumbnail = ipfsData.thumbnail;
+          // self.videourl = '';
+          // self.tags = ipfsData.tags;
+        },
+
+        attached: function() {
+         
+        },
+
+        loadIPFSdata: function() {
+
+          if (!this.ipfsclient) {
+            this.ipfsapihost = new Polymer.IronMetaQuery({
+              key: 'ipfs_read'
+            }).value;
+            this.ipfsclient = window.ipfsAPI(this.ipfsapihost, 80);
+          }
+          var self = this;
+         
+          var buf = '';
+          
+          this.ipfsclient.cat(this.hash, function(err, res) {
+            if (err) {
+              console.log('bt-clipdata error', self.hash, err);
+              return;
+            }
+            res
+              .on('error', function(err) {
+                throw (err);
+              })
+              .on('data', function(data) {
+                buf += data;
+              })
+              .on('end', function() {
+                var ipfsData = JSON.parse(buf);
+                self.itemcache = ipfsData;
+                self.populate(self.itemcache);
+              });
+          });
+
+        }
+
+
+
+
+    });
+  })();
+  </script>
+</dom-module>
