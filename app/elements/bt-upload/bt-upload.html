@@ -51,6 +51,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         width: 60%;
       }
 
+      #newvideo {
+        width: 200px;
+        border: 1px solid red;
+      }
+
       #thecanvas {
         width: 505px;
         height: 286px;
@@ -74,6 +79,18 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         min-height: 20px;
       }
 
+      .uploadcanvas {
+        width: 384px;
+        height: 216px;
+        border: 1px dashed var(--bt-orange);
+        /*background-color: var(--bt-grey1);*/
+      }
+
+      file-upload {
+        width: 100%;
+        height: 100%;
+      }
+
 
 
 
@@ -94,7 +111,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <iron-pages selected="{{state}}" attr-for-selected="state">
 
- <section state="coinsdepleted">
+      <section state="coinsdepleted">
           <div class="center">
           <p>You lack the funds to create a new clip</p>
           <p>Get an invite from somebody to gain some BTcoins</p>
@@ -114,13 +131,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       <section state="start">
         <div class="uploader">
-          
-        <bt-input autofocus label="Title" bind-value="{{title}}" color="orange" big></bt-input>
-        <bt-input label="Description" bind-value="{{description}}" color="orange"></bt-input>
-        <div class="whitespace"></div>
-        <file-upload id="clipupload" target="{{ipfsuploadhost}}/api/v0/add?stream-channels=true" on-success="_setclipipfshash" on-error="uploaderror" accept="*/*"><bt-button color="orange">Choose file</bt-button></file-upload>
-<!--         <bt-input label="Tags" placeholder="comma, separated" bind-value="{{tags}}" color="orange"></bt-input>
-        <bt-input label="Clipshares" bind-value="{{clipshares}}" value="100" color="orange"></bt-input> -->
+          <div class="uploadcanvas">
+            <file-upload id="clipupload" target="{{ipfsuploadhost}}/api/v0/add?stream-channels=true" on-success="_setclipipfshash" on-error="uploaderror" accept="*/*"><bt-button color="orange">Choose file</bt-button></file-upload>
+          </div>
+          <div class="whitespace"></div>
+          <bt-input autofocus label="Title" bind-value="{{title}}" color="orange" big></bt-input>
+          <bt-input label="Description" bind-value="{{description}}" color="orange"></bt-input>
+          <bt-input label="Tags" placeholder="comma, separated" bind-value="{{tags}}" color="orange"></bt-input>
+          <bt-input label="Clipshares" bind-value="{{clipshares}}" value="100" color="orange"></bt-input>
         <template is="dom-if" if="{{_is(state,'uploading')}}">
           <h3>Uploading to IPFS...</h3>
         </template>
@@ -141,7 +159,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </section>
 
   <section state="thumb">
-    <div id="videoland" class="center"></div>
+    <div id="videoland" ></div>
     <canvas id="thecanvas" class="center" crossOrigin="anonymous"></canvas>
     <div id="thumbnailContainer" class="center"></div>
     <div class="container center">

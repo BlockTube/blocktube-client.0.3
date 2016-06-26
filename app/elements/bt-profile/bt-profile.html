@@ -82,13 +82,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         margin: 2px 12px 10px 0px;
       }
 
-      .account {
+      .accountandethbalance {
+        width: 100%;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-start-justified);
+      }
+
+      .accountandethbalance p {
         font-size: 14px;
         color:var(--bt-grey3);
+      }
+
+      .account {
         @apply(--font-nowrap);
         /*word-wrap: break-word*/;
         width: 100px;
       }
+
+      .pipe {
+        margin: 0px 5px 0px 5px;
+      }
+
+
  
       .useravatar {
         width: 100px;
@@ -253,6 +269,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         @apply(--layout-end-justified);
       }
 
+
       
 
 
@@ -301,7 +318,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
         <div class="userinfo">
-          <p class="account">{{account}}</p>
+          <div class="accountandethbalance">
+            <p class="account">{{account}}</p>
+            <p class="pipe"> | </p>
+            <p> E {{etherbalance}}</p>
+          </div>
           <div class="userinfoname">
             <template is="dom-if" if="{{!editname}}">
               <h1  on-tap="editName">{{profiledata.username}}</h1>
@@ -383,6 +404,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         editname: {
           type: Boolean,
           value: false
+        },
+
+        ethbalance: {
+          type:Number,
+          observer:'_ethbalance'
         },
 
        editavatar: {
@@ -515,6 +541,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       editAvatar:function () {
         this.editavatar = !this.editavatar;
 
+      },
+
+      _ethbalance: function () {
+        this.etherbalance = this.ethbalance / 1e18;
       },
 
       toggleupload: function() {
