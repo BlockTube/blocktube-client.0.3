@@ -147,14 +147,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
          <!--  <template is="dom-if" if="{{_is(progress,'uploadcomplete')}}"> -->
 
- <video id="video_upload" class="video-js vjs-default-skin"
-  controls autoplay="false"
-  data-setup='{"example_option":true}'>
-              <p class="vjs-no-js">
-                To view this video please enable JavaScript, and consider upgrading to a web browser that
-                <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-              </p>
-            </video>
 
            
         <!--   </template> -->
@@ -187,6 +179,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </section>
 
   <section state="thumb">
+
+
+ <video id="video_upload" class="video-js vjs-default-skin"
+  controls autoplay="true"
+  data-setup='{"example_option":true}'>
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+              </p>
+            </video>
 
     <canvas id="thecanvas" class="center" crossOrigin="anonymous"></canvas>
     <div id="thumbnailContainer" class="center"></div>
@@ -395,10 +397,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           var self = this;
 
-          videojs(document.getElementById('video_upload'), {}, function() {
-           
-            this.src(self.newvideo);
-          });
+this.$.video_upload.src=self.newvideo;
+
+          // videojs(this.$.video_upload, {}, function() {
+          //  debugger;
+          //   this.src(self.newvideo);
+          // });
 
 
 
