@@ -67,6 +67,8 @@
       <h1>{{clipdata.title}}</h1>      
       <h2>{{clipdata.description}}</h2>      
 
+      <bt-button on-tap="_cast">CAST</bt-button>
+
           </div>
         </template>
   <script>
@@ -220,8 +222,10 @@
         this._initipfs();
         var self = this;
 
+        self.player = videojs(this.$.videoplayer, {}, function() {
 
-this.$.videoplayer.src=self.ipfs_url + self.clipdata.video;
+          self.$.videoplayer.src = self.ipfs_url + self.clipdata.video;
+        });
 
 //         setTimeout(function(){
 //           self.player = videojs(this.$.videoplayer, {}, function() {
@@ -238,6 +242,9 @@ this.$.videoplayer.src=self.ipfs_url + self.clipdata.video;
 
       },
 
+      _cast: function(){
+        this.$.videoplayer.chromecast();
+      },
 
       _clipcontract: function() {
       //  this.$.contractcache.name = 'itemcache-' + this.clipcontract;
