@@ -49,27 +49,25 @@
           --paper-slider-knob-color: var(--bt-orange);
         }
 
-        .videoplayercontainer {
-          width: 500px;
-        }
-
     </style>
 
 
     <bt-clipdata web3="[[web3]]" contract="{{clipcontract}}" clipdata="{{clipdata}}"></bt-clipdata>
 
-    <div class="videoplayercontainer">
+    <div class="vertical layout">
 
-       <video id="videoplayer" class="video-js vjs-default-skin"
-        controls autoplay="false"
-        data-setup='{"example_option":true}'>
-        <p class="vjs-no-js">
-          To view this video please enable JavaScript, and consider upgrading to a web browser that
-          <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-        </p>
-      </video>
+ <video id="videoplayer" class="video-js vjs-default-skin"
+  controls autoplay="false"
+  data-setup='{"example_option":true}'>
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+              </p>
+            </video>
       <h1>{{clipdata.title}}</h1>      
       <h2>{{clipdata.description}}</h2>      
+
+      <bt-button on-tap="_cast">CAST</bt-button>
 
           </div>
         </template>
@@ -224,21 +222,29 @@
         this._initipfs();
         var self = this;
 
-        setTimeout(function(){
-          self.player = videojs(this.$.videoplayer, {}, function() {
+        self.player = videojs(this.$.videoplayer, {}, function() {
 
-            this.src(self.ipfs_url + self.clipdata.video);
-  //          this.chromecast();
-          });
+          self.$.videoplayer.src = self.ipfs_url + self.clipdata.video;
+        });
+
+//         setTimeout(function(){
+//           self.player = videojs(this.$.videoplayer, {}, function() {
+
+//             this.src(self.ipfs_url + self.clipdata.video);
+//   //          this.chromecast();
+//           });
 
 // self.player.chromecast();
       
 
-//      console.log(self.player);
-          }.bind(this),3000);
+// //      console.log(self.player);
+//           }.bind(this),3000);
 
       },
 
+      _cast: function(){
+        this.$.videoplayer.chromecast();
+      },
 
       _clipcontract: function() {
       //  this.$.contractcache.name = 'itemcache-' + this.clipcontract;

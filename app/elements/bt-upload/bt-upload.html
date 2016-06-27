@@ -312,6 +312,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         thumbnailContainer = this.$.thumbnailContainer;
         console.log(thecanvas);
         this.ipfsready = false;
+         videojs(this.$.video_upload, {}, function() {
+
+          console.log('videoJS is ready to rock and roll');
+         });
       },
 
       attached: function() {
@@ -397,12 +401,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           var self = this;
 
-          this.$.video_upload.src=self.newvideo;
 
-          // videojs(this.$.video_upload, {}, function() {
-          //  debugger;
-          //   this.src(self.newvideo);
-          // });
+//debugger;
+
+         
+            self.$.video_upload.src=self.newvideo;
+//            this.src(self.newvideo);
+         
 
 
 
