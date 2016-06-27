@@ -15,7 +15,8 @@
     "iron-localstorage": "^1.0.5",
     "file-upload": "https://github.com/BlockTube/file-upload.git#^1.7.5",
     "polymer-img-crop": "https://github.com/BlockTube/polymer-img-crop.git",
-    "video.js": "^5.10.6"
+    "video.js": "^5.10.6",
+    "videojs-chromecast": "git@github.com:benjipott/video.js-chromecast.git#^2.0.5"
   },
   "devDependencies": {}
 }
