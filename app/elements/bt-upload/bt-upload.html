@@ -141,46 +141,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </section>
 
+
+
+
+
+
     <section state="start">
       <div class="uploader">
         <div class="uploadcanvas">
-
-         <!--  <template is="dom-if" if="{{_is(progress,'uploadcomplete')}}"> -->
-
-
-           
-        <!--   </template> -->
           <file-upload id="clipupload" target="{{ipfsuploadhost}}/api/v0/add?stream-channels=true" on-success="_setclipipfshash" on-error="uploaderror" accept="*/*">
             <bt-button color="orange">Choose file</bt-button>
           </file-upload>
-        </div>
-        <div class="whitespace"></div>
-        <bt-input autofocus label="Title" bind-value="{{title}}" color="orange" big></bt-input>
-        <bt-input label="Description" bind-value="{{description}}" color="orange"></bt-input>
-        <bt-input label="Tags" placeholder="comma, separated" bind-value="{{tags}}" color="orange"></bt-input>
-        <bt-input label="Clipshares" bind-value="{{clipshares}}" value="100" color="orange"></bt-input>
-        <template is="dom-if" if="{{_is(state,'uploading')}}">
-          <h3>Uploading to IPFS...</h3>
-        </template>
-        <!-- <paper-progress value="10" max="100"></paper-progress>
-      -->
-    </div>
-  </section>
-
-  <section state="uploading">
-    <div class="center">
-      <span class="spacer"></span>
-      <span class="spacer"></span>
-      <h3>1. Choose a movie file</h3>
-      <p>Uploading to IPFS...</p>
-      <span class="spacer"></span>
-
-    </div>
-  </section>
-
-  <section state="thumb">
-
-
  <video id="video_upload" class="video-js vjs-default-skin"
   controls autoplay="true"
   data-setup='{"example_option":true}'>
@@ -190,6 +161,39 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </p>
             </video>
 
+
+        </div>
+        <div class="whitespace"></div>
+        <bt-input autofocus label="Title" bind-value="{{title}}" color="orange" big></bt-input>
+        <bt-input label="Description" bind-value="{{description}}" color="orange"></bt-input>
+        <bt-input label="Tags" placeholder="comma, separated" bind-value="{{tags}}" color="orange"></bt-input>
+        <bt-input label="Clipshares" bind-value="{{clipshares}}" value="100" color="orange"></bt-input>
+        <template is="dom-if" if="{{_is(state,'uploading')}}">
+          <h3>Uploading to IPFS...</h3>
+        </template>
+
+        <button on-tap="upload" >UPLOAD!</button>
+        <!-- <paper-progress value="10" max="100"></paper-progress>
+      -->
+    </div>
+  </section>
+
+<!--   <section state="uploading">
+    <div class="center">
+      <span class="spacer"></span>
+      <span class="spacer"></span>
+      <h3>1. Choose a movie file</h3>
+      <p>Uploading to IPFS...</p>
+      <span class="spacer"></span>
+
+    </div>
+  </section> -->
+
+<!--   <section state="thumb">
+
+
+
+
     <canvas id="thecanvas" class="center" crossOrigin="anonymous"></canvas>
     <div id="thumbnailContainer" class="center"></div>
     <div class="container center">
@@ -197,9 +201,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <paper-button raised on-tap="setthumb">set thumbnail</paper-button>
       <span class="spacer"></span>
       <span class="spacer"></span>
-    </section>
+    </section> -->
 
-    <section state="meta">
+<!--     <section state="meta">
       <div class="container">
         <span class="spacer"></span>
         <paper-input label="Title" char-counter maxlength="88" bind-value="{{title}}"></paper-input>
@@ -217,8 +221,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <span class="spacer"></span>
       </div>
 
-    </section>
-    <section state="process">
+    </section> -->
+
+<!--     <section state="process">
       <div class="container">
         <span class="spacer"></span>
         <template is="dom-if" if="{{_is(progress,'uploading')}}">
@@ -243,7 +248,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <span class="spacer"></span>
         clip at {{contractaddress}}
       </div>
-    </section>
+    </section> -->
+
+
   </iron-pages>
 
   <!-- SPonnet; we should give users the ability to enter an ipfs hash instead of uploading the file. -->
@@ -389,7 +396,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           var file = e.srcElement.files[0];
 
-          this.state = 'thumb';
+          //this.state = 'thumb';
           this.ipfsready = true;
           this.metadata.uploaddate = Math.floor(new Date().getTime() / 1000);
           this.metadata.video = resJSON.Hash;
@@ -464,17 +471,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.readyforupload = true;
         this.createclip();
         this.progress = 'uploading';
-        this.state = 'process';
+        //this.state = 'process';
       },
 
       createclip: function() {
+        debugger;
+
         var self = this;
         if (this.readyforupload && this.metadata.video) {
 
           // All is ready
           this.metadata.name = this.title;
           this.metadata.description = this.description;
-          this.metadata.thumbnail = thecanvas.toDataURL();
+          //this.metadata.thumbnail = thecanvas.toDataURL();
 
           console.log('clip uploaded - now upload metadata to IPFS', this.metadata);
           this.$.ipfsupload.add(JSON.stringify(this.metadata), function(err, res) {
@@ -494,6 +503,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             }
           });
         }
+
       },
       fixaddress: function(address) {
         function strStartsWith(str, prefix) {
