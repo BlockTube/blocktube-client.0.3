@@ -220,18 +220,21 @@
         this._initipfs();
         var self = this;
 
-        setTimeout(function(){
-          self.player = videojs(this.$.videoplayer, {}, function() {
 
-            this.src(self.ipfs_url + self.clipdata.video);
-  //          this.chromecast();
-          });
+this.$.videoplayer.src=self.ipfs_url + self.clipdata.video;
 
-self.player.chromecast();
+//         setTimeout(function(){
+//           self.player = videojs(this.$.videoplayer, {}, function() {
+
+//             this.src(self.ipfs_url + self.clipdata.video);
+//   //          this.chromecast();
+//           });
+
+// self.player.chromecast();
       
 
-//      console.log(self.player);
-          }.bind(this),3000);
+// //      console.log(self.player);
+//           }.bind(this),3000);
 
       },
 
