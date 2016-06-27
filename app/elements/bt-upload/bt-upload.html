@@ -149,10 +149,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <section state="start">
       <div class="uploader">
         <div class="uploadcanvas">
-          <file-upload id="clipupload" target="{{ipfsuploadhost}}/api/v0/add?stream-channels=true" on-success="_setclipipfshash" on-error="uploaderror" accept="*/*">
-            <bt-button color="orange">Choose file</bt-button>
-          </file-upload>
- <video id="video_upload" class="video-js vjs-default-skin"
+        <video id="video_upload" class="video-js vjs-default-skin"
   controls autoplay="true"
   data-setup='{"example_option":true}'>
               <p class="vjs-no-js">
@@ -160,6 +157,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
               </p>
             </video>
+          <file-upload id="clipupload" target="{{ipfsuploadhost}}/api/v0/add?stream-channels=true" on-success="_setclipipfshash" on-error="uploaderror" accept="*/*">
+            <bt-button color="orange">Choose file</bt-button>
+          </file-upload>
+ 
 
 
         </div>
@@ -487,16 +488,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           console.log('clip uploaded - now upload metadata to IPFS', this.metadata);
           this.$.ipfsupload.add(JSON.stringify(this.metadata), function(err, res) {
-            // Yeah man - create that contract here now please....
 
             if (!err && res[0] && res[0].Hash) {
-              self._createNewUploadContract(res[0].Hash, function(err, contractaddress) {
-                self.progress = 'contractcreated';
-                console.log('mined!');
-                self.contractaddress = contractaddress;
-                // TODO : add this contractaddress to the index and return to your videos
-                self.push('clips', contractaddress);
-                self._addtoIndexContract(contractaddress);
+              self._createNewUploadContract(res[0].Hash, function(err, txhash, contractaddress) {
+                if (!contractaddress) {
+                  // ik heb de TXhash van het nieuwe clipcontract = txhash - nog even wachten dus
+                  console.log('txhash van clip',txhash);
+                } else {
+                  // nieuwe clipcontract is gemined. We hebben nu contractaddress. Save dat in 
+                  // het indexcontract
+                  console.log('mined!');
+                  //self.contractaddress = contractaddress;
+                  // TODO : add this contractaddress to the index and return to your videos
+                  self.push('clips', contractaddress);
+                  self._addtoIndexContract(contractaddress, function(err, res) {
+                    // hier hebben we een TXhash van het toevoegen van de clip a/h index contract
+                    // dus nu tonen a/d user dat hij weg mag :)
+                    console.log('u mag weg.');
+                  });
+                }
               });
             } else {
               console.log('error uploading metadata to IPFS', err);
@@ -516,7 +526,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         return address;
       },
 
-      _createNewUploadContract: function(hash, fn) {
+      _createNewUploadContract: function(hash,fn) {
         var self = this;
 
 
@@ -547,9 +557,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   self.txhash = myContract.transactionHash;
                   console.log('Wait a new moments while we mine it. You will receive your address when it is mined.');
                   //self.showtoast("Here's the TX hash: " + self.txhash);
-                  self.fire('add-toast', {
-                    msg: 'Here\'s the TX hash: ' + self.txhash
-                  });
+                 
 
                   // check address on the second call (contract deployed)
                 } else {
@@ -560,8 +568,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   //                  self.fire('add-toast', {
                   //                    msg: 'Contract deployed: ' + self.contractaddress
                   //                  });
-                  fn(err, self.contractaddress);
+                  
                 }
+                fn(err,self.txhash, self.contractaddress);
               } else {
                 console.log('error:', err);
                 //self.showtoast("Error: " + err);
@@ -577,7 +586,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       },
 
-      _addtoIndexContract: function(contractaddress) {
+      _addtoIndexContract: function(contractaddress,fn) {
         var self = this;
         //      debugger;
         //this.contracturl = this.resolveUrl('../../contracts/blockTube.json');
@@ -610,12 +619,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   console.log('ERROR: Transaction didnt go through. See console.');
                 } else {
                   console.log('Transaction Successful!');
-                  self.progress = 'addedtoindex';
+                  //self.progress = 'addedtoindex';
                   console.log('Tx hash=', result);
                   // set vote status to TxHash received 
-                  self.votestatus = 2;
-                  self.transactionHash = result;
+                  //self.votestatus = 2;
+                  //self.transactionHash = result;
                 }
+                fn(err,result);
               });
           });
 
