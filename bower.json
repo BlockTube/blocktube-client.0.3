@@ -14,7 +14,8 @@
     "ipfs-upload": "^0.0.13",
     "iron-localstorage": "^1.0.5",
     "file-upload": "https://github.com/BlockTube/file-upload.git#^1.7.5",
-    "polymer-img-crop": "https://github.com/BlockTube/polymer-img-crop.git"
+    "polymer-img-crop": "https://github.com/BlockTube/polymer-img-crop.git",
+    "video.js": "^5.10.6"
   },
   "devDependencies": {}
 }

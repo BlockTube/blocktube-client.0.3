@@ -18,6 +18,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bt-input/bt-input.html">
 <link rel="import" href="../bt-input/bt-textarea.html">
 
+<link href="../../bower_components/video.js/dist/video-js.min.css" rel="stylesheet">
+<script src="../../bower_components/video.js/dist/video.min.js"></script>
+<script>
+//  videojs.options.flash.swf = "http://example.com/path/to/video-js.swf"
+</script>
+
 <dom-module id="bt-upload">
   <template>
     <style is="custom-style" include="shared-styles"></style>
@@ -107,38 +113,60 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
     </style>
 
-          <ipfs-upload hidefileinput id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ></ipfs-upload>
+    <ipfs-upload hidefileinput id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ></ipfs-upload>
 
-      <iron-pages selected="{{state}}" attr-for-selected="state">
+    <iron-pages selected="{{state}}" attr-for-selected="state">
 
       <section state="coinsdepleted">
-          <div class="center">
+        <div class="center">
           <p>You lack the funds to create a new clip</p>
           <p>Get an invite from somebody to gain some BTcoins</p>
-<!--           <p>Buy some BTcoins</p>
-          <h2 class="coinsbar">{{btbalance}}<span class="coinsbaricon">ß</span></h2>
- -->      
-          <h2 class="coinsbar">{{ethbalance}}<span class="coinsbaricon">Ξ</span></h2>
-          <a href="http://faucet.ma.cx:3000/deonate/{{account}}">get some ETH from the faucet</a>
-        </div>
-      </section>
+          <!--           <p>Buy some BTcoins</p>
+        <h2 class="coinsbar">
+          {{btbalance}}
+          <span class="coinsbaricon">ß</span>
+        </h2>
+        -->
+        <h2 class="coinsbar">
+          {{ethbalance}}
+          <span class="coinsbaricon">Ξ</span>
+        </h2>
+        <a href="http://faucet.ma.cx:3000/donate/{{account}}">get some ETH from the faucet</a>
+      </div>
+    </section>
 
-        <section state="firstuse">
-          <div class="center">
-          <p>Explanation of first use here maybe ?</p>
-        </div>
-      </section>
+    <section state="firstuse">
+      <div class="center">
+        <p>Explanation of first use here maybe ?</p>
+      </div>
+    </section>
 
-      <section state="start">
-        <div class="uploader">
-          <div class="uploadcanvas">
-            <file-upload id="clipupload" target="{{ipfsuploadhost}}/api/v0/add?stream-channels=true" on-success="_setclipipfshash" on-error="uploaderror" accept="*/*"><bt-button color="orange">Choose file</bt-button></file-upload>
-          </div>
-          <div class="whitespace"></div>
-          <bt-input autofocus label="Title" bind-value="{{title}}" color="orange" big></bt-input>
-          <bt-input label="Description" bind-value="{{description}}" color="orange"></bt-input>
-          <bt-input label="Tags" placeholder="comma, separated" bind-value="{{tags}}" color="orange"></bt-input>
-          <bt-input label="Clipshares" bind-value="{{clipshares}}" value="100" color="orange"></bt-input>
+    <section state="start">
+      <div class="uploader">
+        <div class="uploadcanvas">
+
+         <!--  <template is="dom-if" if="{{_is(progress,'uploadcomplete')}}"> -->
+
+ <video id="video_upload" class="video-js vjs-default-skin"
+  controls autoplay="false"
+  data-setup='{"example_option":true}'>
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+              </p>
+            </video>
+
+           
+        <!--   </template> -->
+          <file-upload id="clipupload" target="{{ipfsuploadhost}}/api/v0/add?stream-channels=true" on-success="_setclipipfshash" on-error="uploaderror" accept="*/*">
+            <bt-button color="orange">Choose file</bt-button>
+          </file-upload>
+        </div>
+        <div class="whitespace"></div>
+        <bt-input autofocus label="Title" bind-value="{{title}}" color="orange" big></bt-input>
+        <bt-input label="Description" bind-value="{{description}}" color="orange"></bt-input>
+        <bt-input label="Tags" placeholder="comma, separated" bind-value="{{tags}}" color="orange"></bt-input>
+        <bt-input label="Clipshares" bind-value="{{clipshares}}" value="100" color="orange"></bt-input>
         <template is="dom-if" if="{{_is(state,'uploading')}}">
           <h3>Uploading to IPFS...</h3>
         </template>
@@ -159,7 +187,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </section>
 
   <section state="thumb">
-    <div id="videoland" ></div>
+
     <canvas id="thecanvas" class="center" crossOrigin="anonymous"></canvas>
     <div id="thumbnailContainer" class="center"></div>
     <div class="container center">
@@ -365,6 +393,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
           this.newvideo = 'http://gateway.ipfs.io/ipfs/' + this.metadata.video;
 
+          var self = this;
+
+          videojs(document.getElementById('video_upload'), {}, function() {
+           
+            this.src(self.newvideo);
+          });
+
+
+
           this.thumbnailviewer();
         } catch (e) {
           //error uploading
@@ -374,26 +411,26 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       thumbnailviewer: function() {
        
-        var self = this;
+      // var self = this;
 
-        var elem = document.createElement('video');
-        var place = document.querySelector('#videoland');
+      // var elem = document.createElement('video');
+      // var place = document.querySelector('#videoland');
 
-        elem.src = this.newvideo;
-        elem.controls = true;
-        elem.id = 'newvideo';
-        elem.crossOrigin = 'Anonymous';
+      // elem.src = this.newvideo;
+      // elem.controls = true;
+      // elem.id = 'newvideo';
+      // elem.crossOrigin = 'Anonymous';
 
-        place.appendChild(elem);
+      // place.appendChild(elem);
 
-        video = elem;
+      // video = elem;
 
-        var i = 0;
-        elem.addEventListener('seeked', function() {
-          // now video has seeked and current frames will show
-          // at the time as we expect
-          self.generateThumbnail(i);
-        }, false);
+      // var i = 0;
+      // elem.addEventListener('seeked', function() {
+      //   // now video has seeked and current frames will show
+      //   // at the time as we expect
+      //   self.generateThumbnail(i);
+      // }, false);
       },
 
       generateThumbnail: function() {
