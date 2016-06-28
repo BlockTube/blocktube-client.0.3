@@ -149,9 +149,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <section state="start">
       <div class="uploader">
         <div class="uploadcanvas">
-        <video id="video_upload" class="video-js vjs-default-skin"
-  controls autoplay="true"
-  data-setup='{"example_option":true}'>
+        <video crossOrigin="Anonymous" id="video_upload" class="video-js vjs-default-skin"
+  controls>
               <p class="vjs-no-js">
                 To view this video please enable JavaScript, and consider upgrading to a web browser that
                 <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
@@ -164,6 +163,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
         </div>
+
+        <div>
+   <canvas id="thecanvas" class="center" crossOrigin="Anonymous"></canvas>
+    <div id="thumbnailContainer" class="center"></div>
+  </div>
         <div class="whitespace"></div>
         <bt-input autofocus label="Title" bind-value="{{title}}" color="orange" big></bt-input>
         <bt-input label="Description" bind-value="{{description}}" color="orange"></bt-input>
@@ -414,6 +418,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
          
             self.$.video_upload.src=self.newvideo;
+            self.$.video_upload.play();
+            setTimeout(function(){
+              self.$.video_upload.pause();
+            },150);
+
 //            this.src(self.newvideo);
          
 
@@ -428,7 +437,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       thumbnailviewer: function() {
        
-      // var self = this;
+       var self = this;
 
       // var elem = document.createElement('video');
       // var place = document.querySelector('#videoland');
@@ -442,22 +451,23 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       // video = elem;
 
-      // var i = 0;
-      // elem.addEventListener('seeked', function() {
+       var i = 0;
+      this.$.video_upload.addEventListener('seeked', function() {
       //   // now video has seeked and current frames will show
       //   // at the time as we expect
-      //   self.generateThumbnail(i);
-      // }, false);
+      console.log('seeked');
+         self.generateThumbnail(i);
+       }, false);
       },
 
       generateThumbnail: function() {
         //generate thumbnail URL data
 
         var context = thecanvas.getContext('2d');
-        context.drawImage(video, 0, 0, 280, 150);
+        context.drawImage(this.$.video_upload, 0, 0, 280, 150);
 
-        thecanvas.crossOrigin = 'Anonymous';
-        var dataURL = thecanvas.toDataURL();
+        //thecanvas.crossOrigin = 'Anonymous';
+        var dataURL = context.getImageData(0, 0, 280, 150); //toDataURL();
 
         //create img
         var img = document.createElement('img');

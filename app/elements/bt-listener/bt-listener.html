@@ -29,10 +29,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
       },
       _web3: function() {
-        console.log('bt-listener: creating filter');
+        //console.log('bt-listener: creating filter');
         this.filter = this.web3.eth.filter('latest').watch(function(err, blockHash) {
           this.blockheight = this.web3.eth.getBlock(blockHash).number;
-          console.log('bt-listener: new blockheight',this.blockheight);
+          //console.log('bt-listener: new blockheight',this.blockheight);
         }.bind(this));
       },
       detached: function(){
