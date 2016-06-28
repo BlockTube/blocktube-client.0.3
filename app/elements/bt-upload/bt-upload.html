@@ -490,9 +490,11 @@ clip at {{contractaddress}}
 
         // upload thumbnail
         var base64 = this.$.thumbnail.src.replace(/^data:image\/(png|jpg);base64,/, '');
-        var imgdata = window.atob(base64);
+        debugger;
+        var imgbuffer = new Buffer(base64, 'base64');
+        //var imgdata = b.from(base64, 'base64');
         //var imgdata = this.$.thecanvas.toDataURL("image/png");
-        this.$.ipfsupload.add(new Buffer(imgdata), function(err, res) {
+        this.$.ipfsupload.add(imgbuffer, function(err, res) {
 
           if (!err && res[0] && res[0].Hash) {
 
@@ -506,7 +508,6 @@ clip at {{contractaddress}}
           }
 
         });
-        //this.state = 'process';
       },
 
       createclip: function() {
