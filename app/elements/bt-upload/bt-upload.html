@@ -19,7 +19,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bt-input/bt-textarea.html">
 <!-- 
 <link href="../../bower_components/video.js/dist/video-js.min.css" rel="stylesheet">
-<script src="../../bower_components/video.js/dist/video.min.js"></script> -->
+<script src="../../bower_components/video.js/dist/video.min.js"></script>
+-->
 <script>
 //  videojs.options.flash.swf = "http://example.com/path/to/video-js.swf"
 </script>
@@ -63,9 +64,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
       #thecanvas {
-        width: 505px;
+/*        width: 505px;
         height: 286px;
-      }
+*/ 
+
+  display:none;
+     }
 
       .center {
         @apply(--layout-vertical);
@@ -141,33 +145,29 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </div>
     </section>
 
-
-
-
-
-
     <section state="start">
       <div class="uploader">
         <div class="uploadcanvas">
-        <video crossOrigin="Anonymous" id="video_upload" class="video-js vjs-default-skin"
-  controls>
-              <p class="vjs-no-js">
-                To view this video please enable JavaScript, and consider upgrading to a web browser that
-                <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-              </p>
-            </video>
+       
+          <video width="384" height="216" crossOrigin="Anonymous" id="video_upload" class="video-js vjs-default-skin" controls>
+            <p class="vjs-no-js">
+              To view this video please enable JavaScript, and consider upgrading to a web browser that
+              <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+            </p>
+          </video>
+       
           <file-upload id="clipupload" target="{{ipfsuploadhost}}/api/v0/add?stream-channels=true" on-success="_setclipipfshash" on-error="uploaderror" accept="*/*">
             <bt-button color="orange">Choose file</bt-button>
           </file-upload>
- 
-
 
         </div>
 
+        <!-- thumbnail container -->
         <div>
-   <canvas id="thecanvas" class="center" crossOrigin="Anonymous"></canvas>
-    <div id="thumbnailContainer" class="center"></div>
-  </div>
+          <canvas id="thecanvas" class="center" crossOrigin="Anonymous"></canvas>
+          <img  crossOrigin="Anonymous" id="thumbnail">
+        </div>
+
         <div class="whitespace"></div>
         <bt-input autofocus label="Title" bind-value="{{title}}" color="orange" big></bt-input>
         <bt-input label="Description" bind-value="{{description}}" color="orange"></bt-input>
@@ -183,84 +183,80 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </div>
   </section>
 
-<!--   <section state="uploading">
-    <div class="center">
-      <span class="spacer"></span>
-      <span class="spacer"></span>
-      <h3>1. Choose a movie file</h3>
-      <p>Uploading to IPFS...</p>
-      <span class="spacer"></span>
+  <!--   <section state="uploading">
+  <div class="center">
+    <span class="spacer"></span>
+    <span class="spacer"></span>
+    <h3>1. Choose a movie file</h3>
+    <p>Uploading to IPFS...</p>
+    <span class="spacer"></span>
 
-    </div>
-  </section> -->
-
+  </div>
+</section>
+-->
 <!--   <section state="thumb">
 
-
-
-
-    <canvas id="thecanvas" class="center" crossOrigin="anonymous"></canvas>
-    <div id="thumbnailContainer" class="center"></div>
-    <div class="container center">
-      <h3 class="center">Scrub video to generate a new thumbnail.</h3>
-      <paper-button raised on-tap="setthumb">set thumbnail</paper-button>
-      <span class="spacer"></span>
-      <span class="spacer"></span>
-    </section> -->
-
+<canvas id="thecanvas" class="center" crossOrigin="anonymous"></canvas>
+<div id="thumbnailContainer" class="center"></div>
+<div class="container center">
+  <h3 class="center">Scrub video to generate a new thumbnail.</h3>
+  <paper-button raised on-tap="setthumb">set thumbnail</paper-button>
+  <span class="spacer"></span>
+  <span class="spacer"></span>
+</section>
+-->
 <!--     <section state="meta">
-      <div class="container">
-        <span class="spacer"></span>
-        <paper-input label="Title" char-counter maxlength="88" bind-value="{{title}}"></paper-input>
-        <paper-input label="Description" bind-value="{{description}}" maxlength="188" ></paper-input>
-        <paper-input label="Tags" placeholder="comma, separated" bind-value="{{tags}}"></paper-input>
-        <paper-input label="Clipshares" bind-value="{{clipshares}}" value="100"></paper-input>
-        <template is="dom-repeat" items="{{tagsarray}}">
-          <span>
-            <mark>{{item}}</mark>
-          </span>
+<div class="container">
+  <span class="spacer"></span>
+  <paper-input label="Title" char-counter maxlength="88" bind-value="{{title}}"></paper-input>
+  <paper-input label="Description" bind-value="{{description}}" maxlength="188" ></paper-input>
+  <paper-input label="Tags" placeholder="comma, separated" bind-value="{{tags}}"></paper-input>
+  <paper-input label="Clipshares" bind-value="{{clipshares}}" value="100"></paper-input>
+  <template is="dom-repeat" items="{{tagsarray}}">
+    <span>
+      <mark>{{item}}</mark>
+    </span>
 
-        </template>
+  </template>
 
-        <paper-button class="center" raised on-tap="upload" disable="{{ipfsready}}">Create blocktu.be clip</paper-button>
-        <span class="spacer"></span>
-      </div>
+  <paper-button class="center" raised on-tap="upload" disable="{{ipfsready}}">Create blocktu.be clip</paper-button>
+  <span class="spacer"></span>
+</div>
 
-    </section> -->
-
+</section>
+-->
 <!--     <section state="process">
-      <div class="container">
-        <span class="spacer"></span>
-        <template is="dom-if" if="{{_is(progress,'uploading')}}">
-          <span>Your clip is being uploaded</span>
-        </template>
-        <template is="dom-if" if="{{_is(progress,'uploadcomplete')}}">
+<div class="container">
+<span class="spacer"></span>
+<template is="dom-if" if="{{_is(progress,'uploading')}}">
+  <span>Your clip is being uploaded</span>
+</template>
+<template is="dom-if" if="{{_is(progress,'uploadcomplete')}}">
 
-          <span>Upload complete</span>
-        </template>
-        <template is="dom-if" if="{{_is(progress,'creatingcontract')}}">
-          <span>Creating contract for your clip</span>
-        </template>
-        <template is="dom-if" if="{{_is(progress,'contractcreated')}}">
-          <span>Your clip is now ready.</span>
-        </template>
-        <template is="dom-if" if="{{_is(progress,'addingtoindex')}}">
-          <span>Adding to index contract.</span>
-        </template>
-        <template is="dom-if" if="{{_is(progress,'addedtoindex')}}">
-          <span>Added to index.</span>
-        </template>
-        <span class="spacer"></span>
-        clip at {{contractaddress}}
-      </div>
-    </section> -->
+  <span>Upload complete</span>
+</template>
+<template is="dom-if" if="{{_is(progress,'creatingcontract')}}">
+  <span>Creating contract for your clip</span>
+</template>
+<template is="dom-if" if="{{_is(progress,'contractcreated')}}">
+  <span>Your clip is now ready.</span>
+</template>
+<template is="dom-if" if="{{_is(progress,'addingtoindex')}}">
+  <span>Adding to index contract.</span>
+</template>
+<template is="dom-if" if="{{_is(progress,'addedtoindex')}}">
+  <span>Added to index.</span>
+</template>
+<span class="spacer"></span>
+clip at {{contractaddress}}
+</div>
+</section>
+-->
+</iron-pages>
 
+<!-- SPonnet; we should give users the ability to enter an ipfs hash instead of uploading the file. -->
 
-  </iron-pages>
-
-  <!-- SPonnet; we should give users the ability to enter an ipfs hash instead of uploading the file. -->
-
-  <!--  <paper-input label="ipfs hash" bind-value="{{cliphash}}" label="ipfs hash"></paper-input>
+<!--  <paper-input label="ipfs hash" bind-value="{{cliphash}}" label="ipfs hash"></paper-input>
 
 <paper-button raised on-tap="_setipfshash"></paper-button>
 -->
@@ -269,9 +265,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   (function() {
     'use strict';
 
-    var thecanvas;
-    var video;
-    var thumbnailContainer;
+    // var thecanvas;
+    // var video;
+    // var thumbnailContainer;
 
     Polymer({
       is: 'bt-upload',
@@ -319,15 +315,16 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       ready: function() {
+        var self = this;
         this.state = 'start';
-        thecanvas = this.$.thecanvas;
-        thumbnailContainer = this.$.thumbnailContainer;
-        console.log(thecanvas);
+        //thecanvas = this.$.thecanvas;
+        //thumbnailContainer = this.$.thumbnailContainer;
+        //console.log(thecanvas);
         this.ipfsready = false;
-         videojs(this.$.video_upload, {}, function() {
-
+        videojs(this.$.video_upload, {}, function() {
+          delete self.$.video_upload.src;
           console.log('videoJS is ready to rock and roll');
-         });
+        });
       },
 
       attached: function() {
@@ -339,6 +336,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }).value;
 
         this._checkbalance();
+        
+      
+
       },
 
       _checkbalance: function() {
@@ -418,17 +418,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
          
             self.$.video_upload.src=self.newvideo;
+
+            // Play video - but set to pause immediately - this will show the seek bar.
             self.$.video_upload.play();
             setTimeout(function(){
               self.$.video_upload.pause();
+              self.thumbnailviewer();
             },150);
 
-//            this.src(self.newvideo);
-         
-
-
-
-          this.thumbnailviewer();
         } catch (e) {
           //error uploading
           console.log(e);
@@ -456,37 +453,64 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       //   // now video has seeked and current frames will show
       //   // at the time as we expect
       console.log('seeked');
-         self.generateThumbnail(i);
+         self.generateThumbnail();
        }, false);
+      
+      // generate first TN
+       self.generateThumbnail();
       },
 
       generateThumbnail: function() {
         //generate thumbnail URL data
 
-        var context = thecanvas.getContext('2d');
-        context.drawImage(this.$.video_upload, 0, 0, 280, 150);
+        this.$.thecanvas.getContext('2d').drawImage(this.$.video_upload, 0, 0, 280, 150);
 
+        var dataUrl = this.$.thecanvas.toDataURL('image/png');
         //thecanvas.crossOrigin = 'Anonymous';
-        var dataURL = context.getImageData(0, 0, 280, 150); //toDataURL();
+        //var dataURL = context.getImageData(0, 0, 280, 150); //toDataURL();
 
         //create img
-        var img = document.createElement('img');
+        
+
+        this.$.thumbnail.src = dataUrl; //this.$.thecanvas.toDataURL();
 
 
-        img.setAttribute('crossOrigin', 'anonymous');
-        img.setAttribute('src', dataURL);
+
+//        var img = document.createElement('img');
+
+
+//        img.setAttribute('crossOrigin', 'anonymous');
+//        img.setAttribute('src', );
 
       },
 
       upload: function() {
+        var self = this;
         this.readyforupload = true;
-        this.createclip();
-        this.progress = 'uploading';
+
+        // upload thumbnail
+        var base64 = this.$.thumbnail.src.replace(/^data:image\/(png|jpg);base64,/, '');
+        var imgdata = window.atob(base64);
+        //var imgdata = this.$.thecanvas.toDataURL("image/png");
+        this.$.ipfsupload.add(new Buffer(imgdata), function(err, res) {
+
+          if (!err && res[0] && res[0].Hash) {
+
+            self.metadata.thumbnail = res[0].Hash;
+            self.progress = 'uploading';
+            self.createclip();
+
+          } else {
+            // TODO : cannot upload thumbnail... show this in UI
+
+          }
+
+        });
         //this.state = 'process';
       },
 
       createclip: function() {
-        debugger;
+        //debugger;
 
         var self = this;
         if (this.readyforupload && this.metadata.video) {
@@ -540,7 +564,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         var self = this;
 
 
-  app.helpers.getfile('../../contracts/MyToken.json', function(err,contractjson) {
+  app.helpers.getfile('../../contracts/blocktubeClip.json', function(err,contractjson) {
           self.progress = 'creatingcontract';
 
           console.log('Creating new contract on account ', self.account);

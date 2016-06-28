@@ -84,7 +84,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             try{
             var myclipContract = this.web3.eth.contract(this.contractabi);
             var myclipContractInstance = myclipContract.at(this.contract);
-            this.hash = myclipContractInstance.ipfsclipobject();
+            this.hash = myclipContractInstance.ipfsclipobject.call();
             this.hash = this.hash.toString();
             this.loadIPFSdata();              
             }catch(e){

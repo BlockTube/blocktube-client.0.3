@@ -164,7 +164,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <div
       class="thumbnail"
       id="thumb"
-      style="background: url({{clipdata.thumbnail}}) no-repeat center; background-size: cover;"></div>
+      style="background: url({{thumbnail}}) no-repeat center; background-size: cover;"></div>
 
       <div  class="container">
         <div class="title">
@@ -246,12 +246,35 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         },
 
 
-_clipdata: function(){
-  console.log('clipdata=',this.clipdata);
-},
+        _clipdata: function() {
+
+          console.log('clipdata=', this.clipdata);
+          if (!this.clipdata.thumbnail) {
+            this.thumbnail = this.ipfs_url + "QmVGxkXGnQMAduHU81Xgn2zLi2kgnvkXMUAWEanZ87nQx9";
+          } else {
+            if (this.clipdata.thumbnail.startsWith('data')) {
+              // it's a dataURL
+              this.thumbnail = this.clipdata.thumbnail;
+            } else {
+              // it's an IPFS hash
+              this.thumbnail = this.ipfs_url + this.clipdata.thumbnail;
+            }
+          }
+          //debugger;
+          //  if (!this.clipdata)
+          //  https://ipfs.pics/QmVGxkXGnQMAduHU81Xgn2zLi2kgnvkXMUAWEanZ87nQx9
+        },
+
         ready: function(){          
           var web3el = document.querySelector('#web3wallet');
           this.web3 = web3el.web3;
+
+         if (!this.ipfs_url) {
+            this.ipfs_url = new Polymer.IronMetaQuery({
+              key: 'ipfs_url'
+            }).value;
+          }
+
         },
 
         hitMe: function(){
