@@ -5,6 +5,15 @@
 
 	function Helpers() {
 		this.filecache = {};
+
+		// add prototype/polyfill for startsWith
+		if (!String.prototype.startsWith) {
+			String.prototype.startsWith = function(searchString, position) {
+				position = position || 0;
+				return this.substr(position, searchString.length) === searchString;
+			};
+		}
+
 	}
 
 	Helpers.prototype.fixaddress = function(address) {

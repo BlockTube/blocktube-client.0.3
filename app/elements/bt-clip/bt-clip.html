@@ -104,19 +104,17 @@
     <bt-clipdata web3="[[web3]]" contract="{{clipcontract}}" clipdata="{{clipdata}}"></bt-clipdata>
 
     <div class="total">
-     <video id="videoplayer" class="video-js vjs-default-skin"
-      controls autoplay="false"
-      data-setup='{"example_option":true}'
-      allowfullscreen='true'
-      webkitallowfullscreen='true'
-      mozallowfullscreen='true'
-      >
-        <p class="vjs-no-js">
-          To view this video please enable JavaScript, and consider upgrading to a web browser that
-          <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-        </p>
-      </video>
-      <h1>{{clipdata.title}}</h1>      
+
+
+ <video id="videoplayer" class="video-js vjs-default-skin"
+  controls autoplay="false"
+  data-setup='{"example_option":true}'>
+              <p class="vjs-no-js">
+                To view this video please enable JavaScript, and consider upgrading to a web browser that
+                <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+              </p>
+            </video>
+      <h1>{{clipdata.name}}</h1>      
       <h2>{{clipdata.description}}</h2>      
 <!--       <bt-button on-tap="_cast">CAST</bt-button> -->
       </div>

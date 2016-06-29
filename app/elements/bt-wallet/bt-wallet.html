@@ -59,10 +59,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       updateBalance: function() {
-        console.log('bt-wallet: update balance');
+        //console.log('bt-wallet: update balance');
         if (this.coincontractInstance && this.account) {
           this.btbalance = this.coincontractInstance.balanceOf(this.account).toNumber();
-          console.log('your BT balance is ',this.btbalance);
+          //console.log('your BT balance is ',this.btbalance);
         }
       },
 
