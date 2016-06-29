@@ -4,6 +4,8 @@
 <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
+<link rel="import" href="../bt-style/bt-style.html">
+
 <!-- <script src="../../bower_components/VideoSub/videosub.js"></script>
  -->
 
@@ -22,6 +24,38 @@
       --big-play-height: 1.5em;
       --slider-bg-color: lighten(var(--primary-background-color, 33%);
       }
+
+      h1 {
+        @apply(--bt-font-h1);
+        margin: 0px;   
+      }
+
+      h2 {
+        @apply(--bt-font-h2);
+        margin: 0px;
+      }
+
+      h4 {
+        @apply(--bt-font-h4);
+        margin: 0px;   
+      }
+
+      h5 {
+        @apply(--bt-font-h5);
+        margin: 0px;
+      }
+
+
+      p {
+        @apply(--bt-font-body);
+        margin: 0px;
+        text-overflow: ellipsis;
+        overflow: hidden; 
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        height: 30px;
+      }
+
 
 
       .total {
@@ -116,7 +150,6 @@
             </video>
       <h1>{{clipdata.name}}</h1>      
       <h2>{{clipdata.description}}</h2>      
-<!--       <bt-button on-tap="_cast">CAST</bt-button> -->
       </div>
       </template>
   <script>

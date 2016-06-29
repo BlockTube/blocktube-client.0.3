@@ -12,24 +12,61 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/lazy-pages/lazy-pages.html">
 <link rel="import" href="../bt-index/bt-index.html">
 <link rel="import" href="../bt-listitem/bt-listitem.html">
-
+<link rel="import" href="../bt-style/bt-style.html">
 
 <dom-module id="bt-home">
   <template>
     <style>
       :host {
         display: block;
+        height: 100%; 
+      }
+
+      .padding {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 5vh 10vw 5vh 10vw;
+      }
+
+      .wrapit {
         height: 100%;
         @apply(--layout-horizontal);
+        @apply(--layout-start);
+        @apply(--layout-start-justified);
         @apply(--layout-wrap);
-        
       }
+
+      h1 {
+        @apply(--bt-font-h1);
+      }
+      p {
+        @apply(--bt-font-body);
+      }
+      @media all and (min-width: 0) and (max-width: 360px) and (orientation: portrait) {    
+
+        .padding {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 3vh 0vw 5vh 0vw;
+        }
+        .wrapit {
+          height: 100%;
+          @apply(--layout-horizontal);
+          @apply(--layout-start);
+          @apply(--layout-center-justified);
+          @apply(--layout-wrap);
+        }
+      }
+
+
     </style>
+    <div class="wrapit padding">
     <bt-index clips="{{clips}}"></bt-index>
       <template is="dom-repeat" items="[[clips]]">
         <bt-listitem id="{{item.address}}" contract="[[item.address]]">
         </bt-listitem>
       </template>
+      </div>
   </template>
   <script>
   (function() {
