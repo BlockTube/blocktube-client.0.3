@@ -16,61 +16,111 @@
     <style>
       :host {
         display: block;
+      --primary-foreground-color: white;
+      --primary-background-color: #2B333F;
+      --big-play-width: 3em; 
+      --big-play-height: 1.5em;
+      --slider-bg-color: lighten(var(--primary-background-color, 33%);
       }
-      video {
-      /*  HIER NOG NIET NAAR ZIEN!*/
+
+
+      .total {
+        width: 100%;
+        box-sizing: border-box;
+        padding: 10vh 5vw 0px 5vw;
+
+      }
+
+
+        /*
+        #videoplayer {
+          width: 640px;
+          height: 360px;          
+        }*/
+
+
+        #videoplayer {
+          width: 340px;
+          height: 190px;  
+         /* max-width: 100%; */       
         }
 
-        .wide {
-          width: 100%; 
+
+        .video-js {
+
+          font-size: 10px;
+          color: var(--primary-foreground-color);
         }
 
-        #playpause {
-          width: 80px;
-          height: 80px;
+        .vjs-default-skin .vjs-big-play-button {
+          font-size: 3em;
+          line-height: var(--big-play-height);
+          height: var(--big-play-height);
+          width: var(--big-play-width);
+          border: 0.06666em solid var(--primary-foreground-color);
+          border-radius: 0.3em;
+          left: 50%;
+          top: 50%;
         }
 
-        .soundslider {
-          width: 100px;
+        .video-js .vjs-control-bar,
+        .video-js .vjs-big-play-button,
+        .video-js .vjs-menu-button .vjs-menu-content {
+          background-color: var(--primary-background-color);
         }
 
-        .controls {
-/*          background-color: red;
-*/        }
-
-        .overlay {
-          
-          max-height: 300px;
+        .video-js .vjs-slider {
+          background-color: var(--slider-bg-color);
+        }
+        .video-js .vjs-volume-level,
+        .video-js .vjs-play-progress,
+        .video-js .vjs-slider-bar {
+          background: var(--primary-foreground-color);
         }
 
-        paper-slider {
-          --paper-slider-active-color: var(--bt-orange);
-          --paper-slider-secondary-color: var(--bt-orange);
-          --paper-slider-knob-color: var(--bt-orange);
+        .video-js .vjs-load-progress {
         }
+
+        .video-js .vjs-load-progress div {
+        }
+
+
+
+    @media all and (min-width: 0) and (max-width: 340px) and (orientation: portrait) {    
+
+
+        #videoplayer {
+          width: 170px;
+          height: 85px;  
+         /* max-width: 100%; */       
+        }
+
+    }
+
 
     </style>
 
 
     <bt-clipdata web3="[[web3]]" contract="{{clipcontract}}" clipdata="{{clipdata}}"></bt-clipdata>
 
-    <div class="vertical layout">
-
- <video id="videoplayer" class="video-js vjs-default-skin"
-  controls autoplay="false"
-  data-setup='{"example_option":true}'>
-              <p class="vjs-no-js">
-                To view this video please enable JavaScript, and consider upgrading to a web browser that
-                <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-              </p>
-            </video>
+    <div class="total">
+     <video id="videoplayer" class="video-js vjs-default-skin"
+      controls autoplay="false"
+      data-setup='{"example_option":true}'
+      allowfullscreen='true'
+      webkitallowfullscreen='true'
+      mozallowfullscreen='true'
+      >
+        <p class="vjs-no-js">
+          To view this video please enable JavaScript, and consider upgrading to a web browser that
+          <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+        </p>
+      </video>
       <h1>{{clipdata.title}}</h1>      
       <h2>{{clipdata.description}}</h2>      
-
-      <bt-button on-tap="_cast">CAST</bt-button>
-
-          </div>
-        </template>
+<!--       <bt-button on-tap="_cast">CAST</bt-button> -->
+      </div>
+      </template>
   <script>
   (function() {
     // 'use strict';
