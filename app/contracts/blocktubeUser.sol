@@ -1,11 +1,11 @@
-contract btuser {
+contract blocktubeUser {
 
 	address owner;
-	users[address] public Users;
+	mapping(address => string) public users;
 
 	event userAdded(address who, string hash);
 
-	function btuser(){
+	function blocktubeUser(){
 	    owner = msg.sender;
 	}
 

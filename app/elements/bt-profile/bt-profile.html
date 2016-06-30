@@ -18,6 +18,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bt-style/bt-style.html">
 <link rel="import" href="../bt-button/bt-button.html">
 <link rel="import" href="../bt-input/bt-input.html">
+<link rel="import" href="../bt-prepaid/bt-prepaidmake.html">
 
 <dom-module id="bt-profile">
   <template>
@@ -378,6 +379,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!--       <h4 class="temp">Hier dan een lijstje met mijn geuploade video's?</h4> -->
       </div>
     </div>
+    <h2>Invite someone to Blocktube</h2>
+    <p>Inviting someone to Blocktube will create a new account (wallet) which can be given to someone else. It will create an invite link which your friend can use to start using Blocktube.</p>
+    <p>Invitation that are not claimed can be refunded to your own account.</p>
+  <bt-prepaidmake web3="[[web3]]" account="[[account]]" status="{{prepaidstatus}}"></bt-prepaidmake>
 
 <!-- this is headless -->
 <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*"></file-upload>
@@ -433,6 +438,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.account = app.helpers.fixaddress(this.account);
         this.coincontract = new Polymer.IronMetaQuery({
           key: 'coincontract'
+        }).value;
+        this.profilecontract = new Polymer.IronMetaQuery({
+          key: 'profilecontract'
         }).value;
         this._initipfs();
       },
@@ -519,7 +527,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       },
 
       _saveProfile: function(){
-
+        var self = this;
         this.$.ipfsupload.add(JSON.stringify(this.profiledata), function(err, res) {
             if (!err && res[0] && res[0].Hash) {
               console.log('your profile hash is',res[0].Hash);
@@ -535,8 +543,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         app.helpers.getfile('../../contracts/Profile.json', function(err, contractjson) {
           self.web3.eth.getGasPrice(function(err, result) {
             var gasPrice = result.toNumber(10);
-            var MyContract = self.web3.eth.contract(contractjson.abi);
-            MyContract.setProfileHash(hash, {
+debugger;
+            var myContractInstance = MyContract.at(self.profilecontract);
+            MyContract.myContractInstance(hash, {
               from: self.fixaddress(self.account),
               gasPrice: gasPrice,
               gasLimit: 3000000,
@@ -580,6 +589,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
+      makeInvite: function(){
+
+      }
 
     });
   })();

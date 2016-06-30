@@ -1,0 +1,257 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="bt-prepaidmake">
+  <template>
+
+  <iron-localstorage name="bt-prepaidwallets"
+    value="{{prepaidwallets}}"
+    on-iron-localstorage-load="_prepaidwalletsloaded"
+    on-iron-localstorage-load-empty="_prepaidwalletsinit"></iron-localstorage>
+
+    <style is="custom-style" include="shared-styles"></style>
+
+      <div class="container">
+
+          <bt-button color="orange" on-tap="doMakeInvite">Create an invite code</bt-button>
+
+          <template is="dom-if" if="{{_is(status,0)}}">
+          Status is 0
+          </template>
+          <template is="dom-if" if="{{!_is(status,0)}}">
+          Status is {{status}}
+          </template>
+          <template is="dom-if" if="{{invitecode}}">
+          Your invite code is: <a href="mailto:?subject=BlockTubeinvite {{invitecode}}">{{invitecode}}</a>
+          </template>
+
+      </div>  
+</template>
+
+<script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'bt-prepaidmake',
+
+        properties: {
+          web3: {
+            type: Object,
+            observer: '_web3'
+          },
+          account: {
+            type: String
+          },
+          status: {
+            type: Number
+          }
+        },
+
+        ready: function() {
+                    this.status = 0;
+
+        },
+
+        close: function() {},
+
+        _web3: function() {
+
+        },
+        
+        _is: function(a, b) {
+          if (b === undefined){
+            b = true;
+          }
+          return a === b;
+        },
+
+        _prepaidwalletsinit: function(){
+          this.prepaidwallets = [];
+        },
+
+        _prepaidwalletsloaded: function(){
+
+        },
+
+        doMakeInvite: function() {
+          console.log('MAKE INVITE');
+          
+          this.status = 1;
+
+          var secretSeed = lightwallet.keystore.generateRandomSeed();
+
+          lightwallet.keystore.deriveKeyFromPassword('test', function(err, pwDerivedKey) {
+
+            var keystore = new lightwallet.keystore(secretSeed, pwDerivedKey);
+            keystore.generateNewAddress(pwDerivedKey, 1);
+
+            this.publickey = keystore.getAddresses()[0];
+            this.privatekey = keystore.exportPrivateKey(this.publickey, pwDerivedKey);
+
+            this._sendvalue(3 * 300000 + 0.1 * 1e18, function() {
+              // create the pre-paid contract
+            }.bind(this));
+
+            this._createContract();
+
+
+          }.bind(this));
+        },
+
+        fixaddress: function(address) {
+          function strStartsWith(str, prefix) {
+            return str.indexOf(prefix) === 0;
+          }
+
+          if (!strStartsWith(address, '0x')) {
+            return ('0x' + address);
+          }
+          return address;
+        },
+
+        _sendvalue: function(amountofGas, cb) {
+          this.web3.eth.getGasPrice(function(err, result) {
+            var gasPrice = result.toNumber(10);
+
+            console.log('balance',this.web3.eth.getBalance(this.fixaddress(this.account)).toNumber());
+            console.log('sending',amountofGas,'gas to ',this.publickey);
+            
+
+            this.web3.eth.sendTransaction({
+              from: this.fixaddress(this.account),
+              to: this.fixaddress(this.publickey),
+              gas: 300000,
+              gasPrice: gasPrice,
+              gasLimit: 3000000,
+              value: amountofGas // + this.web3.toWei('0.1', 'ether')
+            }, function(error, result) {
+
+              if (error){
+                console.log('TX error',error);
+                return cb(false);
+              }
+
+              console.log('txhash=', result);
+              this.status = 2;
+
+              this.waitTx(result, function(success) {
+                if (!success){
+                  console.log('waitTX failed');
+                }else{
+                  console.log('mined TXhash', result);
+                  this.status = 3;
+                }
+                cb(success);
+              }.bind(this))
+
+
+            }.bind(this));
+          }.bind(this));
+
+        },
+
+        waitTx: function(txHash, callback) {
+          /*
+           * Watch for a particular transaction hash and call the awaiting function when done;
+           * Ether-pudding uses another method, with web3.eth.getTransaction(...) and checking the txHash;
+           * on https://github.com/ConsenSys/ether-pudding/blob/master/index.js
+           */
+          var blockCounter = 15;
+          // Wait for tx to be finished
+          var filter = this.web3.eth.filter('latest').watch(function(err, blockHash) {
+            if (blockCounter <= 0) {
+              filter.stopWatching();
+              filter = null;
+              console.warn('!! Tx expired !!');
+              if (callback)
+                return callback(false);
+              else
+                return false;
+            }
+            // Get info about latest Ethereum block
+            var block = this.web3.eth.getBlock(blockHash);
+            --blockCounter;
+            console.log('We welcome on stage: Block ',block.number);
+            // Found tx hash?
+            if (block.transactions.indexOf(txHash) > -1) {
+              // Tx is finished
+              filter.stopWatching();
+              filter = null;
+              if (callback)
+                return callback(true);
+              else
+                return true;
+              // Tx hash not found yet?
+            } else {
+              // console.log('Waiting tx..', blockCounter);
+            }
+          }.bind(this));
+        },
+
+        _createContract: function() {
+          var self = this;
+          this.contracturl = this.resolveUrl('../../contracts/BlockTubePrepaid.json');
+          this.importHref(this.contracturl, function(e) {
+
+            var contractjson = JSON.parse(e.target.import.body.innerText);
+
+            this.web3.eth.getGasPrice(function(err, result) {
+              var gasPrice = result.toNumber(10);
+
+              console.log('balance of prepay account is now',this.web3.eth.getBalance(this.fixaddress(this.publickey)).toNumber());
+
+              var blocktubeprepaidContract = this.web3.eth.contract(contractjson.abi);
+              var blocktubeprepaid = blocktubeprepaidContract.new({
+                from: this.fixaddress(this.account),
+                data: contractjson.bytecode,
+                gas: 3000000,
+                gasPrice: gasPrice,
+                gasLimit: 3000000,
+                value: 0.01 * 1e18
+              }, function(e, contract) {
+                if (e){
+                  console.log('error creating contract',e);
+                  return ;
+                }
+                console.log(e, contract);
+                if (typeof contract.address !== 'undefined') {
+                  console.log('Contract mined! address: ' + contract.address + ' transactionHash: ' + contract.transactionHash);
+                  this.status = 4;
+
+                  this.prepaidcontractaddress = contract.address;
+                  this.invitecode = this.privatekey + '-' + this.prepaidcontractaddress;
+
+                  this.push('prepaidwallets', {
+                    invitecode: this.invitecode,
+                    created: app.helpers.unixtime()
+                  });
+                  
+                }
+              }.bind(this));
+            }.bind(this));
+
+          }, function(e) {
+            console.log('ERROR!', e);
+          });
+
+        },
+
+
+        goClaim: function() {
+          Excess.RouteManager.transitionTo('/claiminvite/' + this.invitecode);
+        }
+
+      });
+    })();
+  </script>
+
+</dom-module>
