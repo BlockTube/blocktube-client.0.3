@@ -33,6 +33,10 @@
 		this.getfile.call(contracturl,true,cb);
 	};
 
+	Helpers.prototype.unixtime = function(){
+		return Math.floor(Date.now() / 1000);
+	};
+
 	// loads and caches files loaded from URLS
 	Helpers.prototype.getfile = function(contracturl, asJSON, cb) {
 		// if asJSON is not given, asJSON is assumed to be true

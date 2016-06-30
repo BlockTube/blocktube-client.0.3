@@ -1,0 +1,216 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="bt-prepaidclaim">
+  <template>
+    <style is="custom-style" include="shared-styles"></style>
+
+      <div class="container">
+
+          <h3>Claim invite code</h3>
+         
+          <paper-icon-button toggles icon="favorite" on-tap="doClaimInvite"></paper-icon-button>
+
+          <template is="dom-repeat" items="{{addresses}}">
+            {{item}} -- <!-- <bt-balance web3="[[web3]]" account="[[item]]"></bt-balance> -->
+          </template>
+
+      </div>  
+</template>
+
+<script>
+    (function() {
+      'use strict';
+      
+      Polymer({
+        is: 'bt-prepaidclaim',
+
+        properties: {
+          invitecode: {
+            type: String
+          },
+          // web3: {
+          //   type: Object,
+          //   observer: '_web3'
+          // },
+          account: {
+            type: String
+          }
+        },
+
+        ready: function(){
+          this.addresses = [];
+        },
+
+        close: function(){
+        },
+
+        _web3: function(){
+
+        },
+
+        doClaimInvite: function() {
+          console.log('CLAIM INVITE');
+          var parts = this.invitecode.split('-');
+
+          this.privatekey = parts[0];
+          this.prepaidcontractaddress = parts[1];
+
+          console.log('TODO: call claim() from contract', this.prepaidcontractaddress);
+          console.log('using keypair ', this.publickey, this.privatekey);
+          console.log('recepient of funds =>', this.account);
+          
+          
+            this.push('addresses','0xf1b39a55a3e8e0c277e08190238772743ad85337');
+
+
+
+          //debugger;
+          var secretSeed = lightwallet.keystore.generateRandomSeed();
+
+          lightwallet.keystore.deriveKeyFromPassword('test', function(err, pwDerivedKey) {
+
+            var pubkey = lightwallet.keystore._computeAddressFromPrivKey(this.privatekey);
+            console.log('calculated pubkey', pubkey);
+            this.push('addresses',pubkey);
+
+            this.address = pubkey;
+            this.publickey = '0xf1b39a55a3e8e0c277e08190238772743ad85337';
+
+            var keystore = new lightwallet.keystore(secretSeed, pwDerivedKey);
+            //keystore.generateNewAddress(pwDerivedKey, 1);
+
+            keystore.importPrivateKey(this.privatekey,pwDerivedKey);
+
+            // now try to transfer something from this account to another
+              var web3Provider = new HookedWeb3Provider({
+              host: new Polymer.IronMetaQuery({
+                key: 'eth_node'
+              }).value,
+              transaction_signer: keystore
+            });
+
+            this.web3local = new Web3();
+            this.web3local.setProvider(web3Provider);
+
+            keystore.passwordProvider = function(callback) {
+              callback(null, 'test');
+            };
+
+            this._sendvalue( 0.01 * 1e18, function(success) {
+              // create the pre-paid contract
+//              this._createContract(web3);
+              console.log('done... success=',success);
+            }.bind(this));
+
+
+
+
+
+          }.bind(this));
+
+
+        },
+ fixaddress: function(address) {
+          function strStartsWith(str, prefix) {
+            return str.indexOf(prefix) === 0;
+          }
+
+          if (!strStartsWith(address, '0x')) {
+            return ('0x' + address);
+          }
+          return address;
+        },
+
+   _sendvalue: function(amountofGas, cb) {
+          this.web3local.eth.getGasPrice(function(err, result) {
+            var gasPrice = result.toNumber(10);
+
+            console.log('balance of your account is now',this.web3local.eth.getBalance(this.fixaddress(this.address)).toNumber());
+
+            this.web3local.eth.sendTransaction({
+              from: this.fixaddress(this.address),
+              to: this.fixaddress(this.publickey),
+              gas: 300000,
+              gasPrice: gasPrice,
+              gasLimit: 3000000,
+              value: amountofGas // + this.web3.toWei('0.1', 'ether')
+            }, function(error, result) {
+
+              if (error){
+                console.log('TX error',error);
+                return cb(false);
+              }
+
+              console.log('txhash=', result);
+              this.status = 2;
+
+              this.waitTx(result, function(success) {
+                if (!success){
+                  console.log('waitTX failed');
+                }else{
+                  console.log('mined TXhash', result);
+                  this.status = 3;
+                }
+                cb(success);
+              }.bind(this))
+
+
+            }.bind(this));
+          }.bind(this));
+
+        },
+
+        waitTx: function(txHash, callback) {
+          /*
+           * Watch for a particular transaction hash and call the awaiting function when done;
+           * Ether-pudding uses another method, with web3.eth.getTransaction(...) and checking the txHash;
+           * on https://github.com/ConsenSys/ether-pudding/blob/master/index.js
+           */
+          var blockCounter = 15;
+          // Wait for tx to be finished
+          var filter = this.web3local.eth.filter('latest').watch(function(err, blockHash) {
+            if (blockCounter <= 0) {
+              filter.stopWatching();
+              filter = null;
+              console.warn('!! Tx expired !!');
+              if (callback)
+                return callback(false);
+              else
+                return false;
+            }
+            // Get info about latest Ethereum block
+            var block = this.web3local.eth.getBlock(blockHash);
+            --blockCounter;
+            // Found tx hash?
+            if (block.transactions.indexOf(txHash) > -1) {
+              // Tx is finished
+              filter.stopWatching();
+              filter = null;
+              if (callback)
+                return callback(true);
+              else
+                return true;
+              // Tx hash not found yet?
+            } else {
+              // console.log('Waiting tx..', blockCounter);
+            }
+          }.bind(this));
+        },
+
+
+      });
+    })();
+  </script>
+
+</dom-module>

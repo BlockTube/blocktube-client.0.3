@@ -18,6 +18,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../bt-style/bt-style.html">
 <link rel="import" href="../bt-button/bt-button.html">
 <link rel="import" href="../bt-input/bt-input.html">
+<link rel="import" href="../bt-prepaid/bt-prepaidmake.html">
 
 <dom-module id="bt-profile">
   <template>
@@ -296,6 +297,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
     </style>
+
+
+    <ipfs-upload hidefileinput id="ipfsupload" host="/ip4/109.123.70.141/tcp/5001" ></ipfs-upload>
+
     <div class="canvas">
       <div class="padding">
 
@@ -342,6 +347,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             </div> -->
           </div>
           <!-- <div>BTcoins {{btcoinbalance}}</div> -->
+          <bt-button class="confirmbtn" on-tap="_saveProfile" color="green" medium bg="transparent">Save my profile</bt-button>
         </div>
         
 
@@ -373,6 +379,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!--       <h4 class="temp">Hier dan een lijstje met mijn geuploade video's?</h4> -->
       </div>
     </div>
+    <h2>Invite someone to Blocktube</h2>
+    <p>Inviting someone to Blocktube will create a new account (wallet) which can be given to someone else. It will create an invite link which your friend can use to start using Blocktube.</p>
+    <p>Invitation that are not claimed can be refunded to your own account.</p>
+  <bt-prepaidmake web3="[[web3]]" account="[[account]]" status="{{prepaidstatus}}"></bt-prepaidmake>
 
 <!-- this is headless -->
 <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*"></file-upload>
@@ -429,6 +439,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.coincontract = new Polymer.IronMetaQuery({
           key: 'coincontract'
         }).value;
+        this.profilecontract = new Polymer.IronMetaQuery({
+          key: 'profilecontract'
+        }).value;
         this._initipfs();
       },
 
@@ -444,7 +457,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         console.log(e);
       },
      
-
       _web3: function(){
         //debugger;
         this.getBTbalance();
@@ -514,25 +526,42 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.$.avatarupload.clear();
       },
 
-      // _saveProfile: function(){
+      _saveProfile: function(){
+        var self = this;
+        this.$.ipfsupload.add(JSON.stringify(this.profiledata), function(err, res) {
+            if (!err && res[0] && res[0].Hash) {
+              console.log('your profile hash is',res[0].Hash);
+              self._registerAvatar(res[0].Hash);
+            } else {
+              console.log('error uploading metadata to IPFS', err);
+            }
+          });
+      },
 
-      //   this.$.ipfsupload.add(JSON.stringify(this.metadata), function(err, res) {
-      //       // Yeah man - create that contract here now please....
-
-      //       if (!err && res[0] && res[0].Hash) {
-      //         self._createNewUploadContract(res[0].Hash,function(err,contractaddress){
-      //         self.progress = 'contractcreated';
-      //           console.log('mined!');
-      //           self.contractaddress = contractaddress;
-      //           // TODO : add this contractaddress to the index and return to your videos
-      //           self.push('clips',contractaddress);
-      //           self._addtoIndexContract(contractaddress);
-      //         });
-      //       } else {
-      //         console.log('error uploading metadata to IPFS', err);
-      //       }
-      //     });
-      // },
+      _registerAvatar: function(hash) {
+        var self = this;
+        app.helpers.getfile('../../contracts/Profile.json', function(err, contractjson) {
+          self.web3.eth.getGasPrice(function(err, result) {
+            var gasPrice = result.toNumber(10);
+debugger;
+            var myContractInstance = MyContract.at(self.profilecontract);
+            MyContract.myContractInstance(hash, {
+              from: self.fixaddress(self.account),
+              gasPrice: gasPrice,
+              gasLimit: 3000000,
+              gas: 2000000,
+              data: contractjson.bytecode
+            }, function(err, myContract) {
+              if (!err) {
+                console.log('Transaction hash is', myContract.transactionHash);
+                self.txhash = myContract.transactionHash;
+              } else {
+                console.log('error:', err);
+              }
+            });
+          });
+        });
+      },
 
       editName:function () {
         this.editname = !this.editname;
@@ -560,6 +589,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         }
       },
 
+      makeInvite: function(){
+
+      }
 
     });
   })();
