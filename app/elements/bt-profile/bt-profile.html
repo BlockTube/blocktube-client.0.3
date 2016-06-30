@@ -382,7 +382,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <h2>Invite someone to Blocktube</h2>
     <p>Inviting someone to Blocktube will create a new account (wallet) which can be given to someone else. It will create an invite link which your friend can use to start using Blocktube.</p>
     <p>Invitation that are not claimed can be refunded to your own account.</p>
-  <bt-prepaidmake web3="[[web3]]" account="[[account]]" status="{{prepaidstatus}}"></bt-prepaidmake>
+  <bt-prepaidmake web3="[[web3]]" account="[[account]]" status="{{prepaidstatus}}" prepaidwallets="{{prepaidwallets}}"></bt-prepaidmake>
+  <h3>Your invitations</h3>
+  <template is="dom-repeat" items="{{prepaidwallets}}">
+    <div><span>Created at:</span><span>{{item.created}}</span></div>
+    <div><span>Code:</span><span>{{item.invitecode}}</span></div>
+  <bt-button color="orange" on-tap="refund">Cancel and refund</bt-button>
+  </template>
 
 <!-- this is headless -->
 <file-upload id="avatarupload" target="http://109.123.70.141:5001/api/v0/add?stream-channels=true" on-success="_setavataripfshash" on-error="uploaderror" accept="*/*"></file-upload>
@@ -540,12 +546,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _registerAvatar: function(hash) {
         var self = this;
-        app.helpers.getfile('../../contracts/Profile.json', function(err, contractjson) {
+        app.helpers.getfile('../../contracts/blocktubeUser.json', function(err, contractjson) {
           self.web3.eth.getGasPrice(function(err, result) {
             var gasPrice = result.toNumber(10);
 debugger;
             var myContractInstance = MyContract.at(self.profilecontract);
-            MyContract.myContractInstance(hash, {
+            myContractInstance.setProfileHash(hash, {
               from: self.fixaddress(self.account),
               gasPrice: gasPrice,
               gasLimit: 3000000,

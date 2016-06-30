@@ -53,6 +53,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           },
           status: {
             type: Number
+          },
+          prepaidwallets: {
+            type: Object,
+            notify: true
           }
         },
 
@@ -234,7 +238,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                     invitecode: this.invitecode,
                     created: app.helpers.unixtime()
                   });
-                  
+
                 }
               }.bind(this));
             }.bind(this));

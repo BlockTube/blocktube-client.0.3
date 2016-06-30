@@ -9,7 +9,7 @@ contract blocktubeUser {
 	    owner = msg.sender;
 	}
 
-	function setProfilehash(string _hash) {
+	function setProfileHash(string _hash) {
 		users[msg.sender] = _hash;
 		userAdded(msg.sender, _hash);
 	}
