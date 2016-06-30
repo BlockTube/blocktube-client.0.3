@@ -3,6 +3,10 @@
 <link rel="import" href="../../bower_components/iron-icons/av-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/hardware-icons.html">
 <link rel="import" href="../../bower_components/iron-icons/iron-icons.html">
+
+<link rel="import" href="../../bower_components/iron-media-query/iron-media-query.html">
+
+
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../bt-style/bt-style.html">
 
@@ -23,6 +27,17 @@
       --big-play-width: 3em; 
       --big-play-height: 1.5em;
       --slider-bg-color: lighten(var(--primary-background-color, 33%);
+
+        --width-video: 854px;
+        --height-video: 480px;
+        --total-padding:10vh 5vw 0px 5vw;
+        --container-padding:0px;   
+        --container-margin:0px 25px 0px 0px;   
+
+        @apply(--layout-vertical);
+        @apply(--layout-start);
+        @apply(--layout-start-justified);
+
       }
 
       h1 {
@@ -49,116 +64,241 @@
       p {
         @apply(--bt-font-body);
         margin: 0px;
-        text-overflow: ellipsis;
+/*        text-overflow: ellipsis;
         overflow: hidden; 
         -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        height: 30px;
+        -webkit-box-orient: vertical;*/
       }
 
 
 
       .total {
         width: 100%;
+        max-width: 1400px;
+
         box-sizing: border-box;
-        padding: 10vh 5vw 0px 5vw;
+        padding: var(--total-padding);
+
+        @apply(--layout-horizontal);
+        @apply(--layout-start);
+        @apply(--layout-start-justified);
+        @apply(--layout-wrap);
 
       }
 
+      .container {
+        width: 854px;
+        padding: var(--container-padding);
+        margin: var(--container-margin);
+        /*background-color: red;*/
 
 
-        
-        #videoplayer {
-          width: 854px;
-          height: 480px;          
-        }
+        @apply(--layout-vertical);
+        @apply(--layout-start);
+        @apply(--layout-start-justified);
+      }
+
+      .sidebar {
+        @apply(--layout-flex);
+        height: 100px;
+        background-color: rgba(0,0,0,0.05);
+      }
 
 
-        /*
-        #videoplayer {
-          width: 640px;
-          height: 360px;          
-        }*/
+      .infoandtips {
+        width: 100%;
+        @apply(--layout-horizontal);
+        @apply(--layout-start);
+        @apply(--layout-start-justified);
+        margin: 25px 0px 0px 0px;
+
+      }
+
+      
+      #videoplayer {
+        width: var(--width-video);
+        height: var(--height-video);          
+      }
 
 
-/*        #videoplayer {
-          width: 426px;
-          height: 240px;  
-        }*/
+      .videoinfo {
+        width: 100%;
+        @apply(--layout-flex);
+        @apply(--layout-vertical);
+        @apply(--layout-start);
+        margin: 0px 0px 0px 0px;
+        box-sizing: border-box;
+        padding: 10px 15px 25px 0px;
+      }
+
+      .videoinfo h1 {
+        @apply(--montserrat-bold);
+        color: var(--bt-dark);
+        margin: 0px 0px 2px 0px;   
+      }
 
 
-        .video-js {
-
-          font-size: 10px;
-          color: var(--primary-foreground-color);
-        }
-
-        .vjs-default-skin .vjs-big-play-button {
-          font-size: 3em;
-          line-height: var(--big-play-height);
-          height: var(--big-play-height);
-          width: var(--big-play-width);
-          border: 0.06666em solid var(--primary-foreground-color);
-          border-radius: 0.3em;
-          left: 50%;
-          top: 50%;
-        }
-
-        .video-js .vjs-control-bar,
-        .video-js .vjs-big-play-button,
-        .video-js .vjs-menu-button .vjs-menu-content {
-          background-color: var(--primary-background-color);
-        }
-
-        .video-js .vjs-slider {
-          background-color: var(--slider-bg-color);
-        }
-        .video-js .vjs-volume-level,
-        .video-js .vjs-play-progress,
-        .video-js .vjs-slider-bar {
-          background: var(--primary-foreground-color);
-        }
-
-        .video-js .vjs-load-progress {
-        }
-
-        .video-js .vjs-load-progress div {
-        }
+      .videoinfo p {
+        @apply(--lato-light);
+        color: #595959; 
+        font-size: 18px;
+        margin: 10px 0px 2px 0px;
+      }
 
 
+      .tipit {
+        width: 100px;
+        background-color: yellow;
+        height: 50px;
+      }
 
-    @media all and (min-width: 0) and (max-width: 340px) and (orientation: portrait) {    
+
+      .upload {
+        width: 100%;
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        margin: 0px 0px 0px 0px;
+        box-sizing: border-box;
+        padding: 20px 0px 0px 0px;
+      }
 
 
-        #videoplayer {
-          width: 170px;
-          height: 85px;  
-         /* max-width: 100%; */       
-        }
+      .avatar {
+        width: 35px;
+        height: 35px;
+        background-color: var(--bt-green);
+        border-radius: 50%;
+        overflow:hidden;
+      }
 
-    }
+      .avatar img {
+        width: 100%;
+        height: 100%;
+      }
 
+      .uploadinfo {
+        @apply(--layout-flex);
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-start-justified);
+        color: var(--bt-green);
+        text-align: left;
+        box-sizing: border-box;
+        padding: 0px 10px 0px 10px;
+
+      }
+
+      .uploadinfo p {
+        text-overflow: ellipsis;
+        overflow: hidden; 
+        -webkit-line-clamp: 1;
+        -webkit-box-orient: vertical;
+        font-size: 11px;
+      }
+
+      .uploadinfo a {
+       text-decoration: none;
+       @apply(--lato-bold);
+        color: var(--bt-green);
+      }
+      .uploadinfo a:hover {
+       text-decoration: underline;
+      }
+
+      .seperation {
+        height: 2px;
+        background-color: rgba(0,0,0,0.025);
+        width: 100%;
+      }
+
+
+      .video-js {
+
+        font-size: 10px;
+        color: var(--primary-foreground-color);
+      }
+
+      .vjs-default-skin .vjs-big-play-button {
+        font-size: 3em;
+        line-height: var(--big-play-height);
+        height: var(--big-play-height);
+        width: var(--big-play-width);
+        border: 0.06666em solid var(--primary-foreground-color);
+        border-radius: 0.3em;
+        left: 50%;
+        top: 50%;
+      }
+
+      .video-js .vjs-control-bar,
+      .video-js .vjs-big-play-button,
+      .video-js .vjs-menu-button .vjs-menu-content {
+        background-color: var(--primary-background-color);
+      }
+
+      .video-js .vjs-slider {
+        background-color: var(--slider-bg-color);
+      }
+      .video-js .vjs-volume-level,
+      .video-js .vjs-play-progress,
+      .video-js .vjs-slider-bar {
+        background: var(--primary-foreground-color);
+      }
+
+      .video-js .vjs-load-progress {
+      }
+
+      .video-js .vjs-load-progress div {
+      }
 
     </style>
 
-
+    <iron-media-query query="(min-width:0px) and (max-width: 425px)" query-matches="{{phoneview}}"></iron-media-query>
+    <iron-media-query query="(min-width:601px) and (max-width: 1400px)" query-matches="{{desktopview}}"></iron-media-query>
+    <iron-media-query query="(min-width:1401px)" query-matches="{{xlargeview}}"></iron-media-query>
     <bt-clipdata web3="[[web3]]" contract="{{clipcontract}}" clipdata="{{clipdata}}"></bt-clipdata>
 
     <div class="total">
 
 
- <video id="videoplayer" class="video-js vjs-default-skin"
-  controls autoplay="false"
-  data-setup='{"example_option":true}'>
-              <p class="vjs-no-js">
-                To view this video please enable JavaScript, and consider upgrading to a web browser that
-                <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
-              </p>
-            </video>
-      <h1>{{clipdata.name}}</h1>      
-      <h2>{{clipdata.description}}</h2>      
+       <video id="videoplayer" class="video-js vjs-default-skin"
+        controls autoplay="false"
+        data-setup='{"example_option":true}'>
+        <p class="vjs-no-js">
+          To view this video please enable JavaScript, and consider upgrading to a web browser that
+          <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
+        </p>
+      </video>
+      <div class="container">
+
+      <div class="infoandtips">
+
+        <div class="videoinfo">
+          <h1>{{clipdata.name}}</h1> 
+          <p>{{clipdata.description}}</p> 
+        </div>  
+<!-- 
+        <div class="tipit">
+        HIER KOMT DE TIP-MODULE?
+        </div> -->
+ 
       </div>
-      </template>
+        <div class="seperation"></div>
+
+        <div class="upload">
+          <div class="avatar">
+            <img src="https://pbs.twimg.com/profile_images/503980000958103552/7YzFr8Ur_400x400.jpeg">
+          </div> 
+          <div class="uploadinfo"><p>by <a href="">Vladimir Dobrijenko</a></p></div>
+        </div>
+      </div>
+
+
+      <div class="sidebar">
+      </div>
+
+
+    </div>
+    </template>
   <script>
   (function() {
     // 'use strict';
@@ -186,8 +326,23 @@
         progresspercentage: {
           type: Number,
           value: 0
-        }
+        },
 
+
+        phoneview: {
+          type: Boolean,
+          observer: '_sizeview'
+        },
+
+        desktopview: {
+          type: Boolean,
+          observer: '_sizeview'
+        },
+
+        xlargeview: {
+          type: Boolean,
+          observer: '_sizeview'
+        },
       },
 
       // showOverlay: function() {
@@ -341,7 +496,39 @@
 
 
 
-      }
+      },
+
+      _sizeview: function(){
+        if (this.phoneview) {
+          this.sizeview = 'phone';
+          console.log('DIT IS DE SIZEVIEW', this.sizeview);
+          this.customStyle['--width-video'] = '100%';
+          this.customStyle['--height-video'] = '180px';
+          this.customStyle['--total-padding'] = '0px';
+          this.customStyle['--container-padding'] = '0px 10vw 0px 10vw';
+          this.customStyle['--container-margin'] = '0px';
+
+
+          this.updateStyles();          
+        }
+        if (this.desktopview) {
+          this.sizeview = 'desktop';
+          this.customStyle['--width-video'] = '426px';
+          this.customStyle['--height-video'] = '240px';
+          this.updateStyles();   
+          console.log('DIT IS DE SIZEVIEW', this.sizeview);
+        }
+        if (this.xlargeview) {
+          this.sizeview = 'xlarge';
+          this.customStyle['--width-video'] = '854px';
+          this.customStyle['--height-video'] = '480px';
+          this.updateStyles();   
+          console.log('DIT IS DE SIZEVIEW', this.sizeview);
+
+        }
+
+      },
+
     });
   })();
   </script>
