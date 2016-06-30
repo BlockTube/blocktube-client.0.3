@@ -1,11 +1,8 @@
 contract btuser {
 
 	address owner;
-
 	users[address] public Users;
 
-	mapping (address => User) public users;
-	
 	event userAdded(address who, string hash);
 
 	function btuser(){
