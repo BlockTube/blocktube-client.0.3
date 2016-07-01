@@ -168,6 +168,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <!--       <template is="dom-if" route="upload">
           <bt-upload profiledata="{{profiledata}}" web3="[[web3]]" account="[[account]]" btbalance="[[btbalance]]" ethbalance="[[ethbalance]]"></bt-upload>
       </template>   -->    
+    <template is="dom-if" route="claiminvite" restamp>
+        <bt-prepaidclaim account="[[account]]" web3="[[web3]]" invitecode="[[invitecode]]"></bt-prepaidclaim>
+      </template>
     </lazy-pages>
   </paper-scroll-header-panel>
 

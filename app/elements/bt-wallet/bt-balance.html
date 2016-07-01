@@ -1,0 +1,50 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id="bt-balance">
+<script>
+    (function() {
+      'use strict';
+
+      Polymer({
+        is: 'bt-balance',
+
+        properties: {
+          web3: {
+            type: Object,
+            observer: '_dataReady'
+          },
+          account: {
+            type: String,
+            observer: '_dataReady'
+          },
+          ethbalance: {
+            type: Number,
+            notify: true
+          },
+          watch: {
+            type: Boolean,
+            value: false
+          }
+        },
+
+        ready: function() {},
+
+        close: function() {},
+
+        _dataReady: function() {
+          if (this.web3 && this.account) {
+            this.ethbalance = this.web3.eth.getBalance(this.account).toNumber();
+            if (this.watch){
+              this.filter = this.web3.eth.filter('latest').watch(function() {
+                this.ethbalance = this.web3.eth.getBalance(this.account).toNumber();
+              }.bind(this));
+            }
+          }
+
+        },
+
+
+      });
+    })();
+  </script>
+
+</dom-module>

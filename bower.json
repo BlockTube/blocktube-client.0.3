@@ -9,7 +9,7 @@
     "neon-elements": "PolymerElements/neon-elements#^1.0.0",
     "page": "visionmedia/page.js#~1.6.3",
     "lazy-pages": "^0.8.5",
-    "web3-wallet": "https://github.com/BlockTube/web3-wallet.git#^0.0.8",
+    "web3-wallet": "https://github.com/BlockTube/web3-wallet.git",
     "excess-router": "^0.9.14",
     "ipfs-upload": "^0.0.13",
     "iron-localstorage": "^1.0.5",

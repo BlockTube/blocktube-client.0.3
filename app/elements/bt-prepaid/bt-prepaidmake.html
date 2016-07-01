@@ -12,31 +12,57 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <dom-module id="bt-prepaidmake">
   <template>
 
-  <iron-localstorage name="bt-prepaidwallets"
+    <iron-localstorage name="bt-prepaidwallets"
     value="{{prepaidwallets}}"
     on-iron-localstorage-load="_prepaidwalletsloaded"
     on-iron-localstorage-load-empty="_prepaidwalletsinit"></iron-localstorage>
 
     <style is="custom-style" include="shared-styles"></style>
 
-      <div class="container">
+    <div class="container">
 
-          <bt-button color="orange" on-tap="doMakeInvite">Create an invite code</bt-button>
+      <template is="dom-if" if="{{_is(status,0)}}">
+        <bt-button color="orange" on-tap="doMakeInvite">Create an invite code</bt-button>
+      </template>
+      <template is="dom-if" if="{{_is(status,1)}}">Creating invite code.. ({{status}}/4)</template>
+      <template is="dom-if" if="{{_is(status,2)}}">Creating invite code.. ({{status}}/4)</template>
+      <template is="dom-if" if="{{_is(status,3)}}">Creating invite code.. ({{status}}/4)</template>
+      <template is="dom-if" if="{{_is(status,4)}}">
+        <template is="dom-if" if="{{invitecode}}">
+          Your invite code is ready.
+          <a target="_new" href="mailto:?subject=You are invited to try out BlockTube!&amp;body=Your invite code is {{claimlink(invitecode)}}">E-mail this code.</a>
+          <bt-button color="orange" on-tap="dismiss">Dismiss</bt-button>
+        </template>
+        <template is="dom-if" if="{{!invitecode}}">
+          Error creating code.
+          <bt-button color="orange" on-tap="dismiss">Dismiss</bt-button>
+        </template>
+      </template>
+      <template is="dom-if" if="{{hasitems(prepaidwallets)}}">
+        <h3>Your invitations</h3>
+        <template is="dom-repeat" items="{{prepaidwallets}}">
+          <div>
+            <span>Created at:</span>
+            <span>{{item.created}}</span>
+          </div>
+          <div>
+            <span>Code:</span>
+            <span>{{item.invitecode}}</span>
+          </div>
+          <div>
+            <span>Balance:</span>
+            <span>
+              <bt-balance web3="[[web3]]" account="[[item.account]]" ethbalance="{{eb}}">{{eb}}</bt-balance>
+            </span>
+          </div>
+           <a target="_new" href="mailto:?subject=You are invited to try out BlockTube!&amp;body=Your invite code is {{claimlink(item.invitecode)}}">E-mail this code.</a>
+          <bt-button color="orange" on-tap="refund">Cancel and refund</bt-button>
+        </template>
+      </template>
+    </div>
+  </template>
 
-          <template is="dom-if" if="{{_is(status,0)}}">
-          Status is 0
-          </template>
-          <template is="dom-if" if="{{!_is(status,0)}}">
-          Status is {{status}}
-          </template>
-          <template is="dom-if" if="{{invitecode}}">
-          Your invite code is: <a href="mailto:?subject=BlockTubeinvite {{invitecode}}">{{invitecode}}</a>
-          </template>
-
-      </div>  
-</template>
-
-<script>
+  <script>
     (function() {
       'use strict';
 
@@ -63,6 +89,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         ready: function() {
                     this.status = 0;
 
+        },
+
+        claimlink: function(code){
+          //debugger;
+          return window.location.origin + "#!/claiminvite/" + code;
+        },
+
+        hasitems: function(thearray){
+          if (!thearray || !thearray.length) return false;
+          return thearray.length > 0;
+        },
+
+        dismiss: function(){
+          this.status = 0;
+          delete this.invitecode;
         },
 
         close: function() {},
@@ -214,7 +255,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               console.log('balance of prepay account is now',this.web3.eth.getBalance(this.fixaddress(this.publickey)).toNumber());
 
               var blocktubeprepaidContract = this.web3.eth.contract(contractjson.abi);
-              var blocktubeprepaid = blocktubeprepaidContract.new({
+              var blocktubeprepaid = blocktubeprepaidContract.new(this.fixaddress(this.publickey),{
                 from: this.fixaddress(this.account),
                 data: contractjson.bytecode,
                 gas: 3000000,
@@ -235,6 +276,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                   this.invitecode = this.privatekey + '-' + this.prepaidcontractaddress;
 
                   this.push('prepaidwallets', {
+                    publickey: this.publickey,
+                    privatekey: this.privatekey,
+                    prepaidcontractaddress: this.prepaidcontractaddress,
                     invitecode: this.invitecode,
                     created: app.helpers.unixtime()
                   });

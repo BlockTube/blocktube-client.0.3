@@ -1,19 +1,22 @@
 contract BlockTubePrepaid {
 	
-	address owner;
+	address validsender;
+	bool public claimed;
 
-	function BlockTubePrepaid(){
-		owner = msg.sender;
+	function BlockTubePrepaid(address _validsender){
+		validsender = _validsender;
+		claimed = false;
 	}
 
-	event Claimed(address _claimer);
+	event Claimed(address _destination);
 
 	// claim all fund of this contract
-	function claim(address _claimer){
+	function claim(address _destination){
 		// if the caller is not the owner -> throw
-		if (msg.sender != owner) throw;
+		if (msg.sender != validsender) throw;
 		// send all ether to claimer
-		_claimer.send(this.balance);
-		Claimed(_claimer);
+		claimed = true;
+		_destination.send(this.balance);
+		Claimed(_destination);
 	}
 }

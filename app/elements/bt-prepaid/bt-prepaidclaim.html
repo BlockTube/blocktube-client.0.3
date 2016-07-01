@@ -8,18 +8,21 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
 <link rel="import" href="../../bower_components/polymer/polymer.html">
-<link rel="import" href="../../bower_components/paper-material/paper-material.html">
-<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 
 <dom-module id="bt-prepaidclaim">
   <template>
     <style is="custom-style" include="shared-styles"></style>
 
       <div class="container">
-
-          <h3>Claim invite code</h3>
-         
-          <paper-icon-button toggles icon="favorite" on-tap="doClaimInvite"></paper-icon-button>
+        <template is="dom-if" if="{{claimed}}">
+          <h3>Already claimed</h3>
+          <p>Sorry - this code has already been claimed</p>
+        </template> 
+          <template is="dom-if" if="{{!claimed}}">
+            <h3>Congratulations. You were invited to BlockTube</h3>
+            <bt-button color="orange" on-tap="doClaimInvite">Claim my invite code</bt-button>
+            <p>By clicking this button - you will transfer the funds of the invite code to your account ( {{account}} )</p>
+          </template>
 
           <template is="dom-repeat" items="{{addresses}}">
             {{item}} -- <!-- <bt-balance web3="[[web3]]" account="[[item]]"></bt-balance> -->
@@ -37,12 +40,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         properties: {
           invitecode: {
-            type: String
+            type: String,
+            observer: '_invitecode'
           },
-          // web3: {
-          //   type: Object,
-          //   observer: '_web3'
-          // },
           account: {
             type: String
           }
@@ -59,33 +59,48 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         },
 
-        doClaimInvite: function() {
-          console.log('CLAIM INVITE');
+        _invitecode: function() {
+
           var parts = this.invitecode.split('-');
 
           this.privatekey = parts[0];
           this.prepaidcontractaddress = parts[1];
 
-          console.log('TODO: call claim() from contract', this.prepaidcontractaddress);
-          console.log('using keypair ', this.publickey, this.privatekey);
-          console.log('recepient of funds =>', this.account);
-          
-          
-            this.push('addresses','0xf1b39a55a3e8e0c277e08190238772743ad85337');
+          var self = this;
+          app.helpers.getfile('../../contracts/BlockTubePrepaid.json', function(err, contractjson) {
+            self.btppcontractjson = contractjson;
+            self.claimed = self.isclaimed(self.prepaidcontractaddress);
+          });
 
 
+        },
+
+        doClaimInvite: function() {
+          console.log('CLAIM INVITE');
+        
+          if (!this.privatekey || !this.prepaidcontractaddress){
+            return;
+          }
 
           //debugger;
           var secretSeed = lightwallet.keystore.generateRandomSeed();
 
           lightwallet.keystore.deriveKeyFromPassword('test', function(err, pwDerivedKey) {
 
-            var pubkey = lightwallet.keystore._computeAddressFromPrivKey(this.privatekey);
-            console.log('calculated pubkey', pubkey);
-            this.push('addresses',pubkey);
+            this.publickey = lightwallet.keystore._computeAddressFromPrivKey(this.privatekey);
+            console.log('calculated pubkey', this.publickey);
 
-            this.address = pubkey;
-            this.publickey = '0xf1b39a55a3e8e0c277e08190238772743ad85337';
+
+
+
+          console.log('TODO: call claim() from contract', this.prepaidcontractaddress);
+          console.log('using keypair ', this.publickey, this.privatekey);
+          console.log('recepient of funds =>', this.account);
+
+            //this.push('addresses',pubkey);
+
+            //this.address = pubkey;
+            //this.publickey = '0xf1b39a55a3e8e0c277e08190238772743ad85337';
 
             var keystore = new lightwallet.keystore(secretSeed, pwDerivedKey);
             //keystore.generateNewAddress(pwDerivedKey, 1);
@@ -107,20 +122,67 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               callback(null, 'test');
             };
 
-            this._sendvalue( 0.01 * 1e18, function(success) {
-              // create the pre-paid contract
-//              this._createContract(web3);
-              console.log('done... success=',success);
-            }.bind(this));
+            this.claim();
 
-
-
-
+//             this._sendvalue( 0.01 * 1e18, function(success) {
+//               // create the pre-paid contract
+// //              this._createContract(web3);
+//               console.log('done... success=',success);
+//             }.bind(this));
 
           }.bind(this));
 
 
         },
+
+        claim: function(){
+         
+          var self = this;
+
+   self.web3local.eth.getGasPrice(function(err, result) {
+            var gasPrice = result.toNumber(10);
+debugger;
+            var MyContract = self.web3local.eth.contract(self.btppcontractjson.abi);
+            var myContractInstance = MyContract.at(self.prepaidcontractaddress);
+            myContractInstance.claim(self.fixaddress(self.account), {
+              from: self.fixaddress(self.publickey),
+              gasPrice: gasPrice,
+              gasLimit: 3000000,
+              gas: 2000000,
+              data: self.btppcontractjson.bytecode
+            }, function(err, txhash) {
+              if (!err) {
+                console.log('Transaction hash is', txhash);
+                //self.txhash = myContract.transactionHash;
+              } else {
+                console.log('error:', err);
+              }
+            });
+          });
+
+
+
+        },
+
+  isclaimed: function(prepaidcontractaddress) {
+    //debugger;
+        if (this.btppcontractjson){
+             var self = this;
+
+
+
+          var MyContract = self.web3.eth.contract(this.btppcontractjson.abi);
+          var myContractInstance = MyContract.at(prepaidcontractaddress);
+
+          var claimed = myContractInstance.claimed();
+         
+         return claimed;
+       
+        }
+
+      },
+
+
  fixaddress: function(address) {
           function strStartsWith(str, prefix) {
             return str.indexOf(prefix) === 0;
