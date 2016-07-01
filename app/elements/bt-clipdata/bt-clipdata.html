@@ -77,27 +77,46 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           this.loadcontract();
         },
 
-        loadcontract: function(){
-          if (this.cacheready && !this.itemcache){
+        loadcontract: function() {
+          if (this.cacheready && !this.itemcache) {
 
-          if (this.web3 && this.contract){
-            try{
-            var myclipContract = this.web3.eth.contract(this.contractabi);
-            var myclipContractInstance = myclipContract.at(this.contract);
-            this.hash = myclipContractInstance.ipfsclipobject.call();
-            this.hash = this.hash.toString();
-            this.loadIPFSdata();              
-            }catch(e){
-              console.log(e);
-              //debugger;
+            if (this.web3 && this.contract) {
+              try {
+                var myclipContract = this.web3.eth.contract(this.contractabi);
+                var myclipContractInstance = myclipContract.at(this.contract);
+                this.hash = myclipContractInstance.ipfsclipobject.call();
+                this.contractowner = myclipContractInstance.owner();
+                this.hash = this.hash.toString();
+                this.loadownerprofile();
+                this.loadIPFSdata();
+              } catch (e) {
+                console.log(e);
+                //debugger;
+              }
             }
           }
-          }
+        },
+
+        loadownerprofile: function() {
+
+          var self = this;
+          this.profilecontract = new Polymer.IronMetaQuery({
+            key: 'profilecontract'
+          }).value;
+
+          app.helpers.getfile('../../contracts/blocktubeUser.json', function(err, contractjson) {
+            var MyContract = self.web3.eth.contract(contractjson.abi);
+            self.blocktubeUsercontractInstance = MyContract.at(self.profilecontract);
+            self.clipuserprofilehash = self.blocktubeUsercontractInstance.users(self.contractowner);
+            console.log('IPFhash of public profile=', self.clipuserprofilehash);
+          });
+
         },
 
         populate: function(ipfsData) {
           console.log('bt-clipdate: populate clipdata',ipfsData);
           this.clipdata = ipfsData;
+          this.clipdata.contractowner = this.contractowner;
           // var self=this;
           // self.title = ipfsData.name;
           // self.description = ipfsData.description;
