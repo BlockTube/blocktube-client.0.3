@@ -31,7 +31,7 @@
 
         --width-video: 854px;
         --height-video: 480px;
-        --total-padding:10vh 5vw 0px 5vw;
+        --total-padding:10vh 5vw 10vh 5vw;
         --container-padding:0px;   
         --container-margin:0px 25px 0px 0px;   
 
@@ -251,6 +251,12 @@
       .video-js .vjs-load-progress div {
       }
 
+      .whitespace {
+        height: 2vh;
+        min-height: 20px;
+        width: 100vw;
+      }
+
     </style>
 
     <iron-media-query query="(min-width:0px) and (max-width: 660px)" query-matches="{{small}}"></iron-media-query>
@@ -263,6 +269,7 @@
 
     <div class="total">
 
+      <div class="container">
 
        <video id="videoplayer" class="video-js vjs-default-skin"
         controls autoplay="false"
@@ -272,7 +279,6 @@
           <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
         </p>
       </video>
-      <div class="container">
 
       <div class="infoandtips">
 
@@ -299,9 +305,14 @@
 
       <div class="sidebar">
       </div>
-
-
     </div>
+      <div class="whitespace">
+      ?????
+      </div>
+
+      <div class="whitespace">
+      </div>
+
     </template>
   <script>
   (function() {
@@ -539,7 +550,7 @@
           this.sizeview = 'desktop';
           this.customStyle['--width-video'] = '640px';
           this.customStyle['--height-video'] = '360px';
-          this.customStyle['--total-padding'] = '5vh 5vw 0px 5vw';
+          this.customStyle['--total-padding'] = '5vh 5vw 5vh 5vw';
 
           this.updateStyles();   
           console.log('DIT IS DE SIZEVIEW', this.sizeview);
