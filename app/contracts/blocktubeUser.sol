@@ -14,5 +14,9 @@ contract blocktubeUser {
 		userAdded(msg.sender, _hash);
 	}
 
+	function getProfileHash(address useraddress) returns (string userhash) {
+		return users[useraddress];
+	}
+
 	function kill() { if (msg.sender == owner) suicide(owner); }
 }

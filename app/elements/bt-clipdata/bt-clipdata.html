@@ -107,7 +107,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           app.helpers.getfile('../../contracts/blocktubeUser.json', function(err, contractjson) {
             var MyContract = self.web3.eth.contract(contractjson.abi);
             self.blocktubeUsercontractInstance = MyContract.at(self.profilecontract);
-            self.clipuserprofilehash = self.blocktubeUsercontractInstance.users(self.contractowner);
+            self.clipuserprofilehash = self.blocktubeUsercontractInstance.getProfileHash.call(self.contractowner);
             console.log('IPFhash of public profile=', self.clipuserprofilehash);
           });
 
