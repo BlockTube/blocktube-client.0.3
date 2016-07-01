@@ -252,8 +252,11 @@
 
     </style>
 
-    <iron-media-query query="(min-width:0px) and (max-width: 425px)" query-matches="{{phoneview}}"></iron-media-query>
-    <iron-media-query query="(min-width:601px) and (max-width: 1400px)" query-matches="{{desktopview}}"></iron-media-query>
+    <iron-media-query query="(min-width:0px) and (max-width: 660px)" query-matches="{{small}}"></iron-media-query>
+    <iron-media-query query="(min-width:661px) and (max-width: 854px)" query-matches="{{medium}}"></iron-media-query>
+
+    <iron-media-query query="(min-width:855px) and (max-width: 1280px)" query-matches="{{largish}}"></iron-media-query>
+
     <iron-media-query query="(min-width:1401px)" query-matches="{{xlargeview}}"></iron-media-query>
     <bt-clipdata web3="[[web3]]" contract="{{clipcontract}}" clipdata="{{clipdata}}"></bt-clipdata>
 
@@ -329,12 +332,12 @@
         },
 
 
-        phoneview: {
+        smallest: {
           type: Boolean,
           observer: '_sizeview'
         },
 
-        desktopview: {
+        small: {
           type: Boolean,
           observer: '_sizeview'
         },
@@ -499,29 +502,41 @@
       },
 
       _sizeview: function(){
-        if (this.phoneview) {
+        // var w = window.innerWidth;
+        // var h = window.innerWidth/1.775;
+
+        // console.log('Dit is de innerWidth', w , 'en dan moet dit de height zijn' , h);
+        this.widthvideo = window.innerWidth;
+        this.heightvideo = window.innerWidth/1.775;
+
+        console.log('Dit is de innerWidth', this.widthvideo , 'en dan moet dit de height zijn' , this.heightvideo);
+
+
+        if (this.small) {
           this.sizeview = 'phone';
           console.log('DIT IS DE SIZEVIEW', this.sizeview);
           this.customStyle['--width-video'] = '100%';
-          this.customStyle['--height-video'] = '180px';
+          this.customStyle['--height-video'] = '56.5vw';
           this.customStyle['--total-padding'] = '0px';
           this.customStyle['--container-padding'] = '0px 10vw 0px 10vw';
           this.customStyle['--container-margin'] = '0px';
-
-
           this.updateStyles();          
         }
-        if (this.desktopview) {
+
+        if (this.medium) {
           this.sizeview = 'desktop';
-          this.customStyle['--width-video'] = '426px';
-          this.customStyle['--height-video'] = '240px';
+          this.customStyle['--width-video'] = '640px';
+          this.customStyle['--height-video'] = '360px';
+          this.customStyle['--total-padding'] = '5vh 5vw 0px 5vw';
+
           this.updateStyles();   
           console.log('DIT IS DE SIZEVIEW', this.sizeview);
         }
+
         if (this.xlargeview) {
           this.sizeview = 'xlarge';
-          this.customStyle['--width-video'] = '854px';
-          this.customStyle['--height-video'] = '480px';
+          this.customStyle['--width-video'] = '640px';
+          this.customStyle['--height-video'] = '360px';
           this.updateStyles();   
           console.log('DIT IS DE SIZEVIEW', this.sizeview);
 
