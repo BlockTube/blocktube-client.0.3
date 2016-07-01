@@ -9,6 +9,7 @@
 
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../bt-style/bt-style.html">
+<link rel="import" href="../bt-tipping/bt-tipclip.html">
 
 <!-- <script src="../../bower_components/VideoSub/videosub.js"></script>
  -->
@@ -285,10 +286,10 @@
           <h1>{{clipdata.name}}</h1> 
           <p>{{clipdata.description}}</p> 
         </div>  
-<!-- 
+ 
         <div class="tipit">
-        HIER KOMT DE TIP-MODULE?
-        </div> -->
+          <bt-tipclip destinationaddress="{{clipcontract}}"></bt-tipclip>
+        </div>
  
       </div>
         <div class="seperation"></div>
