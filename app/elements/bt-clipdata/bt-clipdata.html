@@ -108,7 +108,34 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             var MyContract = self.web3.eth.contract(contractjson.abi);
             self.blocktubeUsercontractInstance = MyContract.at(self.profilecontract);
             self.clipuserprofilehash = self.blocktubeUsercontractInstance.getProfileHash.call(self.contractowner);
-            console.log('IPFhash of public profile=', self.clipuserprofilehash);
+
+          if (!self.ipfsclient) {
+            self.ipfsapihost = new Polymer.IronMetaQuery({
+              key: 'ipfs_read'
+            }).value;
+            self.ipfsclient = window.ipfsAPI(this.ipfsapihost, 80);
+          }
+          var buf = '';
+          
+          self.ipfsclient.cat(self.clipuserprofilehash, function(err, res) {
+            if (err) {
+              return;
+            }
+            res
+              .on('error', function(err) {
+                throw (err);
+              })
+              .on('data', function(data) {
+                buf += data;
+              })
+              .on('end', function() {
+                var ipfsData = JSON.parse(buf);
+                self.set('clipdata.publicprofile',ipfsData);
+                console.log('public profile=', self.publicprofile);
+              });
+          });
+
+
           });
 
         },

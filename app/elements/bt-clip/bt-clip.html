@@ -296,9 +296,9 @@
 
         <div class="upload">
           <div class="avatar">
-            <img src="https://pbs.twimg.com/profile_images/503980000958103552/7YzFr8Ur_400x400.jpeg">
+            <img src="{{_avatarurl(clipdate.publicprofile.avatarhash)}}">
           </div> 
-          <div class="uploadinfo"><p>by <a href="">Vladimir Dobrijenko</a></p></div>
+          <div class="uploadinfo"><p>by <a href="">{{clipdata.publicprofile.username}}</a></p></div>
         </div>
       </div>
 
@@ -484,6 +484,12 @@
             key: 'ipfs_url'
           }).value;
         }
+      },
+
+      _avatarurl(hash){
+        debugger;
+        this._initipfs();
+          return(self.ipfs_url + self.clipdata.publicprofile.avatarhash);
       },
 
       _clipdata: function() {
