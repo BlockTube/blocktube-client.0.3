@@ -13,6 +13,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <link rel="import" href="../../bower_components/iron-flex-layout/iron-flex-layout.html">
 <link rel="import" href="../../bower_components/ipfs-upload/ipfs-upload.html">
 <link rel="import" href="../bt-style/bt-style.html">
+<link rel="import" href="../bt-data/bt-clipdata.html">
+<link rel="import" href="../bt-data/bt-userdata.html">
 
 <dom-module id="bt-listitem">
   <!-- <template>
@@ -562,6 +564,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </style>
 
     <bt-clipdata web3="[[web3]]" contract="{{contract}}" clipdata="{{clipdata}}"></bt-clipdata>
+    <bt-userdata id="btuserdata" web3="[[web3]]" userdata="{{userdata}}"></bt-userdata>
 
     <div class="total">
       <div class="eyeballstotal">
@@ -596,9 +599,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <div class="seperation"></div>
         <div class="upload">
           <div class="avatar">
-            <img src="https://pbs.twimg.com/profile_images/503980000958103552/7YzFr8Ur_400x400.jpeg">
+            <img src="{{_avatarurl(userdata.avatarhash)}}">
           </div> 
-          <div class="uploaderinfo"><p>by <a href="">Vladimir Dobrijenko</a></p></div>
+          <div class="uploaderinfo"><p>by <a href="">{{userdata.username}}</a></p></div>
         </div>
       </div>
 
@@ -685,6 +688,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
         _clipdata: function() {
 
+          this.$.btuserdata.contract = this.clipdata.contractowner;
+
           console.log('clipdata=', this.clipdata);
           if (!this.clipdata.thumbnail) {
             this.thumbnail = this.ipfs_url + "QmVGxkXGnQMAduHU81Xgn2zLi2kgnvkXMUAWEanZ87nQx9";
@@ -706,13 +711,24 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           var web3el = document.querySelector('#web3wallet');
           this.web3 = web3el.web3;
 
-         if (!this.ipfs_url) {
-            this.ipfs_url = new Polymer.IronMetaQuery({
-              key: 'ipfs_url'
-            }).value;
-          }
+         this._initipfs();
 
         },
+
+
+      _initipfs: function() {
+        if (!this.ipfs_url) {
+          this.ipfs_url = new Polymer.IronMetaQuery({
+            key: 'ipfs_url'
+          }).value;
+        }
+      },
+
+      _avatarurl(hash){
+        this._initipfs();
+        return(this.ipfs_url + hash);
+      },
+
 
         hitMe: function(){
           //this.fire('go', { msg: "/clip/hash1" });

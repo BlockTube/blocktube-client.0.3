@@ -14,10 +14,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <template>
 
   <iron-localstorage
-      id="lscache"
-      value="{{itemcache}}"
-      on-iron-localstorage-load="itemcacheloaded"
-      on-iron-localstorage-load-empty="itemcacheloadedempty">
+      id="lsclipdata"
+      value="{{clipdatacache}}"
+      on-iron-localstorage-load="clipdatacacheloaded"
+      on-iron-localstorage-load-empty="clipdatacacheloadedempty">
     </iron-localstorage>
    
   </template>
@@ -49,15 +49,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
         _contract: function(){
-          this.$.lscache.name = 'itemcache-' + this.contract;   
+          this.$.lsclipdata.name = 'clipdatacache-' + this.contract;   
         },
 
         _web3: function(){
           this.loadcontract();
         },
 
-        itemcacheloaded: function(){
-          if (this.$.lscache.name === ""){
+        clipdatacacheloaded: function(){
+          if (this.$.lsclipdata.name === ""){
             return;
           }
           //console.log('web3',this.web3===null);
@@ -65,20 +65,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           //debugger;
           //this.loadcontract();
           this.cacheready = true;
-          this.populate(this.itemcache);
+          this.populate(this.clipdatacache);
         },
 
-        itemcacheloadedempty: function(){
-          if (this.$.lscache.name === ""){
+        clipdatacacheloadedempty: function(){
+          if (this.$.lsclipdata.name === ""){
             return;
           }
-          //this.itemcache = {};
+          //this.clipdatacache = {};
           this.cacheready = true;
           this.loadcontract();
         },
 
         loadcontract: function() {
-          if (this.cacheready && !this.itemcache) {
+          if (this.cacheready && !this.clipdatacache) {
 
             if (this.web3 && this.contract) {
               try {
@@ -87,7 +87,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
                 this.hash = myclipContractInstance.ipfsclipobject.call();
                 this.contractowner = myclipContractInstance.owner();
                 this.hash = this.hash.toString();
-                this.loadownerprofile();
+                //this.loadownerprofile();
                 this.loadIPFSdata();
               } catch (e) {
                 console.log(e);
@@ -97,60 +97,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           }
         },
 
-        loadownerprofile: function() {
-
-          var self = this;
-          this.profilecontract = new Polymer.IronMetaQuery({
-            key: 'profilecontract'
-          }).value;
-
-          app.helpers.getfile('../../contracts/blocktubeUser.json', function(err, contractjson) {
-            var MyContract = self.web3.eth.contract(contractjson.abi);
-            self.blocktubeUsercontractInstance = MyContract.at(self.profilecontract);
-            self.clipuserprofilehash = self.blocktubeUsercontractInstance.getProfileHash.call(self.contractowner);
-
-          if (!self.ipfsclient) {
-            self.ipfsapihost = new Polymer.IronMetaQuery({
-              key: 'ipfs_read'
-            }).value;
-            self.ipfsclient = window.ipfsAPI(this.ipfsapihost, 80);
-          }
-          var buf = '';
-          
-          self.ipfsclient.cat(self.clipuserprofilehash, function(err, res) {
-            if (err) {
-              return;
-            }
-            res
-              .on('error', function(err) {
-                throw (err);
-              })
-              .on('data', function(data) {
-                buf += data;
-              })
-              .on('end', function() {
-                var ipfsData = JSON.parse(buf);
-                self.set('clipdata.publicprofile',ipfsData);
-                console.log('public profile=', self.publicprofile);
-              });
-          });
-
-
-          });
-
-        },
-
         populate: function(ipfsData) {
           console.log('bt-clipdate: populate clipdata',ipfsData);
           this.clipdata = ipfsData;
           this.clipdata.contractowner = this.contractowner;
-          // var self=this;
-          // self.title = ipfsData.name;
-          // self.description = ipfsData.description;
-          // self.videohash = ipfsData.video;
-          // self.thumbnail = ipfsData.thumbnail;
-          // self.videourl = '';
-          // self.tags = ipfsData.tags;
         },
 
         attached: function() {
@@ -163,7 +113,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
             this.ipfsapihost = new Polymer.IronMetaQuery({
               key: 'ipfs_read'
             }).value;
-            this.ipfsclient = window.ipfsAPI(this.ipfsapihost, 80);
+            this.ipfsclient = window.ipfsAPI(this.ipfsapihost);
           }
           var self = this;
          
@@ -183,8 +133,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               })
               .on('end', function() {
                 var ipfsData = JSON.parse(buf);
-                self.itemcache = ipfsData;
-                self.populate(self.itemcache);
+                self.clipdatacache = ipfsData;
+                self.populate(self.clipdatacache);
               });
           });
 
