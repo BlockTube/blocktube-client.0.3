@@ -1,9 +1,47 @@
+/*
+Blocktube farming consists of a mix of proof of work and proof of stake.
+
+Farmers commit themselves to render a clip in a certain quality and put BTCoins on that.
+When they have rendered the clip and uploaded the quality variant to IPFS, they sumbit
+the IPFS hash to this contract.
+The clip owner gets notified via the 'workSubmitted' event.
+When the owner approves the work - the farmer gets his POS BTcoins back, and the reward
+BTCoins are minted and sent to the farmer address.
+
+Farmers watch this contract to get notified of new raw clips coming into the system
+via the event 'newclipAdded'.
+
+FLOW
+- clip contract calls submitNewClip() 
+- farmer picks up this event
+- farmer chooses a quality to render and claims a slot via 
+	-> getWork(address clipaddress, uint quality)
+- farmer submits his work via
+	-> submitWork(address clipaddress,uint quality,string ipfshash)
+- clip owner watches events on his clipcontract(s)
+- clip owner confirms the work
+  -> acceptWork
+
+
+TODO:
+- introduce time limits between claiming a clip and submitting ( e.g. a function to 
+transfer the POS BTCoins to the clip contract so it can be paid out as eyeballs after 
+a certain time treshold ?)
+- introduce time limits for approving the work - so that the POS of the farmer is not
+stuck forever in the clip contract.
+- Currently the price/reward mapping is set on contract creation, we should add the
+possibility to change the price/rewards afterwards.
+- reject work by clip owner
+- OR: accept work via likes on the clip
+
+*/
+
 contract blocktubeFarming {
 
 address owner;
 
 struct PriceReward {
-    // how many BTcoins to commit to farming this clip
+    // how many BTcoins to commit to POS for farming this clip
     uint price;
     uint reward;
 }
@@ -14,7 +52,7 @@ mapping (uint => PriceReward) public pricerewards;
 function blocktubeFarming(){
     
     owner = msg.sender;
-    
+    // POS for quality 144px is 1 BTCoin - reward for farming is 2 BTCoin
     pricerewards[144] = PriceReward(1,2);
     pricerewards[240] = PriceReward(2,4);
     pricerewards[360] = PriceReward(3,6);
@@ -41,8 +79,9 @@ mapping(address => mapping(uint => FarmingEntry)) farmingqueue;
 
 event newclipAdded(address clipaddress); 
 
-function submitNewClip(address clipaddress){
-    newclipAdded(clipaddress);
+function submitNewClip(){
+		// TODO : check if this is actually a blocktube clipcontract ?
+    newclipAdded(msg.sender);
 }
 
 // claim a work entry
