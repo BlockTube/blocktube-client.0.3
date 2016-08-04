@@ -16,9 +16,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       :host {
         display: block;
       }
+      bt-input {
+        margin: 0px;
+      }
     </style>
-  <bt-input big color="green" bind-value="{{tipamount}}" label="amount" autofocus></bt-input>
-  <bt-button class="confirmbtn" on-tap="sendtip" color="green" medium bg="transparent">Send Tip</bt-button>  
+  <bt-input color="green" bind-value="{{tipamount}}" inputvalue="1" label="amount"></bt-input>
+  <bt-button class="confirmbtn" on-tap="sendtip" underline="yellow" medium>Tip!</bt-button>  
   </template>
   <script>
   (function() {

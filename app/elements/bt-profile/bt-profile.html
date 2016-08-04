@@ -43,6 +43,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       h1 {
         @apply(--bt-font-h1);
       }
+
+      h4 {
+        @apply(--bt-font-h4);
+      }
+
       p {
         @apply(--bt-font-body);
       }
@@ -272,6 +277,63 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       }
 
 
+      .publisher {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-start-justified);
+        @apply(--layout-wrap);
+      }
+
+      .publisher h4 {
+        @apply(--montserrat-bold);
+        color: var(--bt-green);
+        font-size: 13px;
+        border-bottom: 2px dotted var(--bt-green); 
+      }
+
+
+      .whatbtn {
+        height: 16px;
+        width: 16px;
+        border-radius: 50%;
+        margin-left: 5px;
+        color: var(--bt-green);
+        background-color: rgba(57,170,124,0.1);
+        @apply(--layout-horizontal);
+        @apply(--layout-center-center);
+        @apply(--lato-bold);
+        font-size: 10px;
+
+      }
+
+      #whypublish {
+        border-bottom: 2px dotted var(--bt-green); 
+        border-top: 2px dotted var(--bt-green); 
+      }
+
+
+      #whypublish p {
+        color: var(--bt-green);
+        font-size: 15px;
+        line-height: 18px;
+        @apply(--lato-light);
+        margin: 10px 0px 5px 0px;
+      }
+
+      .closer {
+        color: var(--bt-green);
+        font-size: 14px;
+        @apply(--montserrat-bold);
+
+        width: 100%;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--layout-end-justified);
+        margin: 0px 0px 10px 0px;
+
+      }
+
+
       
 
 
@@ -337,19 +399,37 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </div>
             </template>
             <template is="dom-if" if="{{editname}}">
-              <bt-input big color="green" bind-value="{{profiledata.username}}" label="username" autofocus></bt-input>
+              <bt-input big color="green" label="username" autofocus inputvalue="{{profiledata.username}}"  bind-value="{{profiledata.username}}"></bt-input>
+
+<!--               <bt-input big color="green" bind-value="{{profiledata.username}}" label="username" autofocus></bt-input> -->
               <bt-button class="confirmbtn" on-tap="editName" color="green" medium bg="transparent">OK</bt-button>
             </template>
           </div>
-          <div class="usertags">
+<!--           <div class="usertags">
             <p>You're not following any tags yet. <a href="">Show me how!</a></p>
-<!--             <div class="smallbtn">
-              <img src="../../images/add.svg">
-            </div> -->
-          </div>
+          </div> -->
           <!-- <div>BTcoins {{btcoinbalance}}</div> -->
-          <bt-button class="confirmbtn" on-tap="_saveProfile" color="green" medium bg="transparent">Save my profile</bt-button>
-        </div>
+
+
+
+          <template is="dom-if" if="{{whypublishclosed}}">
+            <div class="publisher" on-tap="_saveProfile" underline="green" medium bg="transparent">
+              <h4>Publish my profile</h4>
+              <div class="whatbtn" on-tap="togglewhat">?</div>
+            </div>
+          </template>
+
+<!--           <template is="dom-if" if="{{!whypublishclosed}}">
+ -->
+          <iron-collapse id="whypublish" on-tap="togglewhat">
+          <p>Publishing your profile makes your avatar and username visible to other users. It costs ... Ξ.</p>
+          <div class="closer">
+            <div>OK</div>
+          </div>
+
+          </iron-collapse>
+<!--           </template>
+ -->        </div>
         
 
 
@@ -427,7 +507,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Boolean,
           value: false
         },   
-        collapseclosed: {
+        whypublishclosed: {
           type: Boolean,
           value: true
         },
@@ -593,7 +673,13 @@ debugger;
 
       makeInvite: function(){
 
-      }
+      },
+
+      togglewhat: function() {
+        var whypublish = document.querySelector('#whypublish');
+        whypublish.toggle();
+        this.whypublishclosed=!this.whypublishclosed;
+      },
 
     });
   })();

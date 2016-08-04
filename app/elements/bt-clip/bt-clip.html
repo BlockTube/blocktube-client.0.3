@@ -32,7 +32,7 @@
         --width-video: 854px;
         --height-video: 480px;
         --total-padding:10vh 5vw 10vh 5vw;
-        --container-padding:0px;   
+        --container-padding:0px 0px 0px 0px;   
         --container-margin:0px 25px 0px 0px;   
 
         @apply(--layout-vertical);
@@ -88,7 +88,7 @@
       }
 
       .container {
-        width: 854px;
+        width: var(--width-video);
         padding: var(--container-padding);
         margin: var(--container-margin);
         /*background-color: red;*/
@@ -102,15 +102,17 @@
       .sidebar {
         @apply(--layout-flex);
         height: 100px;
+        min-width: 200px;
         background-color: rgba(0,0,0,0.05);
       }
 
 
       .infoandtips {
-        width: 100%;
+        width: var(--width-video);
         @apply(--layout-horizontal);
         @apply(--layout-start);
         @apply(--layout-start-justified);
+        @apply(--layout-wrap);
         margin: 25px 0px 0px 0px;
 
       }
@@ -124,6 +126,7 @@
 
       .videoinfo {
         width: 100%;
+        min-width: 280px;
         @apply(--layout-flex);
         @apply(--layout-vertical);
         @apply(--layout-start);
@@ -148,11 +151,13 @@
 
 
       .tipit {
-        width: 100px;
-        background-color: yellow;
-        height: 50px;
-      }
+        width: 150px;
+        margin: 0px 0px 0px 0px;
+        box-sizing: border-box;
+        padding: 20px;
+        border: 2px solid var(--bt-yellow);
 
+      }
 
       .upload {
         width: 100%;
@@ -160,7 +165,7 @@
         @apply(--layout-center-center);
         margin: 0px 0px 0px 0px;
         box-sizing: border-box;
-        padding: 20px 0px 0px 0px;
+        padding: 20px 0px 20px 0px;
       }
 
 
@@ -213,6 +218,21 @@
       }
 
 
+      .whitespace {
+        height: 2vh;
+        min-height: 20px;
+        width: 100vw;
+        color: red;
+      }
+
+
+      .comments {
+        font-size: 11px;
+        width: 100%;
+        color: var(--bt-grey2);
+      }
+
+
       .video-js {
 
         font-size: 10px;
@@ -251,11 +271,7 @@
       .video-js .vjs-load-progress div {
       }
 
-      .whitespace {
-        height: 2vh;
-        min-height: 20px;
-        width: 100vw;
-      }
+
 
     </style>
 
@@ -269,7 +285,6 @@
 
     <div class="total">
 
-      <div class="container">
 
        <video id="videoplayer" class="video-js vjs-default-skin"
         controls autoplay="false"
@@ -279,6 +294,7 @@
           <a href="http://videojs.com/html5-video-support/" target="_blank">supports HTML5 video</a>
         </p>
       </video>
+      <div class="container">
 
       <div class="infoandtips">
 
@@ -300,18 +316,24 @@
           </div> 
           <div class="uploadinfo"><p>by <a href="">Vladimir Dobrijenko</a></p></div>
         </div>
+
+      <div class="whitespace">
+      </div>
+
+      <div class="comments">
+      Hier kunnen misschien comments komen? Allesinds alles wat niet de video zelf of de sidebar is
+      </div>
+
+      <div class="whitespace">
+      </div>
+      <div class="whitespace">
+      </div>
       </div>
 
 
       <div class="sidebar">
       </div>
     </div>
-      <div class="whitespace">
-      ?????
-      </div>
-
-      <div class="whitespace">
-      </div>
 
     </template>
   <script>
@@ -527,7 +549,7 @@
         if (this.small) {
           this.sizeview = 'phone';
           console.log('DIT IS DE SIZEVIEW', this.sizeview);
-          this.customStyle['--width-video'] = '100%';
+          this.customStyle['--width-video'] = '100vw';
           this.customStyle['--height-video'] = '56.5vw';
           this.customStyle['--total-padding'] = '0px';
           this.customStyle['--container-padding'] = '0px 10vw 0px 10vw';
