@@ -10,6 +10,8 @@
 <link rel="import" href="../../bower_components/paper-slider/paper-slider.html">
 <link rel="import" href="../bt-style/bt-style.html">
 <link rel="import" href="../bt-tipping/bt-tipclip.html">
+<link rel="import" href="../bt-data/bt-clipdata.html">
+<link rel="import" href="../bt-data/bt-userdata.html">
 
 <!-- <script src="../../bower_components/VideoSub/videosub.js"></script>
  -->
@@ -282,6 +284,7 @@
 
     <iron-media-query query="(min-width:1401px)" query-matches="{{xlargeview}}"></iron-media-query>
     <bt-clipdata web3="[[web3]]" contract="{{clipcontract}}" clipdata="{{clipdata}}"></bt-clipdata>
+    <bt-userdata id="btuserdata" web3="[[web3]]" userdata="{{userdata}}"></bt-userdata>
 
     <div class="total">
 
@@ -312,9 +315,9 @@
 
         <div class="upload">
           <div class="avatar">
-            <img src="https://pbs.twimg.com/profile_images/503980000958103552/7YzFr8Ur_400x400.jpeg">
+            <img src="{{_avatarurl(userdata.avatarhash)}}">
           </div> 
-          <div class="uploadinfo"><p>by <a href="">Vladimir Dobrijenko</a></p></div>
+          <div class="uploadinfo"><p>by <a href="">{{userdata.username}}</a></p></div>
         </div>
 
       <div class="whitespace">
@@ -381,6 +384,17 @@
           observer: '_sizeview'
         },
       },
+
+      ready: function(){
+       
+
+      },
+
+      attached: function(){
+
+
+      },
+    
 
       // showOverlay: function() {
       //   //console.log('hit it!', Date.now());
@@ -497,10 +511,17 @@
         }
       },
 
+      _avatarurl(hash){
+        this._initipfs();
+        return(this.ipfs_url + hash);
+      },
+
       _clipdata: function() {
 
         this._initipfs();
         var self = this;
+
+        this.$.btuserdata.contract = self.clipdata.contractowner;
 
         self.player = videojs(this.$.videoplayer, {}, function() {
 

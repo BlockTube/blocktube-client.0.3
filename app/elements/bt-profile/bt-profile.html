@@ -625,19 +625,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         app.helpers.getfile('../../contracts/blocktubeUser.json', function(err, contractjson) {
           self.web3.eth.getGasPrice(function(err, result) {
             var gasPrice = result.toNumber(10);
-debugger;
+
+            var MyContract = self.web3.eth.contract(contractjson.abi);
             var myContractInstance = MyContract.at(self.profilecontract);
             myContractInstance.setProfileHash(hash, {
-              from: self.fixaddress(self.account),
+              from: app.helpers.fixaddress(self.account),
               gasPrice: gasPrice,
               gasLimit: 3000000,
               gas: 2000000,
               data: contractjson.bytecode
-            }, function(err, myContract) {
+            }, function(err, txhash) {
               if (!err) {
-                console.log('Transaction hash is', myContract.transactionHash);
-                self.txhash = myContract.transactionHash;
+                console.log('Transaction hash is', txhash);
+                // TODO : watch transaction - give feedback to user ?
               } else {
+                // TODO : give feedback to user that his profile failed to save to the blockchain...
                 console.log('error:', err);
               }
             });
