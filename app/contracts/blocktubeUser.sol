@@ -1,12 +1,17 @@
-contract blocktubeUser {
+/*
+BlocktubeUser is an index of all the blocktube users linking 
+their address to their profile info. Publishing your user profile
+is optional.
+*/
+import "owned.sol";
+contract blocktubeUser  is owned {
 
-	address owner;
+	
 	mapping(address => string) public users;
 
 	event userAdded(address who, string hash);
 
 	function blocktubeUser(){
-	    owner = msg.sender;
 	}
 
 	function setProfileHash(string _hash) {
@@ -18,5 +23,5 @@ contract blocktubeUser {
 		return users[useraddress];
 	}
 
-	function kill() { if (msg.sender == owner) suicide(owner); }
+	function kill() onlyOwner { suicide(owner); }
 }

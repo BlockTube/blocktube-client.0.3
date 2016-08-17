@@ -21,11 +21,12 @@
 //    function transfer(address receiver, uint amount){} 
 //}
 
-contract blocktubeClip {
+import "owned.sol";
+import "blocktubeCoin.sol";
+import "blocktubeTag.sol";
+
+contract blocktubeClip is owned  {
     
-    // First, we need to declare some variables used in this contract.
-    // The address of the original poster
-    address public owner;
 
     // the clip is published ? ( AKA visible in index )
     bool public published;
@@ -51,6 +52,8 @@ contract blocktubeClip {
     // Every clip has a json object, that's stored on IPFS.
     string public ipfsclipobject;
     
+    blocktubeCoin coin;
+
     // We have an array of 'funders', the early likes.
     Shareholder[] public shareholders;    
     // The shareholder object
@@ -59,12 +62,27 @@ contract blocktubeClip {
         uint shares;
     }
 
+    struct Tagger {
+        address tagger;
+        uint stake;
+    }
+
+    // there is a mapping from tag addresses to tags
+    mapping (address => Tagger[]) public Tags;
+
     // Then we define some events, where our contraclistener can listen to.
     //event tresholdReached(likesBalance);
 
+    function tag(address _tag,uint _stake){
+        address tag = blocktubeTag(_tag);
+        // Transfer stake BLTC to this contract
+        coin.transfer(this,_stake);    // this function throws if not successful
+        Tags[tag].push(Tagger({tagger:msg.sender,stake:_stake}));
+    }
+
     // And now, the function that runs when deploying this contract.
-    function blocktubeClip(string _ipfsclipobject, uint _treshold, uint _percentageforowner){
-        owner = msg.sender;
+    function blocktubeClip(string _ipfsclipobject, uint _treshold, uint _percentageforowner,address _tokenaddr){
+        coin = blocktubeCoin(_tokenaddr);
         treshold = _treshold;
         ipfsclipobject = _ipfsclipobject;
         percentageforowner = _percentageforowner;
@@ -72,17 +90,13 @@ contract blocktubeClip {
         remainingCliptokens = 100 - _percentageforowner;
         shareholdersnum = shareholders.length;
         published = false;
-        //testnet blocktube contract
-        //tokenaddr = 0xc6305f2c2f05e691cD973B3bb610CA9AE9a30720;
     }
 
-    function publish(){
-        if (owner != msg.sender) return;
+    function publish() onlyOwner{
         published = true;
     }
 
-    function unpublish(){
-        if (owner != msg.sender) return;
+    function unpublish() onlyOwner {
         published = false;
     }
 
@@ -106,9 +120,7 @@ contract blocktubeClip {
         }
     }
 
-    // And because my mist wallet is getting full, we need a suicide function.
-    function kill() { if (msg.sender == owner) suicide(owner); }
-
-
+    // a suicide function.
+    function kill() onlyOwner { suicide(owner); }
 
 }

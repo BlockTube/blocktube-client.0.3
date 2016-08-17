@@ -268,21 +268,28 @@ gulp.task('solc', function() {
   ], {
     cwd: '.'
   }, function(error, files) {
-    var allfiles = '';
+//    var allfiles = '';
     var destpath = '';
 
+    var allfiles = {};
+
     files.forEach(function(file) {
-      console.log('compiling sol file', file);
+      console.log('adding sol file', path.basename(file));
 
       var fileContent = fs.readFileSync(file, "utf8");
 
-      allfiles += fileContent;
-      destpath = require('path').dirname(file);
+      allfiles[path.basename(file)] = fileContent;
+      destpath = path.dirname(file);
     });
 
     var solc = require('solc');
     var input = allfiles;
-    var output = solc.compile(input, 1); // 1 activates the optimiser
+    var output = solc.compile({sources: allfiles},0); // 1 activates the optimiser
+    if (output.errors){
+      console.log('Errors:',output.errors);
+      return;
+    }
+
     //console.log(output);
     for (var contractName in output.contracts) {
       var data = {

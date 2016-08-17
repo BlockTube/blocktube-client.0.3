@@ -1,24 +1,9 @@
 
-contract owned {
-    address public owner;
-
-    function owned() {
-        owner = msg.sender;
-    }
-
-    modifier onlyOwner {
-        if (msg.sender != owner) throw;
-        _
-    }
-
-    function transferOwnership(address newOwner) onlyOwner {
-        owner = newOwner;
-    }
-}
+import "owned.sol";
 
 contract tokenRecipient { function receiveApproval(address _from, uint256 _value, address _token, bytes _extraData); }
 
-contract MyToken is owned {
+contract blocktubeCoin is owned {
     /* Public variables of the token */
     string public name;
     string public symbol;
@@ -38,7 +23,7 @@ contract MyToken is owned {
     event Transfer(address indexed from, address indexed to, uint256 value);
 
     /* Initializes contract with initial supply tokens to the creator of the contract */
-    function MyToken(
+    function blocktubeCoin(
         uint256 initialSupply,
         string tokenName,
         uint8 decimalUnits,
@@ -105,6 +90,7 @@ contract MyToken is owned {
         Transfer(owner, target, mintedAmount);
     }
 
+    // add an address to the list who can mint tokens.
     function addToWhitelist(address _whitelistaddr) onlyOwner {
         whitelist[_whitelistaddr] = true;
     }
@@ -114,6 +100,6 @@ contract MyToken is owned {
     //     throw;     // Prevents accidental sending of ether
     // }
 
-    /* Kill function, for debug purposes (I don't want a mist wallet full of token contracts :) */
-    function kill() { if (msg.sender == owner) suicide(owner); }
+    /* Kill function, for debug purposes */
+     function kill() onlyOwner { suicide(owner); }
 }

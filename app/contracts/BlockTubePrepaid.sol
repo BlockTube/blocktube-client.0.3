@@ -16,7 +16,9 @@ contract BlockTubePrepaid {
 		if (msg.sender != validsender) throw;
 		// send all ether to claimer
 		claimed = true;
-		_destination.send(this.balance);
+		if (!_destination.send(this.balance)){
+			throw;
+		}
 		Claimed(_destination);
 	}
 }
