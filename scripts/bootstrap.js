@@ -2,6 +2,7 @@ var lightwallet = require('eth-lightwallet');
 var Web3 = require('web3');
 var fs = require('fs');
 var async = require('async');
+var assert = require('assert');
 
 var myArgs = require('optimist').argv;
 var HookedWeb3Provider = require("hooked-web3-provider");
@@ -69,6 +70,9 @@ if (!fs.existsSync(config.walletfile)) {
 
     console.log('your PK = ', privatekey);
 
+    // create the testserver with the account in our wallet file as the first and only 
+    // provisioned account.
+
     var TestRPCServer = TestRPC.server({
       accounts: [{
         secretKey: '0x' + privatekey,
@@ -87,9 +91,6 @@ if (!fs.existsSync(config.walletfile)) {
       });
       web3.setProvider(provider);
 
-      web3_monitor = new Web3();
-      web3_monitor.setProvider(new web3.providers.HttpProvider(config.web3host));
-
       web3.eth.getGasPrice(function(err, result) {
 
         gasPrice = result.toNumber(10);
@@ -98,7 +99,7 @@ if (!fs.existsSync(config.walletfile)) {
         console.log(myArgs._[0]);
         var command = myArgs._[0];
         switch (command) {
-          default: monitorBalances(myArgs._[0], true);
+          default: console.log('usage node bootstrap.js <bootstrap>');
           break;
           case "bootstrap":
 
@@ -109,12 +110,17 @@ if (!fs.existsSync(config.walletfile)) {
                     callback(err, res);
                   });
                 },
-                deployTagContracts: function(callback) {
-                  btconfig.tags = [];
-                  async.eachSeries(config.tags, deployTagContract, function(err, results) {
-                    callback(err);
+                deployFarmingContract: function(callback) {
+                  deployFarmingContract(function(err, res) {
+                    callback(err, res);
                   });
                 },
+                // deployTagContracts: function(callback) {
+                //   btconfig.tags = [];
+                //   async.eachSeries(config.tags, deployTagContract, function(err, results) {
+                //     callback(err);
+                //   });
+                // },
               },
               function(err, results) {
                 console.log('Finished');
@@ -166,6 +172,67 @@ function deployCoinContract(cb) {
 }
 
 
+function deployFarmingContract(cb) {
+  console.log('deploy coin contract');
+  var contractjson = require('../app/contracts/blocktubeFarming.json');
+
+
+  var contract = this.web3.eth.contract(contractjson.abi);
+  var contractat = contract.new({
+    from: fixaddress(account),
+    data: contractjson.bytecode,
+    gas: 3000000,
+    gasPrice: gasPrice,
+    gasLimit: 3000000,
+    //    value: this.value * 1e18
+  }, function(e, contract) {
+    if (e) {
+      console.log('error creating contract', e);
+      return;
+    }
+
+    if (typeof contract.address !== 'undefined') {
+      btconfig.farmingcontract = contract.address;
+      console.log('contract deployed at ', contract.address);
+
+      // whitelist the farmer contract to mint coins.
+    
+      var contractjson = require('../app/contracts/blocktubeCoin.json');
+
+      // uint256 initialSupply,
+      //       string tokenName,
+      //       uint8 decimalUnits,
+      //       uint256 _minEthbalance,
+      //       string tokenSymbol,
+      //       string versionOfTheCode
+
+      var contract = this.web3.eth.contract(contractjson.abi);
+      var myContractInstance = contract.at(btconfig.coincontract);
+
+      var allowance = myContractInstance.addToWhitelist(btconfig.farmingcontract, {
+        from: fixaddress(account),
+        data: contractjson.bytecode,
+        gas: 3000000,
+        gasPrice: gasPrice,
+        gasLimit: 3000000,
+      }, function(e, txhash) {
+        if (e) {
+          console.log('error creating contract', e);
+          return;
+        }
+
+        console.log('tx hash = ',txhash);
+        cb();
+
+      }.bind(this));
+
+
+    }
+  }.bind(this));
+}
+
+
+
 function deployTagContract(tagname, cb) {
   console.log('deploy tag contract');
   var contractjson = require('../app/contracts/blocktubeTag.json');
@@ -185,7 +252,10 @@ function deployTagContract(tagname, cb) {
     }
 
     if (typeof contract.address !== 'undefined') {
-      btconfig.tags.push({tagname:tagname,contractaddress:contract.address});
+      btconfig.tags.push({
+        tagname: tagname,
+        contractaddress: contract.address
+      });
       var contractaddress = contract.address;
       console.log('contract for tag', tagname, 'deployed at ', contractaddress);
       cb();
